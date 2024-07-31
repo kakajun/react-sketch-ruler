@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import RulerLine from './ruler-line'; // Assuming this component exists and is compatible with React
+import RulerLine from './RulerLine'; // Assuming this component exists and is compatible with React
 import CanvasRuler from '../canvas-ruler/index'; // Assuming this component exists and is compatible with React
 import useLine from './useLine'; // Assuming this hook exists and is compatible with React
 import styled from 'styled-components';
@@ -8,7 +8,6 @@ import { extendableBorder, verticalBorder } from './mixins.jsx';
 type PaletteType = {
   lineType: string;
   lineColor?: string;
-  // ... other properties
 };
 
 type LinesType = {
@@ -20,10 +19,6 @@ type SnapsObjType = {
   h: number[];
   v: number[];
 };
-
-type ParentRectType = {
-  // ... properties of the parent rect
-} | null;
 
 type PropsType = {
   scale: number;
@@ -40,7 +35,6 @@ type PropsType = {
   selectStart: number;
   selectLength: number;
   isShowReferLine: boolean;
-  parentRect: ParentRectType;
   rate: number;
   snapThreshold: number;
   snapsObj: SnapsObjType;
@@ -63,7 +57,6 @@ const RulerComponent = ({
   selectStart,
   selectLength,
   isShowReferLine,
-  parentRect,
   rate,
   snapThreshold,
   snapsObj,
@@ -74,7 +67,6 @@ const RulerComponent = ({
   const [isdragle, setIsDragle] = useState(false);
   const [showLabel, setShowLabel] = useState(false);
   const [startValue, setStartValue] = useState(startOther - thick / 2);
-
   const { actionStyle, handleMouseMove, handleMouseDown, labelContent } = useLine(
     {
       palette,

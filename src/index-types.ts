@@ -87,4 +87,4 @@ SketchRuler.defaultProps = {
   lockLine: false,
   selfHandle: false,
 };
-export { SketchRuler, SketchRulerProps };
+export { SketchRuler, SketchRulerProps,PaletteType };

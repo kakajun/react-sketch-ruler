@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import RulerWrapper from './ruler-wrapper';
+import RulerWrapper from './RulerWrapper';
 import { eye64, closeEye64 } from './cornerImg64';
-import Panzoom, { PanzoomObject } from 'simple-panzoom';
+import Panzoom  from 'simple-panzoom';
 import { merge } from '../canvas-ruler/utils';
 
 const SketchRuler = (props) => {
-  const [parentRect, setParentRect] = useState(null);
   const [startX, setStartX] = useState(0);
   const [startY, setStartY] = useState(0);
   const [zoomStartX, setZoomStartX] = useState(0);
@@ -13,6 +12,8 @@ const SketchRuler = (props) => {
   const [ownScale, setOwnScale] = useState(1);
   const [showReferLine, setShowReferLine] = useState(props.isShowReferLine);
   const [panzoomInstance, setPanzoomInstance] = useState(null);
+  const rectWidth = props.width - props.thick;
+  const rectHeight = props.height - props.thick;
 
   const paletteCpu = merge(
     {
@@ -47,8 +48,7 @@ const SketchRuler = (props) => {
     height: rectHeight + 'px'
   };
 
-  const rectWidth = props.width - props.thick;
-  const rectHeight = props.height - props.thick;
+
 
   useEffect(() => {
     initPanzoom();
@@ -66,7 +66,7 @@ const SketchRuler = (props) => {
     }
   }, []);
 
-  const getPanOptions = (scale) => ({
+  const getPanOptions = (scale:number) => ({
     noBind: true,
     startScale: scale,
     cursor: 'default',
@@ -98,7 +98,7 @@ const SketchRuler = (props) => {
     return scale;
   };
 
-  const handlePanzoomChange = (e) => {
+  const handlePanzoomChange = (e: { detail: { scale: number; dimsOut: object; }; }) => {
     const { scale, dimsOut } = e.detail;
     if (dimsOut) {
       props.onUpdateScale(scale);
@@ -111,7 +111,7 @@ const SketchRuler = (props) => {
     }
   };
 
-  const handleWheel = (e) => {
+  const handleWheel = (e:MouseEvent) => {
     if (e.ctrlKey || e.metaKey) {
       if (panzoomInstance) {
         panzoomInstance.zoomWithWheel(e);
@@ -120,7 +120,7 @@ const SketchRuler = (props) => {
     }
   };
 
-  const handleSpaceKeyDown = (e) => {
+  const handleSpaceKeyDown = (e:MouseEvent) => {
     if (e.key === ' ') {
       if (panzoomInstance) {
         panzoomInstance.bind();
@@ -185,7 +185,7 @@ const SketchRuler = (props) => {
           {props.children}
         </div>
       </div>
-      <RulerWrapper
+      {/* <RulerWrapper
         style={{ marginLeft: `${props.thick}px`, width: `${rectWidth}px` }}
         vShow={props.showRuler}
         vertical={false}
@@ -209,8 +209,8 @@ const SketchRuler = (props) => {
         gridRatio={props.gridRatio}
         lockLine={props.lockLine}
         onChangeLineState={changeLineState}
-      />
-      <RulerWrapper
+      /> */}
+      {/* <RulerWrapper
         style={{ marginTop: `${props.thick}px`, top: 0, height: `${rectHeight}px` }}
         vShow={props.showRuler}
         vertical={true}
@@ -234,7 +234,7 @@ const SketchRuler = (props) => {
         gridRatio={props.gridRatio}
         lockLine={props.lockLine}
         onChangeLineState={changeLineState}
-      />
+      /> */}
       <a
         vShow={props.showRuler}
         className="corner"
