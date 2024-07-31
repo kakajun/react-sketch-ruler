@@ -1,0 +1,30 @@
+{
+  "name": "react-sketch-ruler",
+  "private": true,
+  "version": "0.0.0-beta.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --config vite.demo.ts",
+    "build": " vite build",
+    "build:demo": "tsc -b && vite build --config vite.demo.ts",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.9",
+    "typescript": "^5.5.3",
+    "vite-plugin-dts": "3.9.1",
+    "vite": "^5.3.5"
+  }
+}
