@@ -26,11 +26,10 @@ export default defineConfig({
     },
     rollupOptions: {
       // 确保外部化处理那些你不想打包进库的依赖
-      external: [ 'panzoom', 'react', 'react-dom'],
+      external: ['styled-components',  'panzoom', 'react', 'react-dom'],
       output: {
         banner,
         globals: {
-          vue: 'Vue',
           panzoom: 'simple-panzoom' // 这里假设 panzoom 暴露在全局变量 Panzoom 下
         }
       }

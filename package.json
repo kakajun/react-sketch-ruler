@@ -1,8 +1,22 @@
 {
   "name": "react-sketch-ruler",
-  "private": true,
   "version": "0.0.0-beta.1",
   "type": "module",
+  "author": "kakajun <253495832@qq.com>",
+  "license": "MIT",
+  "private": false,
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kakajun/react-sketch-ruler"
+  },
+  "sideEffects": false,
+  "main": "lib/index.cjs",
+  "module": "lib/index.js",
+  "style": "lib/style.css",
+  "types": "lib/index.d.ts",
   "scripts": {
     "dev": "vite --config vite.demo.ts",
     "build": " vite build",
@@ -12,7 +26,10 @@
   },
   "dependencies": {
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "simple-panzoom": "^1.0.4",
+    "styled-components": "^6.1.12",
+    "stylis": "^4.3.2"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
@@ -23,8 +40,9 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.9",
+    "sass": "^1.77.8",
     "typescript": "^5.5.3",
-    "vite-plugin-dts": "3.9.1",
-    "vite": "^5.3.5"
+    "vite": "^5.3.5",
+    "vite-plugin-dts": "3.9.1"
   }
 }
