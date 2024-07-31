@@ -1,19 +1,67 @@
-import React, { useState, useEffect, useRef } from 'react';
-import RulerWrapper from './RulerWrapper';
+import React, { useState, useEffect, useRef,forwardRef } from 'react';
+// import RulerWrapper from './RulerWrapper';
 import { eye64, closeEye64 } from './cornerImg64';
-import Panzoom  from 'simple-panzoom';
+import Panzoom, { PanzoomObject } from 'simple-panzoom'
 import { merge } from '../canvas-ruler/utils';
+import type { SketchRulerProps } from '../index-types';
+interface RulerMethods {
+  reset: () => void;
+  zoomIn: () => void;
+  zoomOut: () => void;
+}
 
-const SketchRuler = (props) => {
+
+
+
+const SketchRuler = forwardRef<HTMLDivElement, SketchRulerProps>(function SketchRuler(
+  props,
+  ref
+) {
+  const {
+    showRuler= true,
+    eyeIcon,
+    closeEyeIcon,
+    scale= 1,
+    rate= 1,
+    thick= 16,
+    width= 1400,
+    height= 800,
+    paddingRatio= 0.2,
+    autoCenter= true,
+    shadow= {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+    },
+    lines= {
+      h: [],
+      v: [],
+    },
+    isShowReferLine= true,
+    canvasWidth= 1000,
+    canvasHeight= 700,
+    snapsObj= {
+      h: [],
+      v: [],
+    },
+    snapThreshold= 5,
+    gridRatio= 1,
+    lockLine= false,
+    selfHandle= false,
+    palette,
+    panzoomOption
+  } = props;
+  // static defaultProps=defaultProps;
   const [startX, setStartX] = useState(0);
   const [startY, setStartY] = useState(0);
   const [zoomStartX, setZoomStartX] = useState(0);
   const [zoomStartY, setZoomStartY] = useState(0);
   const [ownScale, setOwnScale] = useState(1);
-  const [showReferLine, setShowReferLine] = useState(props.isShowReferLine);
-  const [panzoomInstance, setPanzoomInstance] = useState(null);
-  const rectWidth = props.width - props.thick;
-  const rectHeight = props.height - props.thick;
+  const [showReferLine, setShowReferLine] = useState(isShowReferLine);
+  const [panzoomInstance, setPanzoomInstance] = useState<PanzoomObject | null>(null);
+  const rectWidth = width - thick;
+  const rectHeight = height - thick;
 
   const paletteCpu = merge(
     {
@@ -29,15 +77,15 @@ const SketchRuler = (props) => {
       borderColor: '#eeeeef',
       cornerActiveColor: 'rgb(235, 86, 72, 0.6)'
     },
-    props.palette || {}
+    palette || {}
   );
 
   const cornerStyle = {
     backgroundImage: showReferLine
-      ? `url(${props.eyeIcon || eye64})`
-      : `url(${props.closeEyeIcon || closeEye64})`,
-    width: `${props.thick}px`,
-    height: `${props.thick}px`,
+      ? `url(${eyeIcon || eye64})`
+      : `url(${closeEyeIcon || closeEye64})`,
+    width: `${thick}px`,
+    height: `${thick}px`,
     borderRight: `1px solid ${paletteCpu.borderColor}`,
     borderBottom: `1px solid ${paletteCpu.borderColor}`
   };
@@ -53,7 +101,7 @@ const SketchRuler = (props) => {
   useEffect(() => {
     initPanzoom();
 
-    if (!props.selfHandle) {
+    if (!selfHandle) {
       document.addEventListener('wheel', handleWheel);
       document.addEventListener('keydown', handleSpaceKeyDown);
       document.addEventListener('keyup', handleSpaceKeyUp);
@@ -73,45 +121,47 @@ const SketchRuler = (props) => {
     startX: zoomStartX,
     startY: zoomStartY,
     smoothScroll: true,
-    ...props.panzoomOption
+    ...panzoomOption
   });
 
   const initPanzoom = () => {
     const elem = document.querySelector('.canvasedit');
-    let scale = props.scale;
-    if (props.autoCenter) {
+    let scale = scale;
+    if (autoCenter) {
       scale = calculateTransform();
     }
 
-    const panzoom = new Panzoom(elem, getPanOptions(scale));
+    const panzoom =  Panzoom(elem as HTMLElement, getPanOptions(scale));
     setPanzoomInstance(panzoom);
+    if (elem) {
+      elem.addEventListener('panzoomchange', handlePanzoomChange);
+    }
 
-    elem.addEventListener('panzoomchange', handlePanzoomChange);
   };
 
   const calculateTransform = () => {
-    const scaleX = (rectWidth * (1 - props.paddingRatio)) / props.canvasWidth;
-    const scaleY = (rectHeight * (1 - props.paddingRatio)) / props.canvasHeight;
+    const scaleX = (rectWidth * (1 - paddingRatio)) / canvasWidth;
+    const scaleY = (rectHeight * (1 - paddingRatio)) / canvasHeight;
     const scale = Math.min(scaleX, scaleY);
-    setZoomStartX(rectWidth / 2 - props.canvasWidth / 2);
-    setZoomStartY(rectHeight / 2 - props.canvasHeight / 2);
+    setZoomStartX(rectWidth / 2 - canvasWidth / 2);
+    setZoomStartY(rectHeight / 2 - canvasHeight / 2);
     return scale;
   };
 
   const handlePanzoomChange = (e: { detail: { scale: number; dimsOut: object; }; }) => {
     const { scale, dimsOut } = e.detail;
     if (dimsOut) {
-      props.onUpdateScale(scale);
+      onUpdateScale(scale);
       setOwnScale(scale);
       const left = (dimsOut.parent.left - dimsOut.elem.left) / scale;
       const top = (dimsOut.parent.top - dimsOut.elem.top) / scale;
       setStartX(left);
-      props.onZoomChange(e.detail);
+      onZoomChange(e.detail);
       setStartY(top);
     }
   };
 
-  const handleWheel = (e:MouseEvent) => {
+  const handleWheel = (e:WheelEvent) => {
     if (e.ctrlKey || e.metaKey) {
       if (panzoomInstance) {
         panzoomInstance.zoomWithWheel(e);
@@ -120,7 +170,7 @@ const SketchRuler = (props) => {
     }
   };
 
-  const handleSpaceKeyDown = (e:MouseEvent) => {
+  const handleSpaceKeyDown = (e:KeyboardEvent) => {
     if (e.key === ' ') {
       if (panzoomInstance) {
         panzoomInstance.bind();
@@ -129,7 +179,7 @@ const SketchRuler = (props) => {
     }
   };
 
-  const handleSpaceKeyUp = (e) => {
+  const handleSpaceKeyUp = (e:KeyboardEvent) => {
     if (e.key === ' ') {
       if (panzoomInstance) {
         panzoomInstance.destroy();
@@ -137,7 +187,7 @@ const SketchRuler = (props) => {
     }
   };
 
-  const reset = () => {
+const reset = () => {
     if (panzoomInstance) {
       panzoomInstance.reset();
     }
@@ -155,28 +205,33 @@ const SketchRuler = (props) => {
     }
   };
 
+  React.useImperativeHandle(ref, () => ({
+    reset,
+    zoomIn,
+    zoomOut
+  }));
   const onCornerClick = () => {
     setShowReferLine(!showReferLine);
-    props.onCornerClick(showReferLine);
+    onCornerClick(showReferLine);
   };
 
   const changeLineState = (val) => {
-    props.onUpdateLockLine(val);
+    onUpdateLockLine(val);
   };
 
   useEffect(() => {
-    setShowReferLine(props.isShowReferLine);
-  }, [props.isShowReferLine]);
+    setShowReferLine(isShowReferLine);
+  }, [isShowReferLine]);
 
   useEffect(() => {
     initPanzoom();
-  }, [props.canvasWidth, props.canvasHeight, props.width, props.height]);
+  }, [canvasWidth, canvasHeight, width, height]);
 
   useEffect(() => {
     if (panzoomInstance) {
-      panzoomInstance.setOptions(getPanOptions(props.scale));
+      panzoomInstance.setOptions(getPanOptions(scale));
     }
-  }, [props.panzoomOption]);
+  }, [panzoomOption]);
 
   return (
     <div className="sketch-ruler">
@@ -186,63 +241,62 @@ const SketchRuler = (props) => {
         </div>
       </div>
       {/* <RulerWrapper
-        style={{ marginLeft: `${props.thick}px`, width: `${rectWidth}px` }}
-        vShow={props.showRuler}
+        style={{ marginLeft: `${thick}px`, width: `${rectWidth}px` }}
+        vShow={showRuler}
         vertical={false}
-        width={props.width}
-        height={props.thick}
+        width={width}
+        height={thick}
         isShowReferLine={showReferLine}
-        thick={props.thick}
+        thick={thick}
         start={startX}
         startOther={startY}
-        lines={props.lines}
-        selectStart={props.shadow.x}
-        snapThreshold={props.snapThreshold}
-        snapsObj={props.snapsObj}
-        selectLength={props.shadow.width}
+        lines={lines}
+        selectStart={shadow.x}
+        snapThreshold={snapThreshold}
+        snapsObj={snapsObj}
+        selectLength={shadow.width}
         scale={ownScale}
         parentRect={parentRect}
         palette={paletteCpu}
-        canvasWidth={props.canvasWidth}
-        canvasHeight={props.canvasHeight}
-        rate={props.rate}
-        gridRatio={props.gridRatio}
-        lockLine={props.lockLine}
+        canvasWidth={canvasWidth}
+        canvasHeight={canvasHeight}
+        rate={rate}
+        gridRatio={gridRatio}
+        lockLine={lockLine}
         onChangeLineState={changeLineState}
       /> */}
       {/* <RulerWrapper
-        style={{ marginTop: `${props.thick}px`, top: 0, height: `${rectHeight}px` }}
-        vShow={props.showRuler}
+        style={{ marginTop: `${thick}px`, top: 0, height: `${rectHeight}px` }}
+        vShow={showRuler}
         vertical={true}
-        width={props.thick}
-        height={props.height}
+        width={thick}
+        height={height}
         isShowReferLine={showReferLine}
-        thick={props.thick}
+        thick={thick}
         start={startY}
         startOther={startX}
-        lines={props.lines}
-        selectStart={props.shadow.y}
-        selectLength={props.shadow.height}
-        snapThreshold={props.snapThreshold}
-        snapsObj={props.snapsObj}
+        lines={lines}
+        selectStart={shadow.y}
+        selectLength={shadow.height}
+        snapThreshold={snapThreshold}
+        snapsObj={snapsObj}
         scale={ownScale}
         parentRect={parentRect}
         palette={paletteCpu}
-        canvasWidth={props.canvasWidth}
-        canvasHeight={props.canvasHeight}
-        rate={props.rate}
-        gridRatio={props.gridRatio}
-        lockLine={props.lockLine}
+        canvasWidth={canvasWidth}
+        canvasHeight={canvasHeight}
+        rate={rate}
+        gridRatio={gridRatio}
+        lockLine={lockLine}
         onChangeLineState={changeLineState}
       /> */}
       <a
-        vShow={props.showRuler}
+        vShow={showRuler}
         className="corner"
         style={cornerStyle}
         onClick={onCornerClick}
       />
     </div>
   );
-};
-
+});
 export default SketchRuler;

@@ -90,8 +90,7 @@ const DemoComponent = () => {
     const { value } = e.target;
     setState(prevState => ({ ...prevState, scale: value }));
     if (sketchruleRef.current) {
-      const panzoomInstance = sketchruleRef.current.panzoomInstance;
-      panzoomInstance.zoom(value);
+     sketchruleRef.current.zoom(value);
     }
   };
 
@@ -157,6 +156,10 @@ const DemoComponent = () => {
     width: `${canvasWidth}px`,
     height: `${canvasHeight}px`
   };
+
+
+
+
 
   return (
     <>
