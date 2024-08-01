@@ -24,7 +24,11 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "rootDirs": [
+      "node_modules/@types",
+      "./types"
+    ],
   },
   "include": ["src"]
 }

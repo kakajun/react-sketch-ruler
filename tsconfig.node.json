@@ -7,7 +7,11 @@
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "noEmit": true
+    "noEmit": true,
+    "rootDirs": [
+      "node_modules/@types",
+      "./types"
+    ],
   },
   "include": ["vite.config.ts"]
 }

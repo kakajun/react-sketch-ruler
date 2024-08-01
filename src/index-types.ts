@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// import type { MouseEventHandler } from 'react'
 interface PaletteType {
   bgColor?: string;
   longfgColor?: string;
@@ -45,4 +47,6 @@ export  interface SketchRulerProps {
   lockLine?: boolean;
   selfHandle?: boolean;
   panzoomOption?: object; // 需要具体类型，这里假设为object
+  children: React.ReactNode;
+  onCornerClick?: (props: any) => void;
 }
