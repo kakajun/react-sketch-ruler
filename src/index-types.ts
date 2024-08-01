@@ -48,5 +48,6 @@ export  interface SketchRulerProps {
   selfHandle?: boolean;
   panzoomOption?: object; // 需要具体类型，这里假设为object
   children: React.ReactNode;
+  onUpdateScale?: (props: any) => void;
   onCornerClick?: (props: any) => void;
 }
