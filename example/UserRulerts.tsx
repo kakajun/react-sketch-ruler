@@ -112,6 +112,9 @@ const DemoComponent = () => {
   const changeScale = (e) => {
     setPanzoomOption(prevState => ({ ...prevState, disableZoom: e.target.checked }));
   };
+  const onUpdateScale=(scale:number)=>{
+    setState(prevState => ({ ...prevState, scale }));
+  }
 
   const changeMove = (e) => {
     setPanzoomOption(prevState => ({ ...prevState, disablePan: e.target.checked }));
@@ -215,6 +218,7 @@ const DemoComponent = () => {
           ref={sketchruleRef}
           isShowReferLine={state.isShowReferLine}
           onCornerClick={handleCornerClick}
+          onUpdateScale={onUpdateScale}
           handleShowReferLine={handleShowReferLine}
           handleShowRuler={handleShowRuler}
           lines={state.lines}

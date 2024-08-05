@@ -1,11 +1,15 @@
 
 import { eye64, closeEye64 } from './cornerImg64';
-import Panzoom, { PanzoomObject } from 'simple-panzoom'
+import Panzoom from 'simple-panzoom'
+import type { PanzoomObject,Dimensions } from 'simple-panzoom'
 import React, {useRef , useState, useEffect, useMemo,useImperativeHandle } from 'react'
 import type { CanvasConfigs, RulerWrapperProps } from '../types/index'
 import { StyledRuler } from './styles'
 // import RulerWrapper from './RulerWrapper'
 import type { SketchRulerProps, PaletteType } from '../index-types';
+
+// 自定义事件接口
+interface PanZoomChangeEvent extends CustomEvent<{ detail: { scale: number; dimsOut: Dimensions; } }> {}
 
 interface SketchRulerMethods {
   reset: () => void;
@@ -42,31 +46,32 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       closeEyeIcon,
       paddingRatio = 0.2,
       autoCenter = true,
-      shadow = {
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0
-      },
-      lines = {
-        h: [],
-        v: []
-      },
+      // shadow = {
+      //   x: 0,
+      //   y: 0,
+      //   width: 0,
+      //   height: 0
+      // },
+      // lines = {
+      //   h: [],
+      //   v: []
+      // },
       isShowReferLine = true,
       canvasWidth = 1000,
       canvasHeight = 700,
-      snapsObj = {
-        h: [],
-        v: []
-      },
+      // snapsObj = {
+      //   h: [],
+      //   v: []
+      // },
       palette,
-      snapThreshold = 5,
-      gridRatio = 1,
-      lockLine = false,
+      // snapThreshold = 5,
+      // gridRatio = 1,
+      // lockLine = false,
       selfHandle = false,
       panzoomOption,
       children,
-      onUpdateScale
+      onUpdateScale,
+      onZoomChange
     }: SketchRulerProps,
     ref) => {
       const localRef = useRef<HTMLDivElement>(null);
@@ -187,15 +192,22 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       return scale;
     };
 
-    const handlePanzoomChange = (e: { detail: { scale: number; dimsOut: object; }; }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handlePanzoomChange = (e:any) => {
       const { scale: newScale, dimsOut } = e.detail;
       if (dimsOut) {
-        onUpdateScale(newScale);
+        if (onUpdateScale) {
+          onUpdateScale(newScale);
+        }
+        console.log('newScale', newScale);
+
         setOwnScale(newScale);
         const left = (dimsOut.parent.left - dimsOut.elem.left) / newScale;
         const top = (dimsOut.parent.top - dimsOut.elem.top) / newScale;
         setStartX(left);
-        onZoomChange(e.detail);
+        if (onZoomChange) {
+          onZoomChange(e.detail);
+        }
         setStartY(top);
       }
     };
