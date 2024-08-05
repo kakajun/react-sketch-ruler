@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import SketchRule from '../src/index';
+import type { SketchRulerMethods } from '../src/index-types';
 import bgImg from './assets/bg.png';
 import { Demo, Top,Button, Wrapper, ImgStyle, Btns, Switch } from './styles';
 
 
 const DemoComponent = () => {
-  const [rectWidth, setRectWidth] = useState(1470);
-  const [rectHeight, setRectHeight] = useState(872);
+  const [rectWidth, setRectWidth] = useState(770);
+  const [rectHeight, setRectHeight] = useState(472);
   const [canvasWidth, setCanvasWidth] = useState(1920);
   const [canvasHeight, setCanvasHeight] = useState(1080);
   const [rendIndex, setRendIndex] = useState(0);
@@ -15,7 +16,7 @@ const DemoComponent = () => {
   const [showRuler, setShowRuler] = useState(true);
   const [panzoomOption, setPanzoomOption] = useState({
     maxScale: 3,
-    minScale: 0.3,
+    minScale: 0.1,
     disablePan: false,
     disableZoom: false,
     handleStartEvent: (event) => {
@@ -56,7 +57,7 @@ const DemoComponent = () => {
   const handleResize = () => {
     if (sketchruleRef.current) {
       changeWindowScale();
-      sketchruleRef.current.initPanzoom();
+      (sketchruleRef.current as SketchRulerMethods).initPanzoom();
     }
   };
 
@@ -67,7 +68,7 @@ const DemoComponent = () => {
 
   const resetMethod = () => {
     if (sketchruleRef.current) {
-      sketchruleRef.current.reset();
+      (sketchruleRef.current as SketchRulerMethods).reset();
     }
   };
 
@@ -77,8 +78,9 @@ const DemoComponent = () => {
   };
 
   const zoomOutMethod = () => {
+    // 已经知道类型 SketchRulerMethods
     if (sketchruleRef.current) {
-      sketchruleRef.current.zoomOut();
+      (sketchruleRef.current as SketchRulerMethods).zoomOut();
     }
   };
 
@@ -86,12 +88,15 @@ const DemoComponent = () => {
     setShowRuler(!showRuler);
   };
 
-  const scaleChange = (e) => {
-    const { value } = e.target;
-    setState(prevState => ({ ...prevState, scale: value }));
-    if (sketchruleRef.current) {
-     sketchruleRef.current.zoom(value);
+  const scaleChange =  (event: React.ChangeEvent<HTMLInputElement>)=> {
+    const { value } = event.target;
+    if (value) {
+      setState(prevState => ({ ...prevState, scale:Number(value)}));
+      if (sketchruleRef.current) {
+        (sketchruleRef.current as SketchRulerMethods).panzoomInstance?.zoom( Number(value));
+      }
     }
+
   };
 
   const handleShowReferLine = () => {
@@ -184,12 +189,11 @@ const DemoComponent = () => {
           min="0.3"
           max="3"
           step="0.1"
-          defaultValue="1"
         />
         <div style={{ marginRight: '10px'}}> 吸附横线: </div>
-        <input style={{ marginRight: '10px'}} value={snapsObj.h.join(',')} onBlur={snapsChange} />
+        <input style={{ marginRight: '10px'}} defaultValue={snapsObj.h.join(',')} onBlur={snapsChange} />
         <div style={{ marginRight: '10px'}}> 吸附纵线: </div>
-        <input style={{ marginRight: '10px'}} value={snapsObj.v.join(',')} onBlur={snapsChangeV} />
+        <input style={{ marginRight: '10px'}} defaultValue={snapsObj.v.join(',')} onBlur={snapsChangeV} />
 
         <a
           href="https://github.com/kakajun/vue3-sketch-ruler"

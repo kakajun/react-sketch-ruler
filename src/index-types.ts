@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// import type { MouseEventHandler } from 'react'
+import type { PanzoomObject } from 'simple-panzoom'
 export  interface PaletteType {
   bgColor?: string;
   longfgColor?: string;
@@ -53,4 +53,12 @@ export  interface SketchRulerProps {
   onCornerClick: Fn
   handleShowRuler: Fn
   handleShowReferLine: Fn
+}
+
+export interface SketchRulerMethods {
+  reset: () => void;
+  zoomIn: () => void;
+  zoomOut: () => void;
+  initPanzoom: () => void;
+  panzoomInstance:PanzoomObject | null
 }

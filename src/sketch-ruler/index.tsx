@@ -1,21 +1,15 @@
 
 import { eye64, closeEye64 } from './cornerImg64';
 import Panzoom from 'simple-panzoom'
-import type { PanzoomObject,Dimensions } from 'simple-panzoom'
+import type { PanzoomObject,PanzoomEventDetail } from 'simple-panzoom'
 import React, {useRef , useState, useEffect, useMemo,useImperativeHandle } from 'react'
 import type { CanvasConfigs, RulerWrapperProps } from '../types/index'
 import { StyledRuler } from './styles'
 // import RulerWrapper from './RulerWrapper'
-import type { SketchRulerProps, PaletteType } from '../index-types';
+import type { SketchRulerProps, PaletteType,SketchRulerMethods } from '../index-types';
 
-// 自定义事件接口
-interface PanZoomChangeEvent extends CustomEvent<{ detail: { scale: number; dimsOut: Dimensions; } }> {}
 
-interface SketchRulerMethods {
-  reset: () => void;
-  zoomIn: () => void;
-  zoomOut: () => void;
-}
+
 
 const usePaletteConfig = (palette: PaletteType) => {
   return useMemo(() => ({
@@ -188,25 +182,37 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       const scaleY = (rectHeight * (1 - paddingRatio)) / canvasHeight;
       const scale = Math.min(scaleX, scaleY);
       setZoomStartX(rectWidth / 2 - canvasWidth / 2);
-      setZoomStartY(rectHeight / 2 - canvasHeight / 2);
+      let y=0;
+      if (scale < 1) {
+        y =
+          ((canvasHeight * scale) / 2 - canvasHeight / 2) / scale -
+          (canvasHeight * scale - rectHeight) / scale / 2
+      } else if (scale > 1) {
+        y =
+          (canvasHeight * scale - canvasHeight) / 2 / scale +
+          (rectHeight - canvasHeight * scale) / scale / 2
+      } else {
+        y = 0
+      }
+      setZoomStartY(y);
       return scale;
     };
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const handlePanzoomChange = (e:any) => {
-      const { scale: newScale, dimsOut } = e.detail;
+      const detail=e.detail as PanzoomEventDetail;
+      const { scale: newScale, dimsOut } = detail;
       if (dimsOut) {
         if (onUpdateScale) {
           onUpdateScale(newScale);
         }
         console.log('newScale', newScale);
-
         setOwnScale(newScale);
         const left = (dimsOut.parent.left - dimsOut.elem.left) / newScale;
         const top = (dimsOut.parent.top - dimsOut.elem.top) / newScale;
         setStartX(left);
         if (onZoomChange) {
-          onZoomChange(e.detail);
+          onZoomChange(detail);
         }
         setStartY(top);
       }
@@ -238,6 +244,8 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     reset,
     zoomIn,
     zoomOut,
+    initPanzoom,
+    panzoomInstance,
   }));
 
 
