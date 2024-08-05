@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import type { MouseEventHandler } from 'react'
-interface PaletteType {
+export  interface PaletteType {
   bgColor?: string;
   longfgColor?: string;
   fontColor?: string;
@@ -49,5 +49,7 @@ export  interface SketchRulerProps {
   panzoomOption?: object; // 需要具体类型，这里假设为object
   children: React.ReactNode;
   onUpdateScale?: (props: any) => void;
-  onCornerClick?: (props: any) => void;
+  onCornerClick: Fn
+  handleShowRuler: Fn
+  handleShowReferLine: Fn
 }

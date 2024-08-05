@@ -82,7 +82,7 @@ const DemoComponent = () => {
     }
   };
 
-  const handleShow = () => {
+  const handleShowRuler = () => {
     setShowRuler(!showRuler);
   };
 
@@ -94,7 +94,7 @@ const DemoComponent = () => {
     }
   };
 
-  const showLineClick = () => {
+  const handleShowReferLine = () => {
     setState(prevState => ({ ...prevState, isShowReferLine: !prevState.isShowReferLine }));
     console.log(state.isShowReferLine, 'state.isShowReferLine');
   };
@@ -157,17 +157,13 @@ const DemoComponent = () => {
     height: `${canvasHeight}px`
   };
 
-
-
-
-
   return (
     <>
     <Demo>
       <Top>
         <div style={{ marginRight: '10px'}}> 缩放比例:{cpuScale} </div>
-        <Button  onClick={showRuler ? () => setShowRuler(false) : handleShow}>隐藏规尺</Button>
-        <Button  onClick={showLineClick}>辅助线开关</Button>
+        <Button  onClick={showRuler ? () => setShowRuler(false) : handleShowRuler}>隐藏规尺</Button>
+        <Button  onClick={handleShowReferLine}>辅助线开关</Button>
         <Button  onClick={() => setLockLine(true)}>锁定参考线</Button>
         <Button  onClick={changeShadow}>模拟阴影切换</Button>
         <Button  onClick={changeTheme}>主题切换</Button>
@@ -219,6 +215,8 @@ const DemoComponent = () => {
           ref={sketchruleRef}
           isShowReferLine={state.isShowReferLine}
           onCornerClick={handleCornerClick}
+          handleShowReferLine={handleShowReferLine}
+          handleShowRuler={handleShowRuler}
           lines={state.lines}
         >
           <div data-type="page" style={canvasStyle}>
