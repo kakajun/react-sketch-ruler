@@ -8,9 +8,6 @@ import { StyledRuler } from './styles'
 // import RulerWrapper from './RulerWrapper'
 import type { SketchRulerProps, PaletteType,SketchRulerMethods } from '../index-types';
 
-
-
-
 const usePaletteConfig = (palette: PaletteType) => {
   return useMemo(() => ({
     bgColor: '#f6f7f9', // ruler bg color
@@ -84,8 +81,8 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
 
     const [startX, setStartX] = useState(0);
     const [startY, setStartY] = useState(0);
-    const [zoomStartX, setZoomStartX] = useState(0);
-    const [zoomStartY, setZoomStartY] = useState(0);
+    let zoomStartX = 0
+    let zoomStartY = 0
     const [ownScale, setOwnScale] = useState(1);
     const [showReferLine, setShowReferLine] = useState(isShowReferLine);
     const [panzoomInstance, setPanzoomInstance] = useState<PanzoomObject | null>(null);
@@ -168,8 +165,11 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       if (autoCenter) {
         scale = calculateTransform();
       }
+      console.log(123);
 
       const panzoom = Panzoom(elem as HTMLElement, getPanOptions(scale));
+      console.log(zoomStartX,"zoomStartX");
+
       setPanzoomInstance(panzoom);
       if (elem) {
         elem.addEventListener('panzoomchange', handlePanzoomChange);
@@ -181,20 +181,18 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       const scaleX = (rectWidth * (1 - paddingRatio)) / canvasWidth;
       const scaleY = (rectHeight * (1 - paddingRatio)) / canvasHeight;
       const scale = Math.min(scaleX, scaleY);
-      setZoomStartX(rectWidth / 2 - canvasWidth / 2);
-      let y=0;
+      zoomStartX=rectWidth / 2 - canvasWidth / 2;
       if (scale < 1) {
-        y =
+        zoomStartY =
           ((canvasHeight * scale) / 2 - canvasHeight / 2) / scale -
           (canvasHeight * scale - rectHeight) / scale / 2
       } else if (scale > 1) {
-        y =
+        zoomStartY =
           (canvasHeight * scale - canvasHeight) / 2 / scale +
           (rectHeight - canvasHeight * scale) / scale / 2
       } else {
-        y = 0
+        zoomStartY = 0
       }
-      setZoomStartY(y);
       return scale;
     };
 
@@ -256,6 +254,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     useEffect(() => {
       initPanzoom();
     }, [canvasWidth, canvasHeight, width, height]);
+
 
     useEffect(() => {
       if (panzoomInstance) {

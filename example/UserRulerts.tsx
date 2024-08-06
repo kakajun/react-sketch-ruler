@@ -11,7 +11,6 @@ const DemoComponent = () => {
   const [canvasWidth, setCanvasWidth] = useState(1920);
   const [canvasHeight, setCanvasHeight] = useState(1080);
   const [rendIndex, setRendIndex] = useState(0);
-  const [windowScale, setWindowScale] = useState(1);
   const sketchruleRef = useRef(null);
   const [showRuler, setShowRuler] = useState(true);
   const [panzoomOption, setPanzoomOption] = useState({
@@ -46,9 +45,7 @@ const DemoComponent = () => {
   });
 
   useEffect(() => {
-    changeWindowScale();
     window.addEventListener('resize', handleResize);
-
     return () => {
       window.removeEventListener('resize', handleResize);
     };
@@ -56,15 +53,10 @@ const DemoComponent = () => {
 
   const handleResize = () => {
     if (sketchruleRef.current) {
-      changeWindowScale();
       (sketchruleRef.current as SketchRulerMethods).initPanzoom();
     }
   };
 
-  const changeWindowScale = () => {
-    const num = Number(window.devicePixelRatio || 1);
-    setWindowScale(num.toFixed(2) * 1);
-  };
 
   const resetMethod = () => {
     if (sketchruleRef.current) {
@@ -78,7 +70,6 @@ const DemoComponent = () => {
   };
 
   const zoomOutMethod = () => {
-    // 已经知道类型 SketchRulerMethods
     if (sketchruleRef.current) {
       (sketchruleRef.current as SketchRulerMethods).zoomOut();
     }
@@ -186,7 +177,7 @@ const DemoComponent = () => {
           type="range"
           value={state.scale}
           onChange={scaleChange}
-          min="0.3"
+          min="0.1"
           max="3"
           step="0.1"
         />
