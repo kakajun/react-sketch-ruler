@@ -4,7 +4,7 @@ export interface CanvasRulerProps {
   scale: number
   width: number
   height: number
-  canvasConfigs: CanvasConfigs
+  palette: PaletteType
   selectStart: number
   selectLength: number
   onAddLine: Fn
@@ -135,30 +135,16 @@ export interface RulerContextMenuProps {
   onCloseMenu: Fn
 }
 
-export interface RulerWrapperProps {
-  vertical: boolean
-  scale: number
-  width: number
-  height: number
-  start: number
-  lines: number[]
-  selectStart: number
-  selectLength: number
-  canvasConfigs: CanvasConfigs
-  isShowReferLine: boolean
-  onLineChange: Fn
-  onShowRightMenu: Fn
-  handleShowReferLine: Fn
-}
+
 
 export interface RulerOptions {
   scale: number
   width: number
   height: number
-  canvasConfigs: CanvasConfigs
+  canvasConfigs: PaletteType
 }
 
-export interface CanvasConfigs {
+export interface PaletteType {
   bgColor: string
   fontColor: string
   shadowColor: string

@@ -1,37 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import useLine from './useLine';
 import { debounce } from '../canvas-ruler/utils';
+import type {LineProps} from '../index-types';
 
-type PaletteType = {
-  lineType: string;
-  lineColor?: string;
-  lockLineColor?: string;
-  hoverBg: string;
-  hoverColor: string;
-};
-
-type SnapsObjType = {
-  h: number[];
-  v: number[];
-};
-
-type PropsType = {
-  scale: number;
-  thick: number;
-  palette: PaletteType;
-  index: number;
-  start: number;
-  vertical: boolean;
-  value: number;
-  canvasWidth: number;
-  canvasHeight: number;
-  lines: any; // Assuming object type for simplicity
-  isShowReferLine: boolean;
-  rate: number;
-  snapThreshold: number;
-  snapsObj: SnapsObjType;
-  lockLine: boolean;
-};
 
 const LineComponent = ({
   scale,
@@ -49,7 +20,7 @@ const LineComponent = ({
   snapThreshold,
   snapsObj,
   lockLine,
-}: PropsType) => {
+}: LineProps) => {
   const [showLabel, setShowLabel] = useState(false);
   const [startValue, setStartValue] = useState(value ?? 0);
   const [isInscale, setIsInscale] = useState(false);

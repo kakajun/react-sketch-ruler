@@ -50,9 +50,42 @@ export  interface SketchRulerProps {
   children: React.ReactNode;
   onUpdateScale?: (props: any) => void;
   onZoomChange?: (props: any) => void;
-  onCornerClick: Fn
+  onCornerClick?: (props: any) => void;
   handleShowRuler: Fn
   handleShowReferLine: Fn
+}
+
+export interface RulerWrapperProps {
+  vertical: boolean
+  scale: number
+  width: number
+  height: number
+  start: number
+  lines: number[]
+  selectStart: number
+  selectLength: number
+  palette: PaletteType
+  isShowReferLine: boolean
+  onLineChange: Fn
+  onShowRightMenu: Fn
+  handleShowReferLine: Fn
+}
+
+export interface LineProps {
+  index: number
+  start: number
+  vertical: boolean
+  canvasWidth: number,
+  canvasHeight: number,
+  snapThreshold: number,
+  snapsObj: LineType,
+  lines: number[],
+  palette: PaletteType,
+  isShowReferLine: boolean,
+  thick: number,
+  scale: number
+  value: number
+  changeLineState: Fn
 }
 
 export interface SketchRulerMethods {

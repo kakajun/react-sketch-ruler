@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { drawCavaseRuler } from './utils'; // Assuming this function exists
+import { drawCavaseRuler } from './utils';
 
 interface Props {
   scale: number;

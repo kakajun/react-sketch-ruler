@@ -1,46 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import RulerLine from './RulerLine'; // Assuming this component exists and is compatible with React
-import CanvasRuler from '../canvas-ruler/index'; // Assuming this component exists and is compatible with React
-import useLine from './useLine'; // Assuming this hook exists and is compatible with React
+import RulerLine from './RulerLine';
+import CanvasRuler from '../canvas-ruler/index';
+import useLine from './useLine';  
 import styled from 'styled-components';
 import { extendableBorder, verticalBorder } from './mixins.jsx';
-
-type PaletteType = {
-  lineType: string;
-  lineColor?: string;
-};
-
-type LinesType = {
-  h: number[];
-  v: number[];
-};
-
-type SnapsObjType = {
-  h: number[];
-  v: number[];
-};
-
-type PropsType = {
-  scale: number;
-  thick: number;
-  canvasWidth: number;
-  canvasHeight: number;
-  palette: PaletteType;
-  vertical: boolean;
-  width: number;
-  height: number;
-  start: number;
-  startOther: number;
-  lines: LinesType;
-  selectStart: number;
-  selectLength: number;
-  isShowReferLine: boolean;
-  rate: number;
-  snapThreshold: number;
-  snapsObj: SnapsObjType;
-  gridRatio: number;
-  lockLine: boolean;
-};
+import type { RulerWrapperProps} from '../index-types';
 
 const RulerComponent = ({
   scale,
@@ -62,7 +26,7 @@ const RulerComponent = ({
   snapsObj,
   gridRatio,
   lockLine,
-}: PropsType) => {
+}: RulerWrapperProps) => {
   const [isLockLine, setIsLockLine] = useState(lockLine);
   const [isdragle, setIsDragle] = useState(false);
   const [showLabel, setShowLabel] = useState(false);
