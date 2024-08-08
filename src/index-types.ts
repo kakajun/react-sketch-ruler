@@ -9,6 +9,8 @@ export  interface PaletteType {
   lineType?: string;
   lockLineColor?: string;
   borderColor?: string;
+  hoverBg?: string;
+  hoverColor?: string;
   cornerActiveColor?: string;
 }
 
@@ -19,7 +21,7 @@ interface ShadowType {
   height: number;
 }
 
-interface LineType {
+export interface LineType {
   h: number[];
   v: number[];
 }
@@ -60,10 +62,19 @@ export interface RulerWrapperProps {
   scale: number
   width: number
   height: number
+  canvasWidth: number
+  canvasHeight: number
+  startOther: number
+  thick: number
   start: number
-  lines: number[]
+  rate: number
+  lines: LineType
+  snapThreshold: number
+  snapsObj: LineType
   selectStart: number
+  gridRatio: number
   selectLength: number
+  lockLine: boolean
   palette: PaletteType
   isShowReferLine: boolean
   onLineChange: Fn
@@ -79,12 +90,13 @@ export interface LineProps {
   canvasHeight: number,
   snapThreshold: number,
   snapsObj: LineType,
-  lines: number[],
+  lines:LineType,
   palette: PaletteType,
   isShowReferLine: boolean,
-  thick: number,
+  rate: number,
   scale: number
   value: number
+  lockLine: boolean
   changeLineState: Fn
 }
 

@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import useLine from './useLine';
 import { debounce } from '../canvas-ruler/utils';
-// import  {LineProps} from '../index-types';
+import type {LineProps} from '../index-types';
 
 
 const LineComponent = ({
   scale,
-  thick,
+  rate,
   palette,
   index,
   start,
@@ -16,11 +16,10 @@ const LineComponent = ({
   canvasHeight,
   lines,
   isShowReferLine,
-  rate,
   snapThreshold,
   snapsObj,
   lockLine,
-}) => {
+}:LineProps) => {
   const [showLabel, setShowLabel] = useState(false);
   const [startValue, setStartValue] = useState(value ?? 0);
   const [isInscale, setIsInscale] = useState(false);
@@ -33,8 +32,9 @@ const LineComponent = ({
       canvasWidth,
       canvasHeight,
       snapThreshold,
-      rate,
       lockLine,
+      index,
+      rate
     },
     vertical
   );

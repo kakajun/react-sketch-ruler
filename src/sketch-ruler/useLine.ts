@@ -1,8 +1,19 @@
 import { useState } from 'react';
-import type {LineProps} from '../index-types';
+import type { PaletteType, LineType } from '../index-types'
+interface Props {
+  palette: PaletteType
+  lockLine: boolean
+  scale: number
+  snapThreshold: number
+  snapsObj: LineType
+  lines: LineType
+  canvasHeight: number
+  canvasWidth: number
+  rate: number
+  index?: number
+}
 
-
-export default function useLine(props: LineProps, vertical: boolean) {
+export default function useLine(props: Props, vertical: boolean) {
   const [offsetLine, setOffsetLine] = useState(0);
   const [startValue, setStartValue] = useState(0);
 
