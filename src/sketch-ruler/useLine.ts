@@ -1,33 +1,8 @@
 import { useState } from 'react';
+import type {LineProps} from '../index-types';
 
-type PaletteType = {
-  hoverBg: string;
-  hoverColor: string;
-};
 
-type SnapsObjType = {
-  h: number[];
-  v: number[];
-};
-
-type LinesType = {
-  h: number[];
-  v: number[];
-};
-
-type PropsType = {
-  palette: PaletteType;
-  scale: number;
-  snapsObj: SnapsObjType;
-  lines: LinesType;
-  canvasWidth: number;
-  canvasHeight: number;
-  snapThreshold: number;
-  rate: number;
-  lockLine: boolean;
-};
-
-export function useLine(props: PropsType, vertical: boolean) {
+export default function useLine(props: LineProps, vertical: boolean) {
   const [offsetLine, setOffsetLine] = useState(0);
   const [startValue, setStartValue] = useState(0);
 

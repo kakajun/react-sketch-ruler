@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import RulerLine from './RulerLine';
 import CanvasRuler from '../canvas-ruler/index';
-import useLine from './useLine';  
+import useLine from './useLine';
 import styled from 'styled-components';
 import { extendableBorder, verticalBorder } from './mixins.jsx';
-import type { RulerWrapperProps} from '../index-types';
+// import { RulerWrapperProps } from '../index-types';
+
 
 const RulerComponent = ({
   scale,
@@ -26,7 +27,7 @@ const RulerComponent = ({
   snapsObj,
   gridRatio,
   lockLine,
-}: RulerWrapperProps) => {
+}) => {
   const [isLockLine, setIsLockLine] = useState(lockLine);
   const [isdragle, setIsDragle] = useState(false);
   const [showLabel, setShowLabel] = useState(false);
@@ -58,7 +59,7 @@ const RulerComponent = ({
     borderBottom: vertical ? `1px ${palette.lineType} ${palette.lineColor}` : undefined,
   };
 
-  const mousedown = (e: React.MouseEvent<HTMLDivElement>) => {
+  const mousedown = (e) => {
     setIsDragle(true);
     setIsLockLine(false);
     setStartValue(Math.round(startOther - thick / 2));

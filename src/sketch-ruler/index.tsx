@@ -2,10 +2,10 @@
 import { eye64, closeEye64 } from './cornerImg64';
 import Panzoom from 'simple-panzoom'
 import type { PanzoomObject, PanzoomEventDetail } from 'simple-panzoom'
-import React, { useRef, useState, useEffect, useMemo, useImperativeHandle } from 'react'
+import React, { useState, useEffect, useMemo, useImperativeHandle } from 'react'
 import { StyledRuler } from './styles'
 import RulerWrapper from './RulerWrapper'
-import type { SketchRulerProps, PaletteType, SketchRulerMethods,RulerWrapperProps } from '../index-types';
+import  { SketchRulerProps, PaletteType, SketchRulerMethods,RulerWrapperProps } from '../index-types';
 
 const usePaletteConfig = (palette: PaletteType) => {
   return useMemo(() => ({
@@ -65,20 +65,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       onZoomChange
     }: SketchRulerProps,
     ref) => {
-    const localRef = useRef<HTMLDivElement>(null);
     const paletteConfig = usePaletteConfig(palette || {});
-    const [canvasConfigs] = useState<PaletteType>(() => {
-      const { bgColor, fontColor, shadowColor, lineColor, borderColor, cornerActiveColor } = palette!
-      return {
-        bgColor,
-        shadowColor,
-        fontColor,
-        lineColor,
-        borderColor,
-        cornerActiveColor,
-      } as PaletteType
-    })
-
     const [startX, setStartX] = useState(0);
     const [startY, setStartY] = useState(0);
     let zoomStartX = 0
@@ -88,8 +75,6 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     const [panzoomInstance, setPanzoomInstance] = useState<PanzoomObject | null>(null);
     const rectWidth = width - thick;
     const rectHeight = height - thick;
-
-
     const changeLineState = () => {
       // onUpdateLockLine(val);
     };
@@ -104,7 +89,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       canvasWidth,
       canvasHeight,
       rate,
-      palette: (palette: PaletteType) => usePaletteConfig(palette),
+      palette:paletteConfig,
       gridRatio,
       lockLine,
       changeLineState: changeLineState,
@@ -275,17 +260,19 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       }
     }, [panzoomOption]);
 
-    return <StyledRuler id="sketch-ruler" ref={localRef} >
+    return <StyledRuler id="sketch-ruler" >
       <div className="canvasedit-parent" style={rectStyle} onWheel={(e) => e.preventDefault()}>
         <div className="canvasedit">
           {children}
         </div>
       </div>
       {
-        showRuler && <RulerWrapper {...commonProps} width={width!} height={thick!} start={startX!} startOther={startY!} selectStart={shadow.x!} selectLength={shadow.width} />
+        showRuler && <RulerWrapper {...commonProps} width={width!} height={thick!} start={startX!}
+         startOther={startY!} selectStart={shadow.x!} selectLength={shadow.width} scale={ownScale} />
       }
       {
-        showRuler && <RulerWrapper {...commonProps} width={thick!} height={height!} start={startY!} startOther={startX!} selectStart={shadow.y!} selectLength={shadow.height} vertical />
+        showRuler && <RulerWrapper {...commonProps} width={thick!} height={height!} start={startY!}
+         startOther={startX!} selectStart={shadow.y!} selectLength={shadow.height} scale={ownScale}  vertical />
       }
       {
         showRuler && <a className='corner' style={cornerStyle} onClick={handleCornerClick} />

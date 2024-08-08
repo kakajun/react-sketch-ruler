@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import useLine from './useLine';
 import { debounce } from '../canvas-ruler/utils';
-import type {LineProps} from '../index-types';
+// import  {LineProps} from '../index-types';
 
 
 const LineComponent = ({
@@ -20,7 +20,7 @@ const LineComponent = ({
   snapThreshold,
   snapsObj,
   lockLine,
-}: LineProps) => {
+}) => {
   const [showLabel, setShowLabel] = useState(false);
   const [startValue, setStartValue] = useState(value ?? 0);
   const [isInscale, setIsInscale] = useState(false);

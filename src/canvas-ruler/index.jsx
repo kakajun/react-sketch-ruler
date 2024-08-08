@@ -1,22 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { drawCavaseRuler } from './utils';
 
-interface Props {
-  scale: number;
-  palette: object;
-  vertical: boolean;
-  start: number;
-  width: number;
-  height: number;
-  selectStart: number;
-  selectLength: number;
-  canvasWidth: number;
-  canvasHeight: number;
-  rate: number;
-  gridRatio: number;
-}
-
-const CanvasRuler: React.FC<Props> = ({
+const CanvasRuler = ({
   scale,
   palette,
   vertical,
@@ -98,9 +83,8 @@ const CanvasRuler: React.FC<Props> = ({
     drawRuler();
   }, [drawRuler]);
 
-  const handleDragStart = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleDragStart = useCallback(() => {
     setIsDragging(true);
-    // Emit event if needed
   }, []);
 
   return (
