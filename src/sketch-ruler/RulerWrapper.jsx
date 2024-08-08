@@ -2,9 +2,7 @@ import React, { useState, useEffect } from 'react';
 import RulerLine from './RulerLine';
 import CanvasRuler from '../canvas-ruler/index';
 import useLine from './useLine';
-import styled from 'styled-components';
-import { extendableBorder, verticalBorder } from './mixins.jsx';
-// import { RulerWrapperProps } from '../index-types';
+import type { RulerWrapperProps } from '../index-types';
 
 
 const RulerComponent = ({
@@ -27,7 +25,7 @@ const RulerComponent = ({
   snapsObj,
   gridRatio,
   lockLine,
-}) => {
+}:RulerWrapperProps) => {
   const [isLockLine, setIsLockLine] = useState(lockLine);
   const [isdragle, setIsDragle] = useState(false);
   const [showLabel, setShowLabel] = useState(false);
@@ -73,15 +71,12 @@ const RulerComponent = ({
     setIsLockLine(lockLine);
   }, [lockLine]);
 
-  const Indicator = styled.div`
-  ${props => props.vertical ? verticalBorder(props.topBottomWidth, props.width, props.offset) : extendableBorder(props.topBottomWidth, props.leftRightWidth, props.offset)}
-`;
 
   return (
 
     <div className={rwClassName}>
-      <Indicator vertical={true} topBottomWidth="4px" leftRightWidth="100vw" offset="-4px">
-        <CanvasRuler
+
+        {/* <CanvasRuler
           vertical={vertical}
           style={{ cursor: vertical ? 'ew-resize' : 'ns-resize' }}
           scale={scale}
@@ -95,8 +90,8 @@ const RulerComponent = ({
           palette={palette}
           rate={rate}
           gridRatio={gridRatio}
-          onHandleDragStart={mousedown}
-        />
+
+        /> */}
         {isShowReferLine && (
           <div className="lines">
             {cpuLines.map((v, i) => (
@@ -121,7 +116,7 @@ const RulerComponent = ({
             ))}
           </div>
         )}
-        {isShowReferLine && (
+        {/* {isShowReferLine && (
           <div
             className="indicator"
             onMouseEnter={() => setShowLabel(true)}
@@ -134,10 +129,8 @@ const RulerComponent = ({
               {showLabel && <span className="value">{labelContent}</span>}
             </div>
           </div>
-        )}
-      </Indicator>
+        )} */}
     </div>
-
   );
 };
 

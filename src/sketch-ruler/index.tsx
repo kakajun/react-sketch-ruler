@@ -5,7 +5,7 @@ import type { PanzoomObject, PanzoomEventDetail } from 'simple-panzoom'
 import React, { useState, useEffect, useMemo, useImperativeHandle } from 'react'
 import { StyledRuler } from './styles'
 import RulerWrapper from './RulerWrapper'
-import  { SketchRulerProps, PaletteType, SketchRulerMethods,RulerWrapperProps } from '../index-types';
+import type { SketchRulerProps, PaletteType, SketchRulerMethods } from '../index-types';
 
 const usePaletteConfig = (palette: PaletteType) => {
   return useMemo(() => ({
@@ -93,7 +93,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       gridRatio,
       lockLine,
       changeLineState: changeLineState,
-    } as RulerWrapperProps
+    }
 
     const cornerStyle = {
       backgroundImage: isShowReferLine
@@ -268,11 +268,11 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       </div>
       {
         showRuler && <RulerWrapper {...commonProps} width={width!} height={thick!} start={startX!}
-         startOther={startY!} selectStart={shadow.x!} selectLength={shadow.width} scale={ownScale} />
+         startOther={startY!} selectStart={shadow.x!} selectLength={shadow.width} scale={ownScale}  vertical={false} />
       }
       {
         showRuler && <RulerWrapper {...commonProps} width={thick!} height={height!} start={startY!}
-         startOther={startX!} selectStart={shadow.y!} selectLength={shadow.height} scale={ownScale}  vertical />
+         startOther={startX!} selectStart={shadow.y!} selectLength={shadow.height} scale={ownScale}  vertical={true} />
       }
       {
         showRuler && <a className='corner' style={cornerStyle} onClick={handleCornerClick} />

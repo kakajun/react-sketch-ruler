@@ -24,7 +24,6 @@ const LineComponent = ({
   const [showLabel, setShowLabel] = useState(false);
   const [startValue, setStartValue] = useState(value ?? 0);
   const [isInscale, setIsInscale] = useState(false);
-
   const { actionStyle, handleMouseMove, handleMouseDown, labelContent } = useLine(
     {
       palette,
