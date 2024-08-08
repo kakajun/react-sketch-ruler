@@ -5,7 +5,8 @@ import useLine from './useLine';
 import type { RulerWrapperProps } from '../index-types';
 
 
-const RulerComponent = ({
+const RulerComponent = React.forwardRef<RulerWrapperProps> ((
+  {
   scale,
   thick,
   canvasWidth,
@@ -25,7 +26,7 @@ const RulerComponent = ({
   snapsObj,
   gridRatio,
   lockLine,
-}:RulerWrapperProps) => {
+},ref) => {
   const [isLockLine, setIsLockLine] = useState(lockLine);
   const [isdragle, setIsDragle] = useState(false);
   const [showLabel, setShowLabel] = useState(false);
@@ -132,6 +133,6 @@ const RulerComponent = ({
         )} */}
     </div>
   );
-};
+});
 
 export default RulerComponent;
