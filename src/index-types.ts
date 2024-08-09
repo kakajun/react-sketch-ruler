@@ -14,6 +14,19 @@ export  interface PaletteType {
   cornerActiveColor?: string;
 }
 
+export interface FinalPaletteType {
+  bgColor: string
+  longfgColor: string
+  fontColor: string
+  shadowColor: string
+  lineColor: string
+  lineType: string
+  lockLineColor: string
+  hoverColor: string
+  hoverBg: string
+  borderColor: string
+}
+
 interface ShadowType {
   x: number;
   y: number;
@@ -80,6 +93,7 @@ export interface RulerWrapperProps {
   onLineChange: Fn
   onShowRightMenu: Fn
   handleShowReferLine: Fn
+  changeLineState: Fn
 }
 
 export interface LineProps {
@@ -91,13 +105,27 @@ export interface LineProps {
   snapThreshold: number,
   snapsObj: LineType,
   lines:LineType,
-  palette: PaletteType,
+  palette: FinalPaletteType,
   isShowReferLine: boolean,
   rate: number,
   scale: number
   value: number
   lockLine: boolean
-  changeLineState: Fn
+}
+
+export interface CanvasProps {
+  start: number
+  vertical: boolean
+  canvasWidth: number,
+  canvasHeight: number,
+  palette: FinalPaletteType,
+  rate: number,
+  scale: number
+  width: number
+  height: number
+  selectStart: number
+  gridRatio: number
+  selectLength: number
 }
 
 export interface SketchRulerMethods {

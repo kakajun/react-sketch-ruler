@@ -44,8 +44,10 @@ const LineComponent = ({
   const offsetStyle = {
     [vertical ? 'top' : 'left']: `${(startValue - start) * scale}px`,
   };
+// 定义PointerEvents的可能值
+type PointerEvents = 'auto' | 'none' | 'all' | 'inherit'; // 根据实际需要定义
 
-  const borderCursor = {
+  const borderCursor: { borderTop?: string; borderLeft?: string; pointerEvents?: PointerEvents; cursor?: string; } = {
     pointerEvents: (lockLine || isInscale) ? 'none' : 'auto',
     cursor:
       isShowReferLine && !lockLine

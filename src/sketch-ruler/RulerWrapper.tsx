@@ -75,12 +75,9 @@ const RulerComponent =(
 
 
   return (
-
     <div className={rwClassName}>
-
-        {/* <CanvasRuler
+        <CanvasRuler
           vertical={vertical}
-          style={{ cursor: vertical ? 'ew-resize' : 'ns-resize' }}
           scale={scale}
           width={width}
           height={height}
@@ -92,8 +89,7 @@ const RulerComponent =(
           palette={palette}
           rate={rate}
           gridRatio={gridRatio}
-
-        /> */}
+        />
         {isShowReferLine && (
           <div className="lines">
             {cpuLines.map((v, i) => (
@@ -113,7 +109,7 @@ const RulerComponent =(
                 vertical={vertical}
                 isShowReferLine={isShowReferLine}
                 rate={rate}
-              />
+                />
             ))}
           </div>
         )}
