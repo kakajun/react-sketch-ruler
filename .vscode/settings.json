@@ -93,6 +93,9 @@
   "[css]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[tsx]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "[less]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },

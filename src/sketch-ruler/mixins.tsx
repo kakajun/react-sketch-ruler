@@ -1,5 +1,8 @@
-
- export const extendableBorder = (topBottomWidth = '4px', leftRightWidth = '100vw', offset = '-4px') => `
+export const extendableBorder = (
+  topBottomWidth = '4px',
+  leftRightWidth = '100vw',
+  offset = '-4px'
+) => `
   left: 0;
   width: ${leftRightWidth};
 
@@ -21,7 +24,7 @@
     bottom: ${offset};
     left: 0;
   }
-`;
+`
 
 export const verticalBorder = (height = '100vh', width = '4px', offset = '-4px') => `
   top: 0;
@@ -45,4 +48,4 @@ export const verticalBorder = (height = '100vh', width = '4px', offset = '-4px')
     right: ${offset};
     top: 0;
   }
-`;
+`

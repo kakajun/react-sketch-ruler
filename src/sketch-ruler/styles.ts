@@ -1,7 +1,11 @@
-import styled  from 'styled-components'
+import styled from 'styled-components'
 
 // 创建一个函数，这个函数将返回一个styled-component，模拟mixin的行为
-const extendableBorder = ({ topBottomWidth = '4px', leftRightWidth = '100vw', offset = '-4px' }) => `
+const extendableBorder = ({
+  topBottomWidth = '4px',
+  leftRightWidth = '100vw',
+  offset = '-4px'
+}) => `
   position: absolute;
   left: 0;
   width: ${leftRightWidth};
@@ -21,7 +25,7 @@ const extendableBorder = ({ topBottomWidth = '4px', leftRightWidth = '100vw', of
     bottom: ${offset};
     left: 0;
   }
-`;
+`
 
 const verticalBorder = ({ height = '100vh', width = '4px', offset = '-4px' }) => `
   position: absolute;
@@ -43,7 +47,7 @@ const verticalBorder = ({ height = '100vh', width = '4px', offset = '-4px' }) =>
     right: ${offset};
     top: 0;
   }
-`;
+`
 
 export const StyledRuler = styled.div`
   position: relative;
@@ -70,48 +74,47 @@ export const StyledRuler = styled.div`
     box-sizing: content-box;
     transition: all 0.2s ease-in-out;
   }
-.h-container,
-.v-container {
-  position: absolute;
-  .indicator {
-    z-index: 4; // 比尺子高
+  .h-container,
+  .v-container {
     position: absolute;
+    .indicator {
+      z-index: 4; // 比尺子高
+      position: absolute;
+    }
+
+    .line {
+      position: absolute;
+    }
+
+    .action {
+      position: absolute;
+    }
+
+    .value {
+      transform: scale(0.83);
+      padding: 5px;
+      border-radius: 5px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+  }
+  .h-container {
+    top: 0;
+    .line {
+      ${verticalBorder({ height: '100vh', width: '4px', offset: '-4px' })}
+    }
+    .indicator {
+      ${extendableBorder({ topBottomWidth: '4px', leftRightWidth: '100vw', offset: '-5px' })}
+    }
   }
 
-  .line {
-    position: absolute;
+  .v-container {
+    left: 0;
+    .line {
+      ${extendableBorder({ topBottomWidth: '4px', leftRightWidth: '100vw', offset: '-5px' })}
+    }
+    .indicator {
+      ${verticalBorder({ height: '100vh', width: '4px', offset: '-4px' })}
+    }
   }
-
-  .action {
-    position: absolute;
-  }
-
-  .value {
-    transform: scale(0.83);
-    padding: 5px;
-    border-radius: 5px;
-    font-size: 12px;
-    white-space: nowrap;
-  }
-}
-.h-container {
-  top: 0;
-   .line {
-    ${verticalBorder({ height: '100vh', width: '4px', offset: '-4px' })}
-  }
-  .indicator {
-    ${extendableBorder({ topBottomWidth: '4px', leftRightWidth: '100vw', offset: '-5px' })}
-  }
-}
-
-.v-container {
-  left: 0;
-  .line {
-    ${extendableBorder({ topBottomWidth: '4px', leftRightWidth: '100vw', offset: '-5px' })}
-  }
-  .indicator {
-    ${verticalBorder({ height: '100vh', width: '4px', offset: '-4px' })}
-  }
-}
-
 `

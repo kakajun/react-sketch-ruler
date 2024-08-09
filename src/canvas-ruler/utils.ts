@@ -1,4 +1,4 @@
-import type {FinalPaletteType} from '../index-types';
+import type { FinalPaletteType } from '../index-types'
 // 标尺中每小格代表的宽度(根据scale的不同实时变化)
 const getGridSize = (scale: number) => {
   if (scale <= 0.25) return 40

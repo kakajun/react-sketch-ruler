@@ -1,7 +1,7 @@
-import { useState, useEffect,  useCallback } from 'react';
-import useLine from './useLine';
-import { debounce } from '../canvas-ruler/utils';
-import type {LineProps} from '../index-types';
+import { useState, useEffect, useCallback } from 'react'
+import useLine from './useLine'
+import { debounce } from '../canvas-ruler/utils'
+import type { LineProps } from '../index-types'
 
 const LineComponent = ({
   scale,
@@ -17,12 +17,11 @@ const LineComponent = ({
   isShowReferLine,
   snapThreshold,
   snapsObj,
-  lockLine,
-}:LineProps) => {
-  const [showLabel, setShowLabel] = useState(false);
-
-  const [isInscale, setIsInscale] = useState(false);
-  const {startValue, actionStyle, handleMouseMove, handleMouseDown, labelContent } = useLine(
+  lockLine
+}: LineProps) => {
+  const [showLabel, setShowLabel] = useState(false)
+  const [isInscale, setIsInscale] = useState(false)
+  const { startValue, actionStyle, handleMouseMove, handleMouseDown, labelContent } = useLine(
     {
       palette,
       scale,
@@ -37,52 +36,53 @@ const LineComponent = ({
       rate
     },
     vertical
-  );
+  )
 
-  const showLine = startValue >= start;
+  const showLine = startValue >= start
 
   const offsetStyle = {
-    [vertical ? 'top' : 'left']: `${(startValue - start) * scale}px`,
-  };
-// 定义PointerEvents的可能值
-type PointerEvents = 'auto' | 'none' | 'all' | 'inherit'; // 根据实际需要定义
+    [vertical ? 'top' : 'left']: `${(startValue - start) * scale}px`
+  }
 
-  const borderCursor: { borderTop?: string; borderLeft?: string; pointerEvents?: PointerEvents; cursor?: string; } = {
-    pointerEvents: (lockLine || isInscale) ? 'none' : 'auto',
-    cursor:
-      isShowReferLine && !lockLine
-        ? vertical
-          ? 'ns-resize'
-          : 'ew-resize'
-        : 'default',
+  type PointerEvents = 'auto' | 'none'
+  const borderCursor: {
+    borderTop?: string
+    borderLeft?: string
+    pointerEvents?: PointerEvents
+    cursor?: string
+  } = {
+    pointerEvents: lockLine || isInscale ? 'none' : 'auto',
+    cursor: isShowReferLine && !lockLine ? (vertical ? 'ns-resize' : 'ew-resize') : 'default',
     ...(vertical
-      ? { borderTop: `1px ${palette.lineType} ${lockLine ? palette.lockLineColor : palette.lineColor}` }
-      : { borderLeft: `1px ${palette.lineType} ${lockLine ? palette.lockLineColor : palette.lineColor}` }),
-  };
-
-
+      ? {
+          borderTop: `1px ${palette.lineType} ${lockLine ? palette.lockLineColor : palette.lineColor}`
+        }
+      : {
+          borderLeft: `1px ${palette.lineType} ${lockLine ? palette.lockLineColor : palette.lineColor}`
+        })
+  }
 
   const deactivateAfterDelay = useCallback(
     debounce(() => {
-      setIsInscale(false);
+      setIsInscale(false)
     }, 1000),
     []
-  );
+  )
 
   useEffect(() => {
-    setIsInscale(true);
-    deactivateAfterDelay();
-  }, [scale, deactivateAfterDelay]);
+    setIsInscale(true)
+    deactivateAfterDelay()
+  }, [scale, deactivateAfterDelay])
 
   const handleMouseenter = () => {
     if (!lockLine) {
-      setShowLabel(true);
+      setShowLabel(true)
     }
-  };
+  }
 
   return (
     <div
-      style={{ ...offsetStyle, ...borderCursor }}
+               style={{ ...offsetStyle, ...borderCursor }}
       className="line"
       onMouseEnter={handleMouseenter}
       onMouseMove={handleMouseMove}
@@ -94,7 +94,7 @@ type PointerEvents = 'auto' | 'none' | 'all' | 'inherit'; // 根据实际需要�
         {showLabel && <span className="value">{labelContent}</span>}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LineComponent;
+export default LineComponent
