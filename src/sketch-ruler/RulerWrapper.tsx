@@ -41,6 +41,7 @@ const RulerComponent =(
       canvasHeight,
       snapThreshold,
       lockLine: isLockLine,
+      rate
     },
     !vertical
   );
@@ -56,6 +57,7 @@ const RulerComponent =(
     borderLeft: vertical ? undefined : `1px ${palette.lineType} ${palette.lineColor}`,
     borderBottom: vertical ? `1px ${palette.lineType} ${palette.lineColor}` : undefined,
   };
+
 
   const mousedown = (e) => {
     setIsDragle(true);
@@ -107,7 +109,6 @@ const RulerComponent =(
                 snapsObj={snapsObj}
                 canvasHeight={canvasHeight}
                 lines={lines}
-                thick={thick}
                 palette={palette}
                 vertical={vertical}
                 isShowReferLine={isShowReferLine}
@@ -116,20 +117,20 @@ const RulerComponent =(
             ))}
           </div>
         )}
-        {/* {isShowReferLine && (
+         {isShowReferLine && (
           <div
             className="indicator"
             onMouseEnter={() => setShowLabel(true)}
             onMouseMove={handleMouseMove}
             onMouseLeave={() => setShowLabel(false)}
             hidden={!isdragle}
-            style={[indicatorStyle, { cursor: vertical ? 'ew-resize' : 'ns-resize' }]}
+            style={indicatorStyle}
           >
             <div className="action" style={actionStyle}>
               {showLabel && <span className="value">{labelContent}</span>}
             </div>
           </div>
-        )} */}
+        )}
     </div>
   );
 };

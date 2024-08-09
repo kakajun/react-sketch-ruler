@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect,  useCallback } from 'react';
 import useLine from './useLine';
 import { debounce } from '../canvas-ruler/utils';
 import type {LineProps} from '../index-types';
-
 
 const LineComponent = ({
   scale,
@@ -21,9 +20,9 @@ const LineComponent = ({
   lockLine,
 }:LineProps) => {
   const [showLabel, setShowLabel] = useState(false);
-  const [startValue, setStartValue] = useState(value ?? 0);
+
   const [isInscale, setIsInscale] = useState(false);
-  const { actionStyle, handleMouseMove, handleMouseDown, labelContent } = useLine(
+  const {startValue, actionStyle, handleMouseMove, handleMouseDown, labelContent } = useLine(
     {
       palette,
       scale,
@@ -34,6 +33,7 @@ const LineComponent = ({
       snapThreshold,
       lockLine,
       index,
+      value,
       rate
     },
     vertical
@@ -46,7 +46,7 @@ const LineComponent = ({
   };
 
   const borderCursor = {
-    pointerEvents: lockLine || isInscale ? 'none' : 'auto',
+    pointerEvents: (lockLine || isInscale) ? 'none' : 'auto',
     cursor:
       isShowReferLine && !lockLine
         ? vertical
@@ -58,9 +58,7 @@ const LineComponent = ({
       : { borderLeft: `1px ${palette.lineType} ${lockLine ? palette.lockLineColor : palette.lineColor}` }),
   };
 
-  useEffect(() => {
-    setStartValue(value ?? 0);
-  }, [value]);
+
 
   const deactivateAfterDelay = useCallback(
     debounce(() => {

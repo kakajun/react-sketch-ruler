@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState ,MouseEventHandler,useMemo ,useEffect} from 'react';
 import type { PaletteType, LineType } from '../index-types'
 interface Props {
   palette: PaletteType
@@ -10,12 +10,17 @@ interface Props {
   canvasHeight: number
   canvasWidth: number
   rate: number
+  value?: number
   index?: number
 }
 
 export default function useLine(props: Props, vertical: boolean) {
   const [offsetLine, setOffsetLine] = useState(0);
   const [startValue, setStartValue] = useState(0);
+
+  useEffect(() => {
+    setStartValue(props.value || 0);
+  }, []); // 空数组依赖确保此 effect 只运行一次
 
   const actionStyle = {
     backgroundColor: props.palette.hoverBg,
@@ -24,7 +29,12 @@ export default function useLine(props: Props, vertical: boolean) {
     [vertical ? 'left' : 'top']: `${offsetLine + 10}px`,
   };
 
-  const handleMouseMove = ({ offsetX, offsetY }: { offsetX: number; offsetY: number }) => {
+  const handleMouseMove : MouseEventHandler<HTMLDivElement> = (event) => {
+    const offsetX = event.nativeEvent.offsetX;
+    const offsetY = event.nativeEvent.offsetY;
+    console.log('offsetX', offsetX);
+    console.log('offsetY', offsetY);
+
     setOffsetLine(vertical ? offsetX : offsetY);
   };
 
@@ -33,7 +43,7 @@ export default function useLine(props: Props, vertical: boolean) {
 
     const startPosition = vertical ? e.clientY : e.clientX;
     const initialValue = startValue;
-
+      debugger
     const moveHandler = (e: MouseEvent) => {
       const currentPosition = vertical ? e.clientY : e.clientX;
       const delta = (currentPosition - startPosition) / props.scale;
@@ -76,9 +86,15 @@ export default function useLine(props: Props, vertical: boolean) {
     return value < 0 || value > maxOffset;
   };
 
+  // const labelContent = useMemo(() => {
+  //   return  checkBoundary(startValue)
+  //   ? 'Release to delete'
+  //   : `${vertical ? 'Y' : 'X'}: ${startValue * props.rate}`;},
+  //   [startValue,  vertical]
+  // )
   const labelContent = checkBoundary(startValue)
-    ? 'Release to delete'
-    : `${vertical ? 'Y' : 'X'}: ${startValue * props.rate}`;
+  ? 'Release to delete'
+  : `${vertical ? 'Y' : 'X'}: ${startValue * props.rate}`;
 
   return {
     startValue,
