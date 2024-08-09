@@ -209,8 +209,6 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       }
     };
 
-
-
     const reset = () => {
       if (panzoomInstance) {
         panzoomInstance.reset();

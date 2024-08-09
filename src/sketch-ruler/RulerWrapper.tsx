@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import RulerLine from './RulerLine';
 import CanvasRuler from '../canvas-ruler/index';
 import useLine from './useLine';
 import type { RulerWrapperProps } from '../index-types';
-
-
 const RulerComponent =(
   {
   scale,
@@ -26,7 +24,7 @@ const RulerComponent =(
   snapsObj,
   gridRatio,
   lockLine,
-}:RulerWrapperProps,ref) => {
+}:RulerWrapperProps) => {
   const [isLockLine, setIsLockLine] = useState(lockLine);
   const [isdragle, setIsDragle] = useState(false);
   const [showLabel, setShowLabel] = useState(false);

@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import type { PanzoomObject } from 'simple-panzoom'
+
+import type { PanzoomObject, PanzoomEventDetail } from 'simple-panzoom'
 export  interface PaletteType {
   bgColor?: string;
   longfgColor?: string;
@@ -63,11 +63,9 @@ export  interface SketchRulerProps {
   selfHandle?: boolean;
   panzoomOption?: object; // 需要具体类型，这里假设为object
   children: React.ReactNode;
-  onUpdateScale?: (props: any) => void;
-  onZoomChange?: (props: any) => void;
-  onCornerClick?: (props: any) => void;
-  handleShowRuler: Fn
-  handleShowReferLine: Fn
+  onUpdateScale?: (props: number) => void;
+  onZoomChange?: (props: PanzoomEventDetail) => void;
+  onCornerClick?: (props: boolean) => void;
 }
 
 export interface RulerWrapperProps {
@@ -90,9 +88,6 @@ export interface RulerWrapperProps {
   lockLine: boolean
   palette: PaletteType
   isShowReferLine: boolean
-  onLineChange: Fn
-  onShowRightMenu: Fn
-  handleShowReferLine: Fn
   changeLineState: Fn
 }
 

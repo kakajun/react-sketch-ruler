@@ -6,10 +6,10 @@ import { Demo, Top,Button, Wrapper, ImgStyle, Btns, Switch } from './styles';
 
 
 const DemoComponent = () => {
-  const [rectWidth, setRectWidth] = useState(770);
-  const [rectHeight, setRectHeight] = useState(472);
-  const [canvasWidth, setCanvasWidth] = useState(1920);
-  const [canvasHeight, setCanvasHeight] = useState(1080);
+  const [rectWidth] = useState(770);
+  const [rectHeight] = useState(472);
+  const [canvasWidth] = useState(1920);
+  const [canvasHeight] = useState(1080);
   const [rendIndex, setRendIndex] = useState(0);
   const sketchruleRef = useRef(null);
   const [showRuler, setShowRuler] = useState(true);
@@ -18,7 +18,7 @@ const DemoComponent = () => {
     minScale: 0.1,
     disablePan: false,
     disableZoom: false,
-    handleStartEvent: (event) => {
+    handleStartEvent: (event: Event) => {
       event.preventDefault();
       console.log('handleStartEvent', event);
     }
@@ -95,24 +95,24 @@ const DemoComponent = () => {
     console.log(state.isShowReferLine, 'state.isShowReferLine');
   };
 
-  const snapsChange = (e) => {
+  const snapsChange = (e: { target: { value: string; }; }) => {
     const arr = e.target.value.split(',');
     setSnapsObj(prevState => ({ ...prevState, h: arr.map(item => Number(item)) }));
   };
 
-  const snapsChangeV = (e) => {
+  const snapsChangeV = (e: { target: { value: string; }; }) => {
     const arr = e.target.value.split(',');
     setSnapsObj(prevState => ({ ...prevState, v: arr.map(item => Number(item)) }));
   };
 
-  const changeScale = (e) => {
+  const changeScale = (e: { target: { checked: boolean; }; }) => {
     setPanzoomOption(prevState => ({ ...prevState, disableZoom: e.target.checked }));
   };
   const onUpdateScale=(scale:number)=>{
     setState(prevState => ({ ...prevState, scale }));
   }
 
-  const changeMove = (e) => {
+  const changeMove = (e: { target: { checked: boolean; }; }) => {
     setPanzoomOption(prevState => ({ ...prevState, disablePan: e.target.checked }));
   };
 
@@ -126,7 +126,7 @@ const DemoComponent = () => {
       }
     }));
   };
-  const handleCornerClick = (e: MouseEvent) => {
+  const handleCornerClick = (e:boolean) => {
     console.log('handleCornerClick', e)
   }
   const cpuScale = state.scale.toFixed(2);
@@ -214,8 +214,6 @@ const DemoComponent = () => {
           isShowReferLine={state.isShowReferLine}
           onCornerClick={handleCornerClick}
           onUpdateScale={onUpdateScale}
-          handleShowReferLine={handleShowReferLine}
-          handleShowRuler={handleShowRuler}
           lines={state.lines}
         >
           <div data-type="page" style={canvasStyle}>

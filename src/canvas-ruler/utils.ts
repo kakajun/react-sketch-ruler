@@ -1,3 +1,4 @@
+import type {FinalPaletteType} from '../index-types';
 // 标尺中每小格代表的宽度(根据scale的不同实时变化)
 const getGridSize = (scale: number) => {
   if (scale <= 0.25) return 40
@@ -20,7 +21,7 @@ export const drawCanvasRuler = (
     height: number
     ratio: number
     gridRatio: number
-    palette: any
+    palette: FinalPaletteType
     canvasWidth: number
     canvasHeight: number
   },
@@ -128,17 +129,4 @@ export function debounce(func: () => void, wait: number) {
       func()
     }, wait)
   }
-}
-
-export function merge(obj: { [key: string]: any }, o: { [key: string]: any }) {
-  Object.keys(obj).forEach((key) => {
-    if (key && obj.hasOwnProperty(key)) {
-      if (typeof o[key] === 'object') {
-        obj[key] = merge(obj[key], o[key])
-      } else if (o.hasOwnProperty(key)) {
-        obj[key] = o[key]
-      }
-    }
-  })
-  return obj
 }
