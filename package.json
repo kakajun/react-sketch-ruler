@@ -1,6 +1,6 @@
 {
   "name": "react-sketch-ruler",
-  "version": "0.0.0-beta.1",
+  "version": "0.0.0-beta.2",
   "type": "module",
   "author": "kakajun <253495832@qq.com>",
   "license": "MIT",
@@ -20,7 +20,8 @@
   "scripts": {
     "dev": "vite --config vite.demo.ts",
     "build": " vite build",
-    "build:demo": "tsc -b && vite build --config vite.demo.ts",
+    "tsc":"tsc -p tsconfig.app.json",
+    "build:demo": "vite build --config vite.demo.ts",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
