@@ -18,7 +18,10 @@
 
 ## 🌈 应用案例:
 
-<!-- [GoView 高效拖拽式低代码数据可视化开发平台](https://vue.mtruning.club/#/project/items) -->
+[GoView 高效拖拽式低代码数据可视化开发平台](https://vue.mtruning.club/#/project/items)
+
+[GoView 2X 应用源码地址](https://gitee.com/majun2232/go-view)
+
 
 ## 🦄 demo
 
@@ -60,18 +63,10 @@ import 'react-sketch-ruler/lib/style.css'
 - [x] 选中阴影阴影响应
 
 ## 未来支持功能
-
-- [] 缩放导航功能
 - [] 加入单元测试功能
 
 这是个开源业余做的功能，有兴趣加强该插件的小伙伴欢迎加入，也欢迎大家提pr或者issue
 
-## 使用
-
-```
-
-
-```
 
 参考一个完整的例子，[点击这里](https://github.com/kakajun/react-sketch-ruler/blob/master/example/components/user-rulerts.vue)
 
@@ -101,13 +96,22 @@ import 'react-sketch-ruler/lib/style.css'
 | gridRatio | 刻度分散比例 | Number | 1 |
 | selfHandle | 自己处理监听移动和缩放 | Boolean | false |
 | panzoomOption | panzoom相关的扩展参数 | object | - |
-| palette | 标尺的样式配置参数 | Palette | 如下 |
+| palette | 标尺的样式配置参数 | Object | 如下表 |
 
-palette:{bgColor: 'rgba(225,225,225, 0)',longfgColor: '#BABBBC',fontColor: '#7D8694', shadowColor: '#E8E8E8',lineColor: '#EB5648', borderColor: '#DADADC',cornerActiveColor: 'rgb(235, 86, 72, 0.6)',}
+| 属性名称      | 描述           | 默认值                         |
+| ------------- | -------------- | ------------------------------ |
+| bgColor       | 画布背景       | #f6f7f9                        |
+| longfgColor   | 刻度背景       | #BABBBC                        |
+| fontColor     | 刻度字体颜色   | #7D8694                        |
+| shadowColor   | 激活阴影背景   | #E8E8E8                        |
+| lineColor     | 对准线颜色     | #51d6a9                        |
+| lineType      | 对准线类型     | solid (solid \dashed \ dotted) |
+| lockLineColor | 锁定对准线颜色 | #d4d7dc                        |
+| hoverColor    | 标签颜色字体   | #fff                           |
+| hoverBg       | 标签颜色背景   | #000                           |
+| borderColor   | 尺子外边框颜色 | #eeeeef                        |
 
 > 更多pazoom插件的配置的panzoomOption参数，可以参考[pazoom document](https://github.com/timmywil/panzoom)
-
-### 更新说明
 
 ### Event
 
@@ -118,9 +122,10 @@ palette:{bgColor: 'rgba(225,225,225, 0)',longfgColor: '#BABBBC',fontColor: '#7D8
 
 ### 使用说明
 
-有些需要自己定义监听移动和缩放，不想按空格移动, 或者不想Ctrl+weel 移动, 那么可以设置selfHandle为true，然后通过ref获取到组件实例，然后通过实例调用组件的方法, 自定义监听按键
-
-具体操作参见我插件里面的监听移动和缩放方法
+1. 同时按Ctrl+鼠标滚轮缩放, 根据鼠标位置发生页面缩放
+2. 同时按空格+鼠标左键, 拖动画布
+3. 有些需要自己定义监听移动和缩放，不想按空格移动, 或者不想Ctrl+weel 移动, 那么可以设置selfHandle为true，然后通过ref获取到组件实例，然后通过实例调用组件的方法, 自定义监听按键
+4. 具体操作参见我插件里面的监听移动和缩放方法
 
 ```js
 const panzoomInstance = sketchruleRef.value.panzoomInstance
@@ -153,7 +158,6 @@ document.addEventListener('keyup', function (e) {
 | reset    | 画布重置位置 |          |
 | zoomIn   | 画布放大     |          |
 | zoomIn   | 画布缩小     |          |
-
 ## 引用
 
 vue3标尺组件 [vue3-sketch-ruler](https://github.com/kakajun/vue3-sketch-ruler)
