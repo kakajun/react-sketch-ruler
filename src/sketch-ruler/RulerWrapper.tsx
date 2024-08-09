@@ -57,7 +57,7 @@ const RulerComponent =(
   };
 
 
-  const mousedown = (e) => {
+  const mousedown = (e:React.MouseEvent<HTMLDivElement>) => {
     setIsDragle(true);
     setIsLockLine(false);
     setStartValue(Math.round(startOther - thick / 2));
@@ -86,6 +86,7 @@ const RulerComponent =(
           selectLength={selectLength}
           palette={palette}
           rate={rate}
+          onDragStart={mousedown}
           gridRatio={gridRatio}
         />
         {isShowReferLine && (

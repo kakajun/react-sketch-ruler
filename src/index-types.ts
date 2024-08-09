@@ -121,6 +121,7 @@ export interface CanvasProps {
   selectStart: number
   gridRatio: number
   selectLength: number
+  onDragStart: Fn
 }
 
 export interface SketchRulerMethods {

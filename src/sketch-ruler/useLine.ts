@@ -32,18 +32,15 @@ export default function useLine(props: Props, vertical: boolean) {
   const handleMouseMove : MouseEventHandler<HTMLDivElement> = (event) => {
     const offsetX = event.nativeEvent.offsetX;
     const offsetY = event.nativeEvent.offsetY;
-    console.log('offsetX', offsetX);
-    console.log('offsetY', offsetY);
-
     setOffsetLine(vertical ? offsetX : offsetY);
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    return new Promise<void>((resolve) => {
     if (props.lockLine) return;
 
     const startPosition = vertical ? e.clientY : e.clientX;
     const initialValue = startValue;
-      debugger
     const moveHandler = (e: MouseEvent) => {
       const currentPosition = vertical ? e.clientY : e.clientX;
       const delta = (currentPosition - startPosition) / props.scale;
@@ -56,15 +53,17 @@ export default function useLine(props: Props, vertical: boolean) {
         nextPos = guidePos;
       }
       setStartValue(Math.round(nextPos));
-    };
 
+    };
     const mouseUpHandler = () => {
       document.removeEventListener('mousemove', moveHandler);
-      handleLineRelease(startValue);
+      handleLineRelease(startValue, props.index);
+      resolve()
     };
 
     document.addEventListener('mousemove', moveHandler);
     document.addEventListener('mouseup', mouseUpHandler, { once: true });
+  })
   };
 
   const handleLineRelease = (value: number, index?: number) => {
@@ -74,7 +73,9 @@ export default function useLine(props: Props, vertical: boolean) {
       if (typeof index === 'number') {
         linesArrs.splice(index, 1);
       }
-      return; // New addition out of range, do nothing
+      else {
+        return // 新增越界,什么也不做
+      }
     }
     if (typeof index !== 'number') {
       linesArrs.push(value);
@@ -86,12 +87,6 @@ export default function useLine(props: Props, vertical: boolean) {
     return value < 0 || value > maxOffset;
   };
 
-  // const labelContent = useMemo(() => {
-  //   return  checkBoundary(startValue)
-  //   ? 'Release to delete'
-  //   : `${vertical ? 'Y' : 'X'}: ${startValue * props.rate}`;},
-  //   [startValue,  vertical]
-  // )
   const labelContent = checkBoundary(startValue)
   ? 'Release to delete'
   : `${vertical ? 'Y' : 'X'}: ${startValue * props.rate}`;

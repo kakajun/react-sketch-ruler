@@ -31,8 +31,7 @@
     "stylis": "^4.3.2"
   },
   "devDependencies": {
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "@types/node": "^22.1.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
@@ -41,6 +40,8 @@
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.9",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "sass": "^1.77.8",
     "typescript": "^5.5.3",
     "vite": "^5.3.5",

@@ -1,4 +1,4 @@
-import React, {memo, useRef, useEffect, useState, useCallback } from 'react';
+import  {memo, useRef, useEffect, useState, useCallback } from 'react';
 import { drawCanvasRuler } from './utils';
 import type {CanvasProps} from '../index-types';
 const CanvasRuler = ({
@@ -37,7 +37,6 @@ const CanvasRuler = ({
     if (canvasRef.current) {
       const ctx = canvasRef.current.getContext('2d');
       setCanvasContext(ctx);
-      updateCanvas();
     }
   }, [canvasRef]);
 
@@ -45,16 +44,13 @@ const CanvasRuler = ({
     if (canvasRef.current && canvasContext) {
       canvasRef.current.width = width;
       canvasRef.current.height = height;
-
       canvasContext.font = `${12 * ratioValue}px -apple-system, "Helvetica Neue", ".SFNSText-Regular", "SF UI Text", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Zen Hei", sans-serif`;
       canvasContext.lineWidth = 1;
       canvasContext.textBaseline = 'middle';
-
-      drawRuler();
     }
-  }, [width, height, ratioValue]);
+  }, [canvasContext, width, height, ratioValue]);
 
-  const drawRuler = useCallback(() => {
+  useEffect(() => {
     const options = {
       scale: scale / rate,
       width,
@@ -78,10 +74,6 @@ const CanvasRuler = ({
       );
     }
   }, [scale, rate, width, height, palette, canvasWidth, canvasHeight, ratioValue, gridRatio, canvasContext, start, selectStart, selectLength, vertical]);
-
-  useEffect(() => {
-    drawRuler();
-  }, [drawRuler]);
 
   const handleDragStart = useCallback(() => {
     setIsDragging(true);
