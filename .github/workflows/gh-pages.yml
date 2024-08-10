@@ -28,4 +28,4 @@ jobs:
         with:
           publish_dir: dist # The folder the action should deploy.
 
-          github_token: ${{ secrets.GITHUB1_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
