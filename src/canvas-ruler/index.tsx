@@ -19,20 +19,6 @@ const CanvasRuler = ({
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   const [canvasContext, setCanvasContext] = useState<CanvasRenderingContext2D | null>(null)
-  const [ratioValue, setRatioValue] = useState(window.devicePixelRatio || 1)
-
-  useEffect(() => {
-    const handleResize = () => {
-      setRatioValue(window.devicePixelRatio || 1)
-      updateCanvas()
-    }
-
-    window.addEventListener('resize', handleResize)
-
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [])
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -41,15 +27,15 @@ const CanvasRuler = ({
     }
   }, [canvasRef])
 
-  const updateCanvas = useCallback(() => {
+  useEffect(() => {
     if (canvasRef.current && canvasContext) {
       canvasRef.current.width = width
       canvasRef.current.height = height
-      canvasContext.font = `${12 * ratioValue}px -apple-system, "Helvetica Neue", ".SFNSText-Regular", "SF UI Text", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Zen Hei", sans-serif`
+      canvasContext.font = `${12 * window.devicePixelRatio}px -apple-system, "Helvetica Neue", ".SFNSText-Regular", "SF UI Text", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Zen Hei", sans-serif`
       canvasContext.lineWidth = 1
       canvasContext.textBaseline = 'middle'
     }
-  }, [canvasContext, width, height, ratioValue])
+  }, [canvasContext, width, height, window.devicePixelRatio])
 
   useEffect(() => {
     const options = {
@@ -59,7 +45,7 @@ const CanvasRuler = ({
       palette,
       canvasWidth: canvasWidth * rate,
       canvasHeight: canvasHeight * rate,
-      ratio: ratioValue,
+      ratio: window.devicePixelRatio,
       rate,
       gridRatio
     }
@@ -75,7 +61,7 @@ const CanvasRuler = ({
     palette,
     canvasWidth,
     canvasHeight,
-    ratioValue,
+    window.devicePixelRatio,
     gridRatio,
     canvasContext,
     start,

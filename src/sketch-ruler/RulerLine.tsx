@@ -45,6 +45,7 @@ const LineComponent = ({
   }
 
   type PointerEvents = 'auto' | 'none'
+  const bordStyle = `1px ${palette.lineType} ${lockLine ? palette.lockLineColor : palette.lineColor}`
   const borderCursor: {
     borderTop?: string
     borderLeft?: string
@@ -53,13 +54,7 @@ const LineComponent = ({
   } = {
     pointerEvents: lockLine || isInscale ? 'none' : 'auto',
     cursor: isShowReferLine && !lockLine ? (vertical ? 'ns-resize' : 'ew-resize') : 'default',
-    ...(vertical
-      ? {
-          borderTop: `1px ${palette.lineType} ${lockLine ? palette.lockLineColor : palette.lineColor}`
-        }
-      : {
-          borderLeft: `1px ${palette.lineType} ${lockLine ? palette.lockLineColor : palette.lineColor}`
-        })
+    [vertical ? 'borderTop' : 'borderLeft']: bordStyle
   }
 
   const deactivateAfterDelay = useCallback(
@@ -82,7 +77,7 @@ const LineComponent = ({
 
   return (
     <div
-               style={{ ...offsetStyle, ...borderCursor }}
+      style={{ ...offsetStyle, ...borderCursor }}
       className="line"
       onMouseEnter={handleMouseenter}
       onMouseMove={handleMouseMove}

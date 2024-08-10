@@ -116,9 +116,10 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     const handleWheel = (e: WheelEvent) => {
       if (e.ctrlKey || e.metaKey) {
         if (panzoomInstance) {
+          // 阻止浏览器的默认行为
+          e.preventDefault()
           panzoomInstance.zoomWithWheel(e)
         }
-        e.preventDefault()
       }
     }
 
@@ -140,7 +141,8 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     }
 
     if (!selfHandle) {
-      document.addEventListener('wheel', handleWheel)
+      console.log('wheel')
+      document.addEventListener('wheel', handleWheel, { passive: false })
       document.addEventListener('keydown', handleSpaceKeyDown)
       document.addEventListener('keyup', handleSpaceKeyUp)
     }
@@ -196,7 +198,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
         if (onUpdateScale) {
           onUpdateScale(newScale)
         }
-        console.log('newScale', newScale)
+
         setOwnScale(newScale)
         const left = (dimsOut.parent.left - dimsOut.elem.left) / newScale
         const top = (dimsOut.parent.top - dimsOut.elem.top) / newScale
@@ -272,7 +274,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     return (
       <StyledRuler id="sketch-ruler">
         {btnSlot}
-        <div className="canvasedit-parent" style={rectStyle} onWheel={(e) => e.preventDefault()}>
+        <div className="canvasedit-parent" style={rectStyle}>
           <div className="canvasedit">{defaultSlot}</div>
         </div>
         {showRuler && (
@@ -287,6 +289,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
             vertical={false}
           />
         )}
+        {/* 竖直方向 */}
         {showRuler && (
           <RulerWrapper
             {...commonProps}

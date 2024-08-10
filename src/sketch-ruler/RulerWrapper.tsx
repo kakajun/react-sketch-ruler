@@ -27,32 +27,38 @@ const RulerComponent = ({
   const [isLockLine, setIsLockLine] = useState(lockLine)
   const [isdragle, setIsDragle] = useState(false)
   const [showLabel, setShowLabel] = useState(false)
-  const [startValue, setStartValue] = useState(startOther - thick / 2)
-  const { actionStyle, handleMouseMove, handleMouseDown, labelContent } = useLine(
-    {
-      palette,
-      scale,
-      snapsObj,
-      lines,
-      canvasWidth,
-      canvasHeight,
-      snapThreshold,
-      lockLine: isLockLine,
-      rate
-    },
-    !vertical
-  )
+  const { actionStyle, handleMouseMove, handleMouseDown, labelContent, startValue, setStartValue } =
+    useLine(
+      {
+        palette,
+        scale,
+        snapsObj,
+        lines,
+        canvasWidth,
+        canvasHeight,
+        snapThreshold,
+        lockLine: isLockLine,
+        rate
+      },
+      !vertical
+    )
 
   const rwClassName = vertical ? 'v-container' : 'h-container'
 
   const cpuLines = vertical ? lines.h : lines.v
 
-  const indicatorStyle = {
-    left: vertical ? undefined : `${(startValue - startOther) * scale + thick}px`,
-    top: vertical ? `${(startValue - startOther) * scale + thick}px` : undefined,
-    cursor: vertical ? 'ew-resize' : 'ns-resize',
-    borderLeft: vertical ? undefined : `1px ${palette.lineType} ${palette.lineColor}`,
-    borderBottom: vertical ? `1px ${palette.lineType} ${palette.lineColor}` : undefined
+  const indicatorStyle = () => {
+    const lineType = palette.lineType
+    let positionKey = vertical ? 'left' : 'top'
+    let gepKey = vertical ? 'top' : 'left'
+    let boderKey = vertical ? 'borderLeft' : 'borderBottom'
+    const offsetPx = (startValue - startOther) * scale + thick
+    return {
+      [positionKey]: offsetPx + 'px',
+      [gepKey]: -thick + 'px',
+      cursor: vertical ? 'ew-resize' : 'ns-resize',
+      [boderKey]: `1px ${lineType} ${palette.lineColor}`
+    }
   }
 
   const mousedown = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -115,8 +121,8 @@ const RulerComponent = ({
           onMouseEnter={() => setShowLabel(true)}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setShowLabel(false)}
-          hidden={!isdragle}
-          style={indicatorStyle}
+          // hidden={!isdragle}
+          style={indicatorStyle()}
         >
           <div className="action" style={actionStyle}>
             {showLabel && <span className="value">{labelContent}</span>}

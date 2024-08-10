@@ -23,7 +23,7 @@ export default function useLine(props: Props, vertical: boolean) {
   }, []) // 空数组依赖确保此 effect 只运行一次
 
   const actionStyle = {
-              backgroundColor: props.palette.hoverBg,
+    backgroundColor: props.palette.hoverBg,
     color: props.palette.hoverColor,
     [vertical ? 'top' : 'left']: '-8px',
     [vertical ? 'left' : 'top']: `${offsetLine + 10}px`
@@ -91,6 +91,7 @@ export default function useLine(props: Props, vertical: boolean) {
     : `${vertical ? 'Y' : 'X'}: ${startValue * props.rate}`
 
   return {
+    setStartValue,
     startValue,
     actionStyle,
     labelContent,
