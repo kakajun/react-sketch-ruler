@@ -2,9 +2,9 @@ name: gh-pages
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
-    branches: [master]
+    branches: [main]
 
 jobs:
   build-and-deploy:
@@ -28,4 +28,4 @@ jobs:
         with:
           publish_dir: dist # The folder the action should deploy.
 
-          github_token: ${{ secrets.GITHUB1_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
