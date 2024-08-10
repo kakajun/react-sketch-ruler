@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import SketchRule from '../src/index'
 import type { SketchRulerMethods } from '../src/index-types'
 import bgImg from './assets/bg.png'
-import { Demo, Top, Button, Wrapper, ImgStyle, Btns, Switch } from './types'
+import { Demo, Top, Button, Wrapper, ImgStyle, Btns, Switch } from './styles'
 
 const DemoComponent = () => {
   const [rectWidth] = useState(770)
