@@ -9,8 +9,8 @@ import type { SketchRulerProps, PaletteType, SketchRulerMethods } from '../index
 const usePaletteConfig = (palette: PaletteType) => {
   return useMemo(
     () => ({
-      bgColor: '#f6f7f9', // ruler bg color
-      longfgColor: '#BABBBC', // ruler longer mark color
+      bgColor: '#f6f7f9',
+      longfgColor: '#BABBBC',
       fontColor: '#7D8694', // ruler font color
       shadowColor: '#e9f7fe', // ruler shadow color
       lineColor: '#51d6a9',
