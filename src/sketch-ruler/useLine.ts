@@ -14,7 +14,11 @@ interface Props {
   index?: number
 }
 
-export default function useLine(props: Props, vertical: boolean) {
+export default function useLine(
+  props: Props,
+  vertical: boolean,
+  setLocalLines?: (lines: LineType) => void
+) {
   const [offsetLine, setOffsetLine] = useState(0)
   const [startValue, setStartValue] = useState(0)
 
@@ -67,11 +71,17 @@ export default function useLine(props: Props, vertical: boolean) {
   }
 
   const handleLineRelease = (value: number, index?: number) => {
+    debugger
     const linesArrs = vertical ? props.lines.h : props.lines.v
     const isOutOfRange = checkBoundary(value)
     if (isOutOfRange) {
       if (typeof index === 'number') {
         linesArrs.splice(index, 1)
+        if (setLocalLines) {
+          console.log('删除了')
+
+          setLocalLines(props.lines)
+        }
       } else {
         return // 新增越界,什么也不做
       }
@@ -87,7 +97,7 @@ export default function useLine(props: Props, vertical: boolean) {
   }
 
   const labelContent = checkBoundary(startValue)
-    ? 'Release to delete'
+    ? '放开删除'
     : `${vertical ? 'Y' : 'X'}: ${startValue * props.rate}`
 
   return {

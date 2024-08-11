@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import RulerLine from './RulerLine'
 import CanvasRuler from '../canvas-ruler/index'
 import useLine from './useLine'
@@ -25,6 +25,7 @@ const RulerComponent = ({
   lockLine
 }: RulerWrapperProps) => {
   const [isLockLine, setIsLockLine] = useState(lockLine)
+  const [localLines, setLocalLines] = useState(lines)
   const [isdragle, setIsDragle] = useState(false)
   const [showLabel, setShowLabel] = useState(false)
   const { actionStyle, handleMouseMove, handleMouseDown, labelContent, startValue, setStartValue } =
@@ -40,12 +41,18 @@ const RulerComponent = ({
         lockLine: isLockLine,
         rate
       },
-      !vertical
+      !vertical,
+      setLocalLines
     )
+  useEffect(() => {
+    setLocalLines(lines)
+  }, [lines])
 
   const rwClassName = vertical ? 'v-container' : 'h-container'
 
-  const cpuLines = vertical ? lines.h : lines.v
+  const cpuLines = useMemo(() => {
+    return vertical ? localLines.v : localLines.h
+  }, [vertical, localLines])
 
   const indicatorStyle = () => {
     const lineType = palette.lineType
