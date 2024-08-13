@@ -28,22 +28,21 @@ const RulerComponent = ({
   const [localLines, setLocalLines] = useState(lines)
   const [isdragle, setIsDragle] = useState(false)
   const [showLabel, setShowLabel] = useState(false)
-  const { actionStyle, handleMouseMove, handleMouseDown, labelContent, startValue, setStartValue } =
-    useLine(
-      {
-        palette,
-        scale,
-        snapsObj,
-        lines,
-        canvasWidth,
-        canvasHeight,
-        snapThreshold,
-        lockLine: isLockLine,
-        rate
-      },
-      !vertical,
-      setLocalLines
-    )
+  const { actionStyle, handleMouseMove, handleMouseDown, labelContent, startValue } = useLine(
+    {
+      palette,
+      scale,
+      snapsObj,
+      lines,
+      canvasWidth,
+      canvasHeight,
+      snapThreshold,
+      lockLine: isLockLine,
+      rate
+    },
+    !vertical,
+    setLocalLines
+  )
   useEffect(() => {
     setLocalLines(lines)
   }, [lines])
@@ -51,27 +50,30 @@ const RulerComponent = ({
   const rwClassName = vertical ? 'v-container' : 'h-container'
 
   const cpuLines = useMemo(() => {
-    return vertical ? localLines.v : localLines.h
+    return vertical ? localLines.h : localLines.v
   }, [vertical, localLines])
 
-  const indicatorStyle = () => {
+  const indicatorStyle = useMemo(() => {
     const lineType = palette.lineType
     let positionKey = vertical ? 'left' : 'top'
     let gepKey = vertical ? 'top' : 'left'
     let boderKey = vertical ? 'borderLeft' : 'borderBottom'
-    const offsetPx = (startValue - startOther) * scale + thick
+    const offsetPx = (startValue.current - startOther) * scale + thick
+    console.log('offsetPx', offsetPx)
+    console.log('startOther', startOther)
+    console.log('positionKey', positionKey)
     return {
       [positionKey]: offsetPx + 'px',
       [gepKey]: -thick + 'px',
       cursor: vertical ? 'ew-resize' : 'ns-resize',
       [boderKey]: `1px ${lineType} ${palette.lineColor}`
     }
-  }
+  }, [startValue, startOther, vertical, palette.lineType, scale, palette.lineColor, thick])
 
   const mousedown = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsDragle(true)
     setIsLockLine(false)
-    setStartValue(Math.round(startOther - thick / 2))
+    startValue.current = Math.round(startOther - thick / 2)
     setTimeout(async () => {
       await handleMouseDown(e)
       setIsDragle(false)
@@ -129,7 +131,7 @@ const RulerComponent = ({
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setShowLabel(false)}
           // hidden={!isdragle}
-          style={indicatorStyle()}
+          style={indicatorStyle}
         >
           <div className="action" style={actionStyle}>
             {showLabel && <span className="value">{labelContent}</span>}

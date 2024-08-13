@@ -1,4 +1,8 @@
 import styled from 'styled-components'
+import { DetailedHTMLProps, HTMLAttributes } from 'react'
+interface RulerProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+  thickness?: number
+}
 
 // 创建一个函数，这个函数将返回一个styled-component，模拟mixin的行为
 const extendableBorder = ({
@@ -49,7 +53,7 @@ const verticalBorder = ({ height = '100vh', width = '4px', offset = '-4px' }) =>
   }
 `
 
-export const StyledRuler = styled.div`
+export const StyledRuler = styled.div<RulerProps>`
   position: relative;
   z-index: 3;
   /* 需要比resizer高 */
@@ -62,8 +66,8 @@ export const StyledRuler = styled.div`
   }
   .canvasedit-parent {
     position: absolute;
-    left: v-bind(thickness);
-    top: v-bind(thickness);
+    left: ${(props) => props.thickness}px;
+    top: ${(props) => props.thickness}px;
   }
   .corner {
     position: absolute;

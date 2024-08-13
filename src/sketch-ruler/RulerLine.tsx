@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import useLine from './useLine'
 import { debounce } from '../canvas-ruler/utils'
 import type { LineProps } from '../index-types'
@@ -38,24 +38,23 @@ const LineComponent = ({
     vertical
   )
 
-  const showLine = startValue >= start
+  const showLine = startValue.current >= start
 
-  const offsetStyle = {
-    [vertical ? 'top' : 'left']: `${(startValue - start) * scale}px`
-  }
+  const combinedStyle = useMemo(() => {
+    const { lineType, lockLineColor, lineColor } = palette
+    const borderColor = lockLine ? lockLineColor : (lineColor ?? 'black')
+    const pointerEvents = lockLine || isInscale ? 'none' : 'auto'
+    const cursor = isShowReferLine && !lockLine ? (vertical ? 'ns-resize' : 'ew-resize') : 'default'
+    const borderProperty = vertical ? 'borderTop' : 'borderLeft'
+    const offsetPx = (startValue.current - start) * scale
 
-  type PointerEvents = 'auto' | 'none'
-  const bordStyle = `1px ${palette.lineType} ${lockLine ? palette.lockLineColor : palette.lineColor}`
-  const borderCursor: {
-    borderTop?: string
-    borderLeft?: string
-    pointerEvents?: PointerEvents
-    cursor?: string
-  } = {
-    pointerEvents: lockLine || isInscale ? 'none' : 'auto',
-    cursor: isShowReferLine && !lockLine ? (vertical ? 'ns-resize' : 'ew-resize') : 'default',
-    [vertical ? 'borderTop' : 'borderLeft']: bordStyle
-  }
+    return {
+      [borderProperty]: `1px ${lineType} ${borderColor}`,
+      'pointer-events': pointerEvents,
+      cursor,
+      [vertical ? 'top' : 'left']: `${offsetPx}px`
+    }
+  }, [palette, lockLine, isInscale, isShowReferLine, vertical, startValue, start, scale])
 
   const deactivateAfterDelay = useCallback(
     debounce(() => {
@@ -77,7 +76,7 @@ const LineComponent = ({
 
   return (
     <div
-      style={{ ...offsetStyle, ...borderCursor }}
+      style={combinedStyle}
       className="line"
       onMouseEnter={handleMouseenter}
       onMouseMove={handleMouseMove}
