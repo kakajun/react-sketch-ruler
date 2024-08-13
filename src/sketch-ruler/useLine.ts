@@ -22,10 +22,6 @@ export default function useLine(
   const [offsetLine, setOffsetLine] = useState(0)
   const [startValue, setStartValue] = useState(0)
 
-  useEffect(() => {
-    setStartValue(props.value || 0)
-  }, []) // 空数组依赖确保此 effect 只运行一次
-
   const actionStyle = {
     backgroundColor: props.palette.hoverBg,
     color: props.palette.hoverColor,
