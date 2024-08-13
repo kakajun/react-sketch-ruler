@@ -203,6 +203,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
         const left = (dimsOut.parent.left - dimsOut.elem.left) / newScale
         const top = (dimsOut.parent.top - dimsOut.elem.top) / newScale
         setStartX(left)
+        console.log(left, 'startX.value')
         if (onZoomChange) {
           onZoomChange(detail)
         }
@@ -272,7 +273,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       [null, null] // 初始化 acc 为数组
     )
     return (
-      <StyledRuler id="sketch-ruler">
+      <StyledRuler id="sketch-ruler" thickness={thick}>
         {btnSlot}
         <div className="canvasedit-parent" style={rectStyle}>
           <div className="canvasedit">{defaultSlot}</div>

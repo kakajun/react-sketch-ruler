@@ -1,4 +1,4 @@
-import { useState, MouseEventHandler, useEffect } from 'react'
+import { useState, useRef, MouseEventHandler, useEffect } from 'react'
 import type { PaletteType, LineType } from '../index-types'
 interface Props {
   palette: PaletteType
@@ -20,7 +20,7 @@ export default function useLine(
   setLocalLines?: (lines: LineType) => void
 ) {
   const [offsetLine, setOffsetLine] = useState(0)
-  const [startValue, setStartValue] = useState(0)
+  const startValue = useRef<number>(props.value || 0)
 
   const actionStyle = {
     backgroundColor: props.palette.hoverBg,
@@ -39,7 +39,7 @@ export default function useLine(
     return new Promise<void>((resolve) => {
       if (props.lockLine) return
       const startPosition = vertical ? e.clientY : e.clientX
-      const initialValue = startValue
+      const initialValue = startValue.current
       const moveHandler = (e: MouseEvent) => {
         const currentPosition = vertical ? e.clientY : e.clientX
         const delta = (currentPosition - startPosition) / props.scale
@@ -53,11 +53,11 @@ export default function useLine(
           guidePos = guideSnaps[0]
           nextPos = guidePos
         }
-        setStartValue(Math.round(nextPos))
+        startValue.current = Math.round(nextPos)
       }
       const mouseUpHandler = () => {
         document.removeEventListener('mousemove', moveHandler)
-        handleLineRelease(startValue, props.index)
+        handleLineRelease(startValue.current, props.index)
         resolve()
       }
 
@@ -92,12 +92,11 @@ export default function useLine(
     return value < 0 || value > maxOffset
   }
 
-  const labelContent = checkBoundary(startValue)
+  const labelContent = checkBoundary(startValue.current)
     ? '放开删除'
-    : `${vertical ? 'Y' : 'X'}: ${startValue * props.rate}`
+    : `${vertical ? 'Y' : 'X'}: ${startValue.current * props.rate}`
 
   return {
-    setStartValue,
     startValue,
     actionStyle,
     labelContent,
