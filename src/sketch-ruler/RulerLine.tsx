@@ -38,7 +38,7 @@ const LineComponent = ({
     vertical
   )
 
-  const showLine = startValue.current >= start
+  const showLine = useMemo(() => startValue.current >= start, [start, startValue.current, vertical])
 
   const combinedStyle = useMemo(() => {
     const { lineType, lockLineColor, lineColor } = palette
@@ -47,14 +47,15 @@ const LineComponent = ({
     const cursor = isShowReferLine && !lockLine ? (vertical ? 'ns-resize' : 'ew-resize') : 'default'
     const borderProperty = vertical ? 'borderTop' : 'borderLeft'
     const offsetPx = (startValue.current - start) * scale
+    console.log('combinedStyle变化')
 
     return {
       [borderProperty]: `1px ${lineType} ${borderColor}`,
-      'pointer-events': pointerEvents,
+      pointerEvents: pointerEvents,
       cursor,
       [vertical ? 'top' : 'left']: `${offsetPx}px`
     }
-  }, [palette, lockLine, isInscale, isShowReferLine, vertical, startValue, start, scale])
+  }, [palette, lockLine, isInscale, isShowReferLine, vertical, startValue.current, start, scale])
 
   const deactivateAfterDelay = useCallback(
     debounce(() => {

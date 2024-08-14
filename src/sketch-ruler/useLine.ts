@@ -67,7 +67,7 @@ export default function useLine(
   }
 
   const handleLineRelease = (value: number, index?: number) => {
-    debugger
+
     const linesArrs = vertical ? props.lines.h : props.lines.v
     const isOutOfRange = checkBoundary(value)
     if (isOutOfRange) {

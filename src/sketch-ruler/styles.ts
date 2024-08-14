@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { DetailedHTMLProps, HTMLAttributes } from 'react'
 interface RulerProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-  thickness?: number
+  $thickness: number
 }
 
 // 创建一个函数，这个函数将返回一个styled-component，模拟mixin的行为
@@ -66,8 +66,8 @@ export const StyledRuler = styled.div<RulerProps>`
   }
   .canvasedit-parent {
     position: absolute;
-    left: ${(props) => props.thickness}px;
-    top: ${(props) => props.thickness}px;
+    left: ${(props) => props.$thickness}px;
+    top: ${(props) => props.$thickness}px;
   }
   .corner {
     position: absolute;

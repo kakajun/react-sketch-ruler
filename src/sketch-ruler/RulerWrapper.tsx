@@ -68,7 +68,7 @@ const RulerComponent = ({
       cursor: vertical ? 'ew-resize' : 'ns-resize',
       [boderKey]: `1px ${lineType} ${palette.lineColor}`
     }
-  }, [startValue, startOther, vertical, palette.lineType, scale, palette.lineColor, thick])
+  }, [startValue.current, startOther, vertical, palette.lineType, scale, palette.lineColor, thick])
 
   const mousedown = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsDragle(true)

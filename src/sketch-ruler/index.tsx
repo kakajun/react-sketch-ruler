@@ -273,7 +273,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       [null, null] // 初始化 acc 为数组
     )
     return (
-      <StyledRuler id="sketch-ruler" thickness={thick}>
+      <StyledRuler id="sketch-ruler" $thickness={thick}>
         {btnSlot}
         <div className="canvasedit-parent" style={rectStyle}>
           <div className="canvasedit">{defaultSlot}</div>
