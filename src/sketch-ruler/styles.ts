@@ -8,7 +8,7 @@ interface RulerProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, H
 const extendableBorder = ({
   topBottomWidth = '4px',
   leftRightWidth = '100vw',
-  offset = '-4px'
+  offset = '-3px'
 }) => `
   position: absolute;
   left: 0;
@@ -31,7 +31,7 @@ const extendableBorder = ({
   }
 `
 
-const verticalBorder = ({ height = '100vh', width = '4px', offset = '-4px' }) => `
+const verticalBorder = ({ height = '100vh', width = '4px', offset = '-3px' }) => `
   position: absolute;
   top: 0;
   height: ${height};
@@ -105,20 +105,20 @@ export const StyledRuler = styled.div<RulerProps>`
   .h-container {
     top: 0;
     .line {
-      ${verticalBorder({ height: '100vh', width: '4px', offset: '-4px' })}
+      ${verticalBorder({ height: '100vh', width: '4px' })}
     }
     .indicator {
-      ${extendableBorder({ topBottomWidth: '4px', leftRightWidth: '100vw', offset: '-5px' })}
+      ${extendableBorder({ topBottomWidth: '4px', leftRightWidth: '100vw' })}
     }
   }
 
   .v-container {
     left: 0;
     .line {
-      ${extendableBorder({ topBottomWidth: '4px', leftRightWidth: '100vw', offset: '-5px' })}
+      ${extendableBorder({ topBottomWidth: '4px', leftRightWidth: '100vw' })}
     }
     .indicator {
-      ${verticalBorder({ height: '100vh', width: '4px', offset: '-4px' })}
+      ${verticalBorder({ height: '100vh', width: '4px' })}
     }
   }
 `

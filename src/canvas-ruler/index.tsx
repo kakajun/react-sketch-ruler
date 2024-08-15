@@ -1,4 +1,4 @@
-import { memo, useRef, useEffect, useState, useCallback, MouseEvent } from 'react'
+import { memo, useRef, useEffect, useState, MouseEvent, useMemo } from 'react'
 import { drawCanvasRuler } from './utils'
 import type { CanvasProps } from '../index-types'
 const CanvasRuler = ({
@@ -17,9 +17,7 @@ const CanvasRuler = ({
   onDragStart
 }: CanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
-
   const [canvasContext, setCanvasContext] = useState<CanvasRenderingContext2D | null>(null)
-
   useEffect(() => {
     if (canvasRef.current) {
       const ctx = canvasRef.current.getContext('2d')
@@ -70,14 +68,14 @@ const CanvasRuler = ({
     vertical
   ])
 
-  const rulerStyle = {
-    cursor: vertical ? 'ew-resize' : 'ns-resize',
-    [vertical ? 'borderRight' : 'borderBottom']: `1px solid ${palette.borderColor || '#eeeeef'}`
-  }
+  const rulerStyle = useMemo(() => {
+    return {
+      cursor: vertical ? 'ew-resize' : 'ns-resize',
+      [vertical ? 'borderRight' : 'borderBottom']: `1px solid ${palette.borderColor || '#eeeeef'}`
+    }
+  }, [vertical, palette.borderColor])
 
-  const handleDragStart = useCallback((e: MouseEvent<HTMLCanvasElement>) => {
-    onDragStart(e)
-  }, [])
+  const handleDragStart = (e: MouseEvent<HTMLCanvasElement>) => onDragStart(e)
   return (
     <canvas ref={canvasRef} className="ruler" style={rulerStyle} onMouseDown={handleDragStart} />
   )

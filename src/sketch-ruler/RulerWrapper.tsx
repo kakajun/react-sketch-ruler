@@ -1,9 +1,8 @@
-import { useState, useEffect, useMemo, useCallback } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import RulerLine from './RulerLine'
 import CanvasRuler from '../canvas-ruler/index'
 import useLine from './useLine'
 import type { RulerWrapperProps } from '../index-types'
-
 const RulerComponent = ({
   scale,
   thick,
@@ -59,10 +58,6 @@ const RulerComponent = ({
     let gepKey = vertical ? 'top' : 'left'
     let boderKey = vertical ? 'borderLeft' : 'borderBottom'
     const offsetPx = (startValue - startOther) * scale + thick
-    console.log('startValue', startValue)
-    console.log('offsetPx', offsetPx)
-    console.log('startOther', startOther)
-    console.log('positionKey', positionKey)
     return {
       [positionKey]: offsetPx + 'px',
       [gepKey]: -thick + 'px',
@@ -71,22 +66,17 @@ const RulerComponent = ({
     }
   }, [startValue, startOther, vertical, palette.lineType, scale, palette.lineColor, thick])
 
-  const mousedown = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      setIsDragle(true)
-      setIsLockLine(false)
-      let tempStartValue = Math.round(startOther - thick / 2)
-      setStartValue(tempStartValue)
-      console.log('startOther', startOther)
-      console.log('tempStartValue', tempStartValue)
-    },
-    [startOther, thick] // 添加 startOther 和 thick 到依赖数组
-  )
-
-  useEffect(() => {
-    console.log(startOther, 'startOther useEffect')
-    console.log(start, 'start')
-  }, [startOther])
+  const mousedown = async (e: React.MouseEvent<HTMLDivElement>) => {
+    const { offsetX, offsetY } = e.nativeEvent as MouseEvent
+    setIsDragle(true)
+    setIsLockLine(false)
+    let tempStartValue = Math.round(
+      startOther - thick / scale + (vertical ? offsetX : offsetY) / scale
+    )
+    setStartValue(tempStartValue)
+    await handleMouseDown(e, tempStartValue)
+    setIsDragle(false)
+  }
 
   useEffect(() => {
     setIsLockLine(lockLine)
