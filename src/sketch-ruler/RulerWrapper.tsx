@@ -23,10 +23,10 @@ const RulerComponent = ({
   snapsObj,
   gridRatio,
   lockLine,
-  propStyle
+  propStyle,
+  handleLine
 }: RulerWrapperProps) => {
   const [isLockLine, setIsLockLine] = useState(lockLine)
-  const [localLines, setLocalLines] = useState(lines)
   const [isdragle, setIsDragle] = useState(false)
   const [showLabel, setShowLabel] = useState(false)
   const { actionStyle, handleMouseMove, handleMouseDown, labelContent, startValue } = useLine(
@@ -39,20 +39,17 @@ const RulerComponent = ({
       canvasHeight,
       snapThreshold,
       lockLine: isLockLine,
-      rate
+      rate,
+      handleLine
     },
-    !vertical,
-    setLocalLines
+    !vertical
   )
-  useEffect(() => {
-    setLocalLines(lines)
-  }, [lines])
 
   const rwClassName = vertical ? 'v-container' : 'h-container'
 
   const cpuLines = useMemo(() => {
-    return vertical ? localLines.h : localLines.v
-  }, [vertical, localLines])
+    return vertical ? lines.h : lines.v
+  }, [vertical, lines])
 
   const indicatorStyle = useMemo(() => {
     const lineType = palette.lineType

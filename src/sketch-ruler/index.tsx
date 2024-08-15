@@ -62,9 +62,10 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       selfHandle = false,
       panzoomOption,
       children,
-      onCornerClick,
-      onUpdateScale,
-      onZoomChange
+      onHandleCornerClick,
+      updateScale,
+      onZoomChange,
+      handleLine
     }: SketchRulerProps,
     ref
   ) => {
@@ -95,7 +96,8 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       gridRatio,
       lockLine,
       scale: ownScale,
-      changeLineState: changeLineState
+      changeLineState,
+      handleLine
     }
 
     const cornerStyle = {
@@ -195,8 +197,8 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       const detail = e.detail as PanzoomEventDetail
       const { scale: newScale, dimsOut } = detail
       if (dimsOut) {
-        if (onUpdateScale) {
-          onUpdateScale(newScale)
+        if (updateScale) {
+          updateScale(newScale)
         }
 
         setOwnScale(newScale)
@@ -231,8 +233,8 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
 
     const handleCornerClick = () => {
       setShowReferLine(!showReferLine)
-      if (onCornerClick) {
-        onCornerClick(!showReferLine)
+      if (onHandleCornerClick) {
+        onHandleCornerClick(!showReferLine)
       }
     }
     // 使用 useImperativeHandle 来暴露这些方法

@@ -12,12 +12,12 @@ interface Props {
   rate: number
   value?: number
   index?: number
+  handleLine: Fn
 }
 
 export default function useLine(
   props: Props,
-  vertical: boolean,
-  setLocalLines?: (lines: LineType) => void
+  vertical: boolean
 ) {
   const [offsetLine, setOffsetLine] = useState(0)
   const startValue = useRef<number>(props.value || 0)
@@ -75,11 +75,7 @@ export default function useLine(
     if (isOutOfRange) {
       if (typeof index === 'number') {
         linesArrs.splice(index, 1)
-        if (setLocalLines) {
-          console.log('删除了')
-
-          setLocalLines(props.lines)
-        }
+        props.handleLine(props.lines)
       } else {
         return // 新增越界,什么也不做
       }

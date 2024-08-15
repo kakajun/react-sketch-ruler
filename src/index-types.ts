@@ -62,9 +62,10 @@ export interface SketchRulerProps {
   selfHandle?: boolean
   panzoomOption?: object // 需要具体类型，这里假设为object
   children: React.ReactNode
-  onUpdateScale?: (props: number) => void
+  updateScale?: (props: number) => void
   onZoomChange?: (props: PanzoomEventDetail) => void
-  onCornerClick?: (props: boolean) => void
+  onHandleCornerClick?: (props: boolean) => void
+  handleLine?: (props: LineType) => void
 }
 
 export interface RulerWrapperProps {
@@ -88,6 +89,7 @@ export interface RulerWrapperProps {
   lockLine: boolean
   isShowReferLine: boolean
   changeLineState: Fn
+  handleLine: Fn
   propStyle: React.CSSProperties
 }
 

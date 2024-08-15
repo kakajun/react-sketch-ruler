@@ -119,10 +119,10 @@ import 'react-sketch-ruler/lib/style.css'
 
 ### Event
 
-| 事件名称      | 描述              | 回调参数                                                    |
-| ------------- | ----------------- | ----------------------------------------------------------- |
-| onCornerClick | 左上角点击事件    |                                                             |
-| zoomchange    | 画布移动,缩放事件 | {dimsOut:{elem: {}, parent: {}},originalEvent:{},scale,x,y} |
+| 事件名称 | 描述 | 回调参数 |
+| --- | --- | --- |
+| handleCornerClick | 左上角点击事件 |  |
+| zoomchange | 画布移动,缩放事件 | {dimsOut:{elem: {}, parent: {}},originalEvent:{},scale,x,y} |
 
 ### 使用说明
 

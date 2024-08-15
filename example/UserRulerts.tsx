@@ -9,7 +9,6 @@ const DemoComponent = () => {
   const [rectHeight] = useState(472)
   const [canvasWidth] = useState(1920)
   const [canvasHeight] = useState(1080)
-  const [rendIndex, setRendIndex] = useState(0)
   const sketchruleRef = useRef(null)
   const [showRuler, setShowRuler] = useState(true)
   const [panzoomOption, setPanzoomOption] = useState({
@@ -64,7 +63,10 @@ const DemoComponent = () => {
 
   const changeTheme = () => {
     setState((prevState) => ({ ...prevState, isBlack: !prevState.isBlack }))
-    setRendIndex((prevIndex) => prevIndex + 1)
+  }
+
+  const handleLine = (lines: Record<'h' | 'v', number[]>) => {
+    setState((prevState) => ({ ...prevState, lines }))
   }
 
   const zoomOutMethod = () => {
@@ -105,7 +107,7 @@ const DemoComponent = () => {
   const changeScale = (e: { target: { checked: boolean } }) => {
     setPanzoomOption((prevState) => ({ ...prevState, disableZoom: e.target.checked }))
   }
-  const onUpdateScale = (scale: number) => {
+  const updateScale = (scale: number) => {
     setState((prevState) => ({ ...prevState, scale }))
   }
 
@@ -194,7 +196,7 @@ const DemoComponent = () => {
           />
 
           <a
-            href="https://github.com/kakajun/vue3-sketch-ruler"
+            href="https://github.com/kakajun/react-sketch-ruler"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -204,7 +206,6 @@ const DemoComponent = () => {
 
         <Wrapper style={rectStyle}>
           <SketchRule
-            key={rendIndex}
             scale={state.scale}
             lockLine={lockLine}
             thick={state.thick}
@@ -219,8 +220,9 @@ const DemoComponent = () => {
             panzoomOption={panzoomOption}
             ref={sketchruleRef}
             isShowReferLine={state.isShowReferLine}
-            onCornerClick={handleCornerClick}
-            onUpdateScale={onUpdateScale}
+            onHandleCornerClick={handleCornerClick}
+            updateScale={updateScale}
+            handleLine={handleLine}
             lines={state.lines}
           >
             <div slot="default" data-type="page" style={canvasStyle}>
