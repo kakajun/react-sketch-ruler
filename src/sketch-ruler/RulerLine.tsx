@@ -68,7 +68,7 @@ const LineComponent = ({
   useEffect(() => {
     setIsInscale(true)
     deactivateAfterDelay()
-  }, [scale, deactivateAfterDelay])
+  }, [scale])
 
   useEffect(() => {
     setStartValue(value)

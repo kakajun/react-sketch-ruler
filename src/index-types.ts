@@ -89,7 +89,7 @@ export interface RulerWrapperProps {
   lockLine: boolean
   isShowReferLine: boolean
   changeLineState: Fn
-  handleLine: Fn
+  handleLine?: (props: LineType) => void
   propStyle: React.CSSProperties
 }
 
@@ -108,7 +108,7 @@ export interface LineProps {
   scale: number
   value: number
   lockLine: boolean
-  handleLine: Fn
+  handleLine?: (props: LineType) => void
 }
 
 export interface CanvasProps {

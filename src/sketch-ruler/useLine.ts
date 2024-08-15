@@ -12,7 +12,7 @@ interface Props {
   rate: number
   value?: number
   index?: number
-  handleLine: Fn
+  handleLine?: (props: LineType) => void
 }
 
 export default function useLine(props: Props, vertical: boolean) {
@@ -71,14 +71,14 @@ export default function useLine(props: Props, vertical: boolean) {
     if (isOutOfRange) {
       if (typeof index === 'number') {
         linesArrs.splice(index, 1)
-        props.handleLine(props.lines)
+        props.handleLine && props.handleLine(props.lines)
       } else {
         return // 新增越界,什么也不做
       }
     }
     if (typeof index !== 'number') {
       linesArrs.push(value)
-      props.handleLine(props.lines)
+      props.handleLine && props.handleLine(props.lines)
     }
   }
 
