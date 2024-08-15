@@ -47,7 +47,7 @@ const LineComponent = ({
     const cursor = isShowReferLine && !lockLine ? (vertical ? 'ns-resize' : 'ew-resize') : 'default'
     const borderProperty = vertical ? 'borderTop' : 'borderLeft'
     const offsetPx = (startValue.current - start) * scale
-    console.log('combinedStyle变化')
+    // console.log('combinedStyle变化', startValue.current)
 
     return {
       [borderProperty]: `1px ${lineType} ${borderColor}`,

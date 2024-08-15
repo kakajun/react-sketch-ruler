@@ -76,8 +76,8 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     const [ownScale, setOwnScale] = useState(1)
     const [showReferLine, setShowReferLine] = useState(isShowReferLine)
     const [panzoomInstance, setPanzoomInstance] = useState<PanzoomObject | null>(null)
-    const rectWidth = width - thick
-    const rectHeight = height - thick
+    const rectWidth = useMemo(() => width - thick, [width, thick])
+    const rectHeight = useMemo(() => height - thick, [height, thick])
     const changeLineState = () => {
       // onUpdateLockLine(val);
     }
@@ -282,6 +282,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
           <RulerWrapper
             {...commonProps}
             width={width!}
+            propStyle={{ marginLeft: thick + 'px', width: rectWidth + 'px' }}
             height={thick!}
             start={startX!}
             startOther={startY!}
@@ -294,6 +295,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
         {showRuler && (
           <RulerWrapper
             {...commonProps}
+            propStyle={{ marginTop: thick + 'px', top: 0, height: rectHeight + 'px' }}
             width={thick!}
             height={height!}
             start={startY!}

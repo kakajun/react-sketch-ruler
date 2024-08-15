@@ -22,7 +22,8 @@ const RulerComponent = ({
   snapThreshold,
   snapsObj,
   gridRatio,
-  lockLine
+  lockLine,
+  propStyle
 }: RulerWrapperProps) => {
   const [isLockLine, setIsLockLine] = useState(lockLine)
   const [localLines, setLocalLines] = useState(lines)
@@ -85,7 +86,7 @@ const RulerComponent = ({
   }, [lockLine])
 
   return (
-    <div className={rwClassName}>
+    <div className={rwClassName} style={propStyle}>
       <CanvasRuler
         vertical={vertical}
         scale={scale}
@@ -130,7 +131,7 @@ const RulerComponent = ({
           onMouseEnter={() => setShowLabel(true)}
           onMouseMove={handleMouseMove}
           onMouseLeave={() => setShowLabel(false)}
-          // hidden={!isdragle}
+          hidden={!isdragle}
           style={indicatorStyle}
         >
           <div className="action" style={actionStyle}>

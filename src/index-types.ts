@@ -88,6 +88,7 @@ export interface RulerWrapperProps {
   lockLine: boolean
   isShowReferLine: boolean
   changeLineState: Fn
+  propStyle: React.CSSProperties
 }
 
 export interface LineProps {
