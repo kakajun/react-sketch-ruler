@@ -29,20 +29,22 @@ const RulerComponent = ({
   const [isLockLine, setIsLockLine] = useState(lockLine)
   const [isdragle, setIsDragle] = useState(false)
   const [showLabel, setShowLabel] = useState(false)
-  const { actionStyle, handleMouseMove, handleMouseDown, labelContent, startValue } = useLine(
-    {
-      palette,
-      scale,
-      snapsObj,
-      lines,
-      canvasWidth,
-      canvasHeight,
-      snapThreshold,
-      lockLine: isLockLine,
-      rate
-    },
-    !vertical
-  )
+  const { actionStyle, handleMouseMove, handleMouseDown, labelContent, startValue, setStartValue } =
+    useLine(
+      {
+        palette,
+        scale,
+        snapsObj,
+        lines,
+        canvasWidth,
+        canvasHeight,
+        snapThreshold,
+        lockLine: isLockLine,
+        rate,
+        handleLine
+      },
+      !vertical
+    )
 
   const rwClassName = vertical ? 'v-container' : 'h-container'
 
@@ -55,7 +57,7 @@ const RulerComponent = ({
     let positionKey = vertical ? 'left' : 'top'
     let gepKey = vertical ? 'top' : 'left'
     let boderKey = vertical ? 'borderLeft' : 'borderBottom'
-    const offsetPx = (startValue.current - startOther) * scale + thick
+    const offsetPx = (startValue - startOther) * scale + thick
     console.log('offsetPx', offsetPx)
     console.log('startOther', startOther)
     console.log('positionKey', positionKey)
@@ -65,12 +67,12 @@ const RulerComponent = ({
       cursor: vertical ? 'ew-resize' : 'ns-resize',
       [boderKey]: `1px ${lineType} ${palette.lineColor}`
     }
-  }, [startValue.current, startOther, vertical, palette.lineType, scale, palette.lineColor, thick])
+  }, [startValue, startOther, vertical, palette.lineType, scale, palette.lineColor, thick])
 
   const mousedown = (e: React.MouseEvent<HTMLDivElement>) => {
     setIsDragle(true)
     setIsLockLine(false)
-    startValue.current = Math.round(startOther - thick / 2)
+    setStartValue(Math.round(startOther - thick / 2))
     setTimeout(async () => {
       await handleMouseDown(e)
       setIsDragle(false)

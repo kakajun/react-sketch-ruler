@@ -1,4 +1,4 @@
-import { useState, useRef, MouseEventHandler, useEffect } from 'react'
+import { useState, MouseEventHandler } from 'react'
 import type { PaletteType, LineType } from '../index-types'
 interface Props {
   palette: PaletteType
@@ -12,16 +12,12 @@ interface Props {
   rate: number
   value?: number
   index?: number
-  handleLine?: Fn
+  handleLine: Fn
 }
 
-export default function useLine(
-  props: Props,
-  vertical: boolean
-) {
+export default function useLine(props: Props, vertical: boolean) {
   const [offsetLine, setOffsetLine] = useState(0)
-  const startValue = useRef<number>(props.value || 0)
-
+  const [startValue, setStartValue] = useState(0)
   const actionStyle = {
     backgroundColor: props.palette.hoverBg,
     color: props.palette.hoverColor,
@@ -39,7 +35,7 @@ export default function useLine(
     return new Promise<void>((resolve) => {
       if (props.lockLine) return
       const startPosition = vertical ? e.clientY : e.clientX
-      const initialValue = startValue.current
+      const initialValue = startValue
       const moveHandler = (e: MouseEvent) => {
         const currentPosition = vertical ? e.clientY : e.clientX
         const delta = (currentPosition - startPosition) / props.scale
@@ -56,11 +52,11 @@ export default function useLine(
           guidePos = guideSnaps[0]
           nextPos = guidePos
         }
-        startValue.current = Math.round(nextPos)
+        setStartValue(Math.round(nextPos))
       }
       const mouseUpHandler = () => {
         document.removeEventListener('mousemove', moveHandler)
-        handleLineRelease(startValue.current, props.index)
+        handleLineRelease(startValue, props.index)
         resolve()
       }
 
@@ -82,6 +78,7 @@ export default function useLine(
     }
     if (typeof index !== 'number') {
       linesArrs.push(value)
+      props.handleLine(props.lines)
     }
   }
 
@@ -90,12 +87,13 @@ export default function useLine(
     return value < 0 || value > maxOffset
   }
 
-  const labelContent = checkBoundary(startValue.current)
+  const labelContent = checkBoundary(startValue)
     ? '放开删除'
-    : `${vertical ? 'Y' : 'X'}: ${startValue.current * props.rate}`
+    : `${vertical ? 'Y' : 'X'}: ${startValue * props.rate}`
 
   return {
     startValue,
+    setStartValue,
     actionStyle,
     labelContent,
     handleMouseMove,
