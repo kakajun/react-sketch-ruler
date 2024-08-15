@@ -1,7 +1,12 @@
 # react-sketch-ruler
->In using vue3, the zoom operation used for page presentation
 
-[![](https://camo.githubusercontent.com/28479a7a834310a667f36760a27283f7389e864a/68747470733a2f2f696d672e736869656c64732e696f2f6e706d2f6c2f76322d646174657069636b65722e737667)](https://camo.githubusercontent.com/28479a7a834310a667f36760a27283f7389e864a/68747470733a2f2f696d672e736869656c64732e696f2f6e706d2f6c2f76322d646174657069636b65722e737667) [![build status](https://github.com/kakajun/react-sketch-ruler/actions/workflows/gh-pages.yml/badge.svg?branch=master)](https://github.com/kakajun/react-sketch-ruler/actions/workflows/gh-pages.yml)
+> In using react, the zoom operation used for page presentation
+
+[![](https://camo.githubusercontent.com/28479a7a834310a667f36760a27283f7389e864a/68747470733a2f2f696d672e736869656c64732e696f2f6e706d2f6c2f76322d646174657069636b65722e737667)](https://camo.githubusercontent.com/28479a7a834310a667f36760a27283f7389e864a/68747470733a2f2f696d672e736869656c64732e696f2f6e706d2f6c2f76322d646174657069636b65722e737667) [![build status](https://github.com/kakajun/react-sketch-ruler/actions/workflows/gh-pages.yml/badge.svg?branch=main)](https://github.com/kakajun/react-sketch-ruler/actions/workflows/gh-pages.yml)
+
+<div align=center>
+<img src="https://github.com/kakajun/rect-sketch-ruler/blob/main/example/assets/logo.png" width="392" height="300">
+</div>
 
 ## 🚀 Features
 
@@ -22,10 +27,9 @@
 
 [GoView 2X 应用源码地址](https://gitee.com/majun2232/go-view)
 
-
 ## 🦄 demo
 
-案例浏览: [https://kakajun.github.io/react-sketch-ruler](https://kakajun.github.io/react-sketch-ruler) ![image](https://github.com/kakajun/react-sketch-ruler/blob/master/example/assets/1.png)
+案例浏览: [https://kakajun.github.io/react-sketch-ruler](https://kakajun.github.io/react-sketch-ruler) ![image](https://github.com/kakajun/react-sketch-ruler/blob/main/example/assets/1.png)
 
 ## 安装
 
@@ -63,12 +67,12 @@ import 'react-sketch-ruler/lib/style.css'
 - [x] 选中阴影阴影响应
 
 ## 未来支持功能
+
 - [] 加入单元测试功能
 
 这是个开源业余做的功能，有兴趣加强该插件的小伙伴欢迎加入，也欢迎大家提pr或者issue
 
-
-参考一个完整的例子，[点击这里](https://github.com/kakajun/react-sketch-ruler/blob/master/example/components/user-rulerts.vue)
+参考一个完整的例子，[点击这里](https://github.com/kakajun/react-sketch-ruler/blob/main/example/UserRulerts.tsx)
 
 ## api
 
@@ -128,25 +132,25 @@ import 'react-sketch-ruler/lib/style.css'
 4. 具体操作参见我插件里面的监听移动和缩放方法
 
 ```js
-const panzoomInstance = sketchruleRef.value.panzoomInstance
+const panzoomInstance = sketchruleRef.panzoomInstance
 
 document.addEventListener('wheel', function (e) {
   if (e.ctrlKey || e.metaKey) {
-    panzoomInstance.value?.zoomWithWheel(e)
+    panzoomInstance.zoomWithWheel(e)
   }
 })
 
 // 让按下空格键才能移动画布
 document.addEventListener('keydown', function (e) {
   if (e.key === ' ') {
-    panzoomInstance.value?.bind()
+    panzoomInstance.bind()
     e.preventDefault()
   }
 })
 
 document.addEventListener('keyup', function (e) {
   if (e.key === ' ') {
-    panzoomInstance.value?.destroy()
+    panzoomInstance.destroy()
   }
 })
 ```
@@ -158,6 +162,22 @@ document.addEventListener('keyup', function (e) {
 | reset    | 画布重置位置 |          |
 | zoomIn   | 画布放大     |          |
 | zoomIn   | 画布缩小     |          |
+
+### QQ 技术交流群：
+欢迎大家一起参与插件建设
+
+<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=oqnBX-qn7gkWsdfYQdvNCzYbkeNknuOc&jump_from=webapi&authKey=4YXd2jvmWYU0cN8zUky5DoCD6kz+fjUyWv782GLUjDEIHctXYviSXD/pbqxm/ZDD"><img border="0" src="https://github.com/kakajun/react-sketch-ruler/blob/main/example/assets/group.png" alt="react-sketch-ruler" title="点击这里加入QQ群640166628"></a>
+
+<div align=center>
+<img src="https://github.com/kakajun/react-sketch-ruler/blob/main/example/assets/qq.png" width="243" height="287">
+</div>
+
+## 贡献者
+
+<a href="https://github.com/kakajun/react-sketch-ruler/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=kakajun/react-sketch-ruler" />
+</a>
+
 ## 引用
 
 vue3标尺组件 [vue3-sketch-ruler](https://github.com/kakajun/vue3-sketch-ruler)

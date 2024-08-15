@@ -49,7 +49,10 @@ export default function useLine(
         const guideSnaps = [...snaps].sort(
           (a, b) => Math.abs(guidePos - a) - Math.abs(guidePos - b)
         )
-        if (guideSnaps.length && Math.abs(guideSnaps[0] - nextPos) < props.snapThreshold) {
+        if (
+          guideSnaps.length &&
+          Math.abs(guideSnaps[0] - nextPos) < props.snapThreshold / props.scale
+        ) {
           guidePos = guideSnaps[0]
           nextPos = guidePos
         }
@@ -67,7 +70,6 @@ export default function useLine(
   }
 
   const handleLineRelease = (value: number, index?: number) => {
-
     const linesArrs = vertical ? props.lines.h : props.lines.v
     const isOutOfRange = checkBoundary(value)
     if (isOutOfRange) {
