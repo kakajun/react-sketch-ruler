@@ -138,12 +138,11 @@ const DemoComponent = () => {
         bgColor: 'transparent',
         hoverBg: '#fff',
         hoverColor: '#000',
-        longfgColor: '#BABBBC',
-        fontColor: '#DEDEDE',
-        shadowColor: '#525252',
+        longfgColor: '#BABBBC', // ruler longer mark color
+        fontColor: '#DEDEDE', // ruler font color
+        shadowColor: '#525252', // ruler shadow color
         lineColor: '#51d6a9',
-        borderColor: '#B5B5B5',
-        cornerActiveColor: '#fff'
+        borderColor: '#B5B5B5'
       }
     : {
         bgColor: 'transparent',
@@ -204,7 +203,7 @@ const DemoComponent = () => {
           </a>
         </Top>
 
-        <Wrapper style={rectStyle}>
+        <Wrapper style={rectStyle} className={state.isBlack ? 'balckwrapper' : 'whitewrapper'}>
           <SketchRule
             scale={state.scale}
             lockLine={lockLine}

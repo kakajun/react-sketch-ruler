@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from 'styled-components'
 
 const Demo = styled.div`
   width: 100%;
@@ -6,7 +6,17 @@ const Demo = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-`;
+  .whitewrapper {
+    background-color: #fafafc;
+    background-image: linear-gradient(#fafafc 20px, transparent 0),
+      linear-gradient(90deg, transparent 20px, #373739 0);
+  }
+  .balckwrapper {
+    background-color: #18181c;
+    background-image: linear-gradient(#18181c 20px, transparent 0),
+      linear-gradient(90deg, transparent 20px, #86909c 0);
+  }
+`
 
 const Top = styled.div`
   display: flex;
@@ -14,30 +24,25 @@ const Top = styled.div`
   justify-content: center;
   width: 100%;
   font-size: 20px;
-`;
-
+`
 
 const Button = styled.button`
- font-size: 18px;
- margin-right: 10px;
-`;
-
+  font-size: 18px;
+  margin-right: 10px;
+`
 
 const Wrapper = styled.div`
   margin: 0 auto;
-  background-color: #fafafc;
-  background-image: linear-gradient(#fafafc 20px, transparent 0),
-    linear-gradient(90deg, transparent 20px, #373739 0);
   background-size:
     21px 21px,
     21px 21px;
   border: 1px solid #dadadc;
-`;
+`
 
 const ImgStyle = styled.img`
   width: 100%;
   height: 100%;
-`;
+`
 
 const Btns = styled.div`
   position: absolute;
@@ -45,7 +50,7 @@ const Btns = styled.div`
   bottom: 20px;
   right: 40px;
   z-index: 999;
-`;
+`
 
 const Switch = styled.input.attrs({ type: 'checkbox' })`
   outline: none;
@@ -57,7 +62,9 @@ const Switch = styled.input.attrs({ type: 'checkbox' })`
   height: 20px;
   background: #ccc;
   border-radius: 10px;
-  transition: border-color 0.3s, background-color 0.3s;
+  transition:
+    border-color 0.3s,
+    background-color 0.3s;
 
   &::after {
     content: '';
@@ -83,16 +90,6 @@ const Switch = styled.input.attrs({ type: 'checkbox' })`
     left: 55%;
     top: 2px;
   }
-`;
+`
 
-
-
-export {
-  Demo,
-  Top,
-  Button,
-  Wrapper,
-  ImgStyle,
-  Btns,
-  Switch
-};
+export { Demo, Top, Button, Wrapper, ImgStyle, Btns, Switch }

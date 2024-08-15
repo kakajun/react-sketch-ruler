@@ -31,11 +31,12 @@ export default function useLine(props: Props, vertical: boolean) {
     setOffsetLine(vertical ? offsetX : offsetY)
   }
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>, propValue?: number) => {
     return new Promise<void>((resolve) => {
       if (props.lockLine) return
       const startPosition = vertical ? e.clientY : e.clientX
-      const initialValue = startValue
+      const initialValue = propValue || startValue
+      let tempStartValue = initialValue
       const moveHandler = (e: MouseEvent) => {
         const currentPosition = vertical ? e.clientY : e.clientX
         const delta = (currentPosition - startPosition) / props.scale
@@ -52,11 +53,12 @@ export default function useLine(props: Props, vertical: boolean) {
           guidePos = guideSnaps[0]
           nextPos = guidePos
         }
+        tempStartValue = Math.round(nextPos)
         setStartValue(Math.round(nextPos))
       }
       const mouseUpHandler = () => {
         document.removeEventListener('mousemove', moveHandler)
-        handleLineRelease(startValue, props.index)
+        handleLineRelease(tempStartValue, props.index)
         resolve()
       }
 
