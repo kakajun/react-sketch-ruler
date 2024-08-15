@@ -17,7 +17,8 @@ const LineComponent = ({
   isShowReferLine,
   snapThreshold,
   snapsObj,
-  lockLine
+  lockLine,
+  handleLine
 }: LineProps) => {
   const [showLabel, setShowLabel] = useState(false)
   const [isInscale, setIsInscale] = useState(false)
@@ -33,7 +34,8 @@ const LineComponent = ({
       lockLine,
       index,
       value,
-      rate
+      rate,
+      handleLine
     },
     vertical
   )

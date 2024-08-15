@@ -12,7 +12,7 @@ interface Props {
   rate: number
   value?: number
   index?: number
-  handleLine: Fn
+  handleLine?: Fn
 }
 
 export default function useLine(

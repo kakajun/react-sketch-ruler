@@ -108,6 +108,7 @@ export interface LineProps {
   scale: number
   value: number
   lockLine: boolean
+  handleLine: Fn
 }
 
 export interface CanvasProps {

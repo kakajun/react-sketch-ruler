@@ -39,8 +39,7 @@ const RulerComponent = ({
       canvasHeight,
       snapThreshold,
       lockLine: isLockLine,
-      rate,
-      handleLine
+      rate
     },
     !vertical
   )
@@ -117,6 +116,7 @@ const RulerComponent = ({
               palette={palette}
               vertical={vertical}
               isShowReferLine={isShowReferLine}
+              handleLine={handleLine}
               rate={rate}
             />
           ))}
