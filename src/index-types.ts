@@ -1,5 +1,5 @@
 import type { PanzoomObject, PanzoomEventDetail } from 'simple-panzoom'
-import React, { MutableRefObject } from 'react'
+import { MutableRefObject } from 'react'
 export interface PaletteType {
   bgColor?: string
   longfgColor?: string
@@ -124,7 +124,7 @@ export interface CanvasProps {
   selectStart: number
   gridRatio: number
   selectLength: number
-  onDragStart: Fn
+  onDragStart: (e: React.MouseEvent<HTMLDivElement>) => Promise<void>
 }
 
 export interface SketchRulerMethods {
