@@ -5,8 +5,10 @@ import bgImg from './assets/bg.png'
 import { Demo, Top, Button, Wrapper, ImgStyle, Btns, Switch } from './styles'
 
 const DemoComponent = () => {
-  const [rectWidth] = useState(770)
-  const [rectHeight] = useState(472)
+  // const [rectWidth] = useState(770)
+  // const [rectHeight] = useState(472)
+  const [rectWidth] = useState(1470)
+  const [rectHeight] = useState(800)
   const [canvasWidth] = useState(1920)
   const [canvasHeight] = useState(1080)
   const sketchruleRef = useRef(null)
@@ -84,7 +86,7 @@ const DemoComponent = () => {
     if (value) {
       setState((prevState) => ({ ...prevState, scale: Number(value) }))
       if (sketchruleRef.current) {
-        ;(sketchruleRef.current as SketchRulerMethods).panzoomInstance?.zoom(Number(value))
+        ;(sketchruleRef.current as SketchRulerMethods).panzoomInstance.current?.zoom(Number(value))
       }
     }
   }

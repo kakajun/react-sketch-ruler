@@ -1,4 +1,5 @@
 import type { PanzoomObject, PanzoomEventDetail } from 'simple-panzoom'
+import React, { MutableRefObject } from 'react'
 export interface PaletteType {
   bgColor?: string
   longfgColor?: string
@@ -88,7 +89,6 @@ export interface RulerWrapperProps {
   selectLength: number
   lockLine: boolean
   isShowReferLine: boolean
-  changeLineState: Fn
   handleLine?: (props: LineType) => void
   propStyle: React.CSSProperties
 }
@@ -132,5 +132,5 @@ export interface SketchRulerMethods {
   zoomIn: () => void
   zoomOut: () => void
   initPanzoom: () => void
-  panzoomInstance: PanzoomObject | null
+  panzoomInstance: MutableRefObject<PanzoomObject | null>
 }

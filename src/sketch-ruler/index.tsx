@@ -1,7 +1,7 @@
 import { eye64, closeEye64 } from './cornerImg64'
 import Panzoom from 'simple-panzoom'
 import type { PanzoomObject, PanzoomEventDetail } from 'simple-panzoom'
-import React, { useState, useEffect, useMemo, useImperativeHandle } from 'react'
+import React, { useState, useEffect, useMemo, useImperativeHandle, useRef } from 'react'
 import { StyledRuler } from './styles'
 import RulerWrapper from './RulerWrapper'
 import type { SketchRulerProps, PaletteType, SketchRulerMethods } from '../index-types'
@@ -77,12 +77,9 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     let zoomStartY = 0
     const [ownScale, setOwnScale] = useState(1)
     const [showReferLine, setShowReferLine] = useState(isShowReferLine)
-    const [panzoomInstance, setPanzoomInstance] = useState<PanzoomObject | null>(null)
+    const panzoomInstance = useRef<PanzoomObject | null>(null)
     const rectWidth = useMemo(() => width - thick, [width, thick])
     const rectHeight = useMemo(() => height - thick, [height, thick])
-    const changeLineState = () => {
-      // onUpdateLockLine(val);
-    }
 
     const commonProps = {
       thick,
@@ -97,7 +94,6 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       gridRatio,
       lockLine,
       scale: ownScale,
-      changeLineState,
       handleLine
     }
 
@@ -123,17 +119,17 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
 
     const handleWheel = (e: WheelEvent) => {
       if (e.ctrlKey || e.metaKey) {
-        if (panzoomInstance) {
-          panzoomInstance.zoomWithWheel(e)
+        if (panzoomInstance.current) {
+          panzoomInstance.current.zoomWithWheel(e)
         }
       }
     }
 
     const handleSpaceKeyDown = (e: KeyboardEvent) => {
       if (e.key === ' ') {
-        if (panzoomInstance) {
+        if (panzoomInstance.current) {
           setCursorClass('grabCursor')
-          panzoomInstance.bind()
+          panzoomInstance.current.bind()
         }
         e.preventDefault()
       }
@@ -141,16 +137,10 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
 
     const handleSpaceKeyUp = (e: KeyboardEvent) => {
       if (e.key === ' ') {
-        if (panzoomInstance) {
-          panzoomInstance.destroy()
+        if (panzoomInstance.current) {
+          panzoomInstance.current.destroy()
         }
       }
-    }
-
-    if (!selfHandle) {
-      document.addEventListener('wheel', handleWheel, { passive: false })
-      document.addEventListener('keydown', handleSpaceKeyDown)
-      document.addEventListener('keyup', handleSpaceKeyUp)
     }
 
     const getPanOptions = (scale: number) => ({
@@ -168,14 +158,14 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       const detail = e.detail as PanzoomEventDetail
       const { scale: newScale, dimsOut } = detail
       if (dimsOut) {
-        setOwnScale(newScale)
+        const tempScale = Number(newScale.toFixed(2))
+        setOwnScale(tempScale)
         if (updateScale) {
-          updateScale(newScale)
+          updateScale(tempScale)
         }
-        const left = (dimsOut.parent.left - dimsOut.elem.left) / newScale
-        const top = (dimsOut.parent.top - dimsOut.elem.top) / newScale
+        const left = (dimsOut.parent.left - dimsOut.elem.left) / tempScale
+        const top = (dimsOut.parent.top - dimsOut.elem.top) / tempScale
         setStartX(left)
-        console.log(left, 'startX.value')
         if (onZoomChange) {
           onZoomChange(detail)
         }
@@ -194,7 +184,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
         }
       }
       const panzoom = Panzoom(elem as HTMLElement, getPanOptions(tempScale))
-      setPanzoomInstance(panzoom)
+      panzoomInstance.current = panzoom
       if (elem) {
         elem.addEventListener('panzoomchange', handlePanzoomChange)
       }
@@ -222,10 +212,11 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       return scale
     }
 
-    const reset = () => panzoomInstance?.reset()
-    const zoomIn = () => panzoomInstance?.zoomIn()
-    const zoomOut = () => panzoomInstance?.zoomOut()
-    const setOtions = (obj?: any) => panzoomInstance?.setOptions(obj || getPanOptions(ownScale))
+    const reset = () => panzoomInstance.current?.reset()
+    const zoomIn = () => panzoomInstance.current?.zoomIn()
+    const zoomOut = () => panzoomInstance.current?.zoomOut()
+    const setOtions = (obj?: any) =>
+      panzoomInstance.current?.setOptions(obj || getPanOptions(ownScale))
 
     const handleCornerClick = () => {
       setShowReferLine(!showReferLine)
@@ -248,6 +239,17 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
 
     useEffect(() => {
       initPanzoom()
+      if (!selfHandle) {
+        document.addEventListener('wheel', handleWheel, { passive: false })
+        document.addEventListener('keydown', handleSpaceKeyDown)
+        document.addEventListener('keyup', handleSpaceKeyUp)
+      }
+      // 清理函数，用于移除监听器
+      return () => {
+        document.removeEventListener('wheel', handleWheel)
+        document.removeEventListener('keydown', handleSpaceKeyDown)
+        document.removeEventListener('keyup', handleSpaceKeyUp)
+      }
     }, [canvasWidth, canvasHeight, width, height])
 
     useEffect(() => {
@@ -255,8 +257,8 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     }, [panzoomOption])
 
     useEffect(() => {
-      if (panzoomInstance) {
-        panzoomInstance.setOptions(getPanOptions(scale))
+      if (panzoomInstance.current) {
+        panzoomInstance.current.setOptions(getPanOptions(scale))
       }
     }, [panzoomOption])
 
