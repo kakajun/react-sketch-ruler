@@ -170,7 +170,7 @@ document.addEventListener('keyup', function (e) {
 <a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=oqnBX-qn7gkWsdfYQdvNCzYbkeNknuOc&jump_from=webapi&authKey=4YXd2jvmWYU0cN8zUky5DoCD6kz+fjUyWv782GLUjDEIHctXYviSXD/pbqxm/ZDD"><img border="0" src="https://github.com/kakajun/react-sketch-ruler/blob/main/example/assets/group.png" alt="react-sketch-ruler" title="点击这里加入QQ群640166628"></a>
 
 <div align=center>
-<img src="https://github.com/kakajun/react-sketch-ruler/blob/main/example/assets/logo.png" width="243" height="287">
+<img src="https://github.com/kakajun/react-sketch-ruler/blob/main/example/assets/qq.png" width="243" height="287">
 </div>
 
 ## 贡献者
