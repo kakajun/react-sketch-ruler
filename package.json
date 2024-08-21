@@ -1,6 +1,6 @@
 {
   "name": "react-sketch-ruler",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "type": "module",
   "author": "kakajun <253495832@qq.com>",
   "license": "MIT",
@@ -20,7 +20,7 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "dev": "vite --config vite.demo.ts",
-    "build": " vite build",
+    "build": "vite build",
     "tsc": "tsc -p tsconfig.app.json",
     "build:demo": "vite build --config vite.demo.ts",
     "format": "prettier --write --loglevel warn \"src/**/*.{js,ts,json,tsx,css,less,scss,vue,html,md}\"",
