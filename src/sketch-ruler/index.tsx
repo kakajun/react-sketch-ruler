@@ -138,6 +138,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     const handleSpaceKeyUp = (e: KeyboardEvent) => {
       if (e.key === ' ') {
         if (panzoomInstance.current) {
+          setCursorClass('defaultCursor')
           panzoomInstance.current.destroy()
         }
       }
@@ -146,7 +147,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     const getPanOptions = (scale: number) => ({
       noBind: true,
       startScale: scale,
-      cursor: 'default',
+      // cursor: 'default',
       startX: zoomStartX,
       startY: zoomStartY,
       smoothScroll: true,
@@ -183,6 +184,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
           updateScale(tempScale)
         }
       }
+      console.log('init', tempScale)
       const panzoom = Panzoom(elem as HTMLElement, getPanOptions(tempScale))
       panzoomInstance.current = panzoom
       if (elem) {
@@ -215,8 +217,10 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     const reset = () => panzoomInstance.current?.reset()
     const zoomIn = () => panzoomInstance.current?.zoomIn()
     const zoomOut = () => panzoomInstance.current?.zoomOut()
-    const setOtions = (obj?: any) =>
-      panzoomInstance.current?.setOptions(obj || getPanOptions(ownScale))
+    const setOtions = () => {
+      let centerScale = calculateTransform()
+      panzoomInstance.current?.setOptions(getPanOptions(centerScale))
+    }
 
     const handleCornerClick = () => {
       setShowReferLine(!showReferLine)
@@ -254,12 +258,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
 
     useEffect(() => {
       setOtions()
-    }, [panzoomOption])
-
-    useEffect(() => {
-      if (panzoomInstance.current) {
-        panzoomInstance.current.setOptions(getPanOptions(scale))
-      }
+      console.log('setOtions执行了')
     }, [panzoomOption])
 
     // 处理children

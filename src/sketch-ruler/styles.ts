@@ -64,6 +64,14 @@ export const StyledRuler = styled.div<RulerProps>`
   span {
     line-height: 1;
   }
+
+  .defaultCursor {
+    cursor: default !important;
+  }
+
+  .grabCursor {
+    cursor: grab !important;
+  }
   .canvasedit-parent {
     position: absolute;
     left: ${(props) => props.$thickness}px;
