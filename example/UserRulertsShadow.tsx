@@ -76,6 +76,10 @@ const DemoComponent = () => {
     setState((prevState) => ({ ...prevState, scale }))
   }
 
+  const updateSnapsObj = (snapsObj: Record<'h' | 'v', number[]>) => {
+    setState((prevState) => ({ ...prevState, snapsObj }))
+  }
+
   const handleCornerClick = (e: boolean) => {
     console.log('handleCornerClick', e)
   }
@@ -150,7 +154,7 @@ const DemoComponent = () => {
             lines={state.lines}
           >
             <div slot="default" data-type="page" style={canvasStyle}>
-              <MovebleCom updateShadow={updateShadow} />
+              <MovebleCom updateShadow={updateShadow} updateSnapsObj={updateSnapsObj} />
             </div>
 
             <Btns slot="btn">

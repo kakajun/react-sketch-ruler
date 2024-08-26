@@ -1,7 +1,10 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import Moveable from 'react-moveable' // 假设 Moveable 已经适配了 React
+import type { ShadowType } from '../src/index-types'
+
 interface MovebleComProps {
-  updateShadow: (props: string) => void
+  updateShadow: (props: ShadowType) => void
+  updateSnapsObj: (props: { h: number[]; v: number[] }) => void
 }
 
 type TargetItem = {
@@ -15,7 +18,7 @@ type TargetItem = {
   zIndex?: number // 可选字段
 }
 
-const MovebleCom = ({ updateShadow }: MovebleComProps) => {
+const MovebleCom = ({ updateShadow, updateSnapsObj }: MovebleComProps) => {
   const [targetId, setTargetId] = useState(null)
   const [targetList, setTargetList] = useState<TargetItem[]>([
     {
@@ -144,6 +147,12 @@ const MovebleCom = ({ updateShadow }: MovebleComProps) => {
       moveableRef.current.updateRect()
     }
   }
+
+  useEffect(() => {
+    const h = targetList.map((item: TargetItem) => item.top)
+    const v = targetList.map((item: TargetItem) => item.left)
+    updateSnapsObj({ h, v })
+  }, [targetId])
 
   return (
     <div className="container">
