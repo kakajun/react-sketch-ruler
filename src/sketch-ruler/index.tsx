@@ -12,6 +12,7 @@ const usePaletteConfig = (palette: PaletteType) => {
       bgColor: '#f6f7f9',
       longfgColor: '#BABBBC',
       fontColor: '#7D8694', // ruler font color
+      fontShadowColor: '#106ebe',
       shadowColor: '#e9f7fe', // ruler shadow color
       lineColor: '#51d6a9',
       lineType: 'solid',
@@ -38,6 +39,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       closeEyeIcon,
       paddingRatio = 0.2,
       autoCenter = true,
+      showShadowText = true,
       shadow = {
         x: 0,
         y: 0,
@@ -92,6 +94,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       rate,
       palette: paletteConfig,
       gridRatio,
+      showShadowText,
       lockLine,
       scale: ownScale,
       handleLine

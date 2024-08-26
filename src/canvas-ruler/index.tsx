@@ -13,6 +13,7 @@ const CanvasRuler = ({
   canvasWidth,
   canvasHeight,
   rate,
+  showShadowText,
   gridRatio,
   onDragStart
 }: CanvasProps) => {
@@ -45,7 +46,8 @@ const CanvasRuler = ({
       canvasHeight: canvasHeight * rate,
       ratio: window.devicePixelRatio,
       rate,
-      gridRatio
+      gridRatio,
+      showShadowText
     }
 
     if (canvasContext) {

@@ -24,6 +24,7 @@ const RulerComponent = ({
   gridRatio,
   lockLine,
   propStyle,
+  showShadowText,
   handleLine
 }: RulerWrapperProps) => {
   const [isLockLine, setIsLockLine] = useState(lockLine)
@@ -90,6 +91,7 @@ const RulerComponent = ({
         width={width}
         height={height}
         start={start}
+        showShadowText={showShadowText}
         canvasWidth={canvasWidth}
         canvasHeight={canvasHeight}
         selectStart={selectStart}

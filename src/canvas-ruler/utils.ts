@@ -24,11 +24,12 @@ export const drawCanvasRuler = (
     palette: FinalPaletteType
     canvasWidth: number
     canvasHeight: number
+    showShadowText: boolean
   },
   isHorizontal?: boolean //横向为true,纵向缺省
 ) => {
-  const { scale, width, height, ratio, palette, gridRatio } = options
-  const { bgColor, fontColor, shadowColor, longfgColor } = palette
+  const { scale, width, height, ratio, palette, gridRatio, showShadowText } = options
+  const { bgColor, fontColor, fontShadowColor, shadowColor, longfgColor } = palette
   const endNum = isHorizontal ? options.canvasWidth : options.canvasHeight
   // 缩放ctx, 以简化计算
   ctx.scale(ratio, ratio)
@@ -53,6 +54,19 @@ export const drawCanvasRuler = (
     isHorizontal
       ? ctx.fillRect(shadowX, 0, shadowWidth, height)
       : ctx.fillRect(0, shadowX, width, shadowWidth)
+
+    // 画阴影文字起始
+    if (showShadowText) {
+      if (isHorizontal) {
+        drawShadowText(shadowX, height * 0.3, String(selectStart))
+        const shadowEnd = ((selectStart + selectLength - start) * scale) / ratio
+        drawShadowText(shadowEnd, height * 0.3, String(selectStart + selectLength))
+      } else {
+        drawShadowText(width * 0.3, shadowX, String(selectStart))
+        const shadowEnd = ((selectStart + selectLength - start) * scale) / ratio
+        drawShadowText(width * 0.3, shadowEnd, String(selectStart + selectLength))
+      }
+    }
   }
   // 3. 画刻度和文字(因为刻度遮住了阴影)
   ctx.beginPath()
@@ -88,7 +102,19 @@ export const drawCanvasRuler = (
         ctx.rotate(-Math.PI / 2) // 旋转 -90 度
       }
       ctx.scale(FONT_SCALE / ratio, FONT_SCALE / ratio)
-      ctx.fillText(value.toString(), 4 * ratio, 7 * ratio)
+
+      // 如果最后一个大刻度挨着最后一个刻度, 不画文字
+      if (endNum - value > gridSize10 / 2) {
+        if (
+          !showShadowText ||
+          selectLength == 0 ||
+          (Math.abs(value - selectStart) > gridSize10 / 2 &&
+            Math.abs(value - (selectStart + selectLength)) > gridSize10 / 2)
+        ) {
+          ctx.fillText(value.toString(), 4 * ratio, 9 * ratio)
+        }
+      }
+
       ctx.restore()
       // 影响刻度位置
       if (value == 0) {
@@ -118,6 +144,18 @@ export const drawCanvasRuler = (
     ctx.stroke()
     ctx.closePath()
     ctx.setTransform(1, 0, 0, 1, 0, 0)
+  }
+
+  function drawShadowText(x: number, y: number, text: string) {
+    ctx.fillStyle = fontShadowColor
+    ctx.strokeStyle = longfgColor
+    ctx.save()
+    ctx.translate(x, y)
+    if (!isHorizontal) ctx.rotate(-Math.PI / 2)
+    ctx.scale(FONT_SCALE / ratio, FONT_SCALE / ratio)
+    ctx.strokeText(text, 0, 0)
+    ctx.fillText(text, 0, 0)
+    ctx.restore()
   }
 }
 

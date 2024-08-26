@@ -65,12 +65,11 @@ import 'react-sketch-ruler/lib/style.css'
 - [x] 提供右下角按钮缩放,还原所需API
 - [x] 刻度吸附效果
 - [x] 选中阴影阴影响应
+- [x] 阴影刻度数字响应
 
 ## 未来支持功能
 
 - [] 加入单元测试功能
-
-这是个开源业余做的功能，有兴趣加强该插件的小伙伴欢迎加入，也欢迎大家提pr或者issue
 
 参考一个完整的例子，[点击这里](https://github.com/kakajun/react-sketch-ruler/blob/main/example/UserRulerts.tsx)
 
@@ -93,6 +92,7 @@ import 'react-sketch-ruler/lib/style.css'
 | canvasHeight | 画布高 | Number | 700 |
 | isShowReferLine | 是否显示标线 | Boolean | true |
 | showRuler | 是否显示尺规 | Boolean | true |
+| showShadowText | 是否显示阴影文字 | Boolean | true |
 | lines | 初始化水平标尺上的参考线 | object<Array> | {h:[],v:[]} |
 | snapsObj | 吸附刻度集合 | object<Array> | {h:[],v:[]} |
 | snapThreshold | 吸附距离 | Number | 5 |
@@ -102,18 +102,19 @@ import 'react-sketch-ruler/lib/style.css'
 | panzoomOption | panzoom相关的扩展参数 | object | - |
 | palette | 标尺的样式配置参数 | Object | 如下表 |
 
-| 属性名称      | 描述           | 默认值                         |
-| ------------- | -------------- | ------------------------------ |
-| bgColor       | 画布背景       | #f6f7f9                        |
-| longfgColor   | 刻度背景       | #BABBBC                        |
-| fontColor     | 刻度字体颜色   | #7D8694                        |
-| shadowColor   | 激活阴影背景   | #E8E8E8                        |
-| lineColor     | 对准线颜色     | #51d6a9                        |
-| lineType      | 对准线类型     | solid (solid \dashed \ dotted) |
-| lockLineColor | 锁定对准线颜色 | #d4d7dc                        |
-| hoverColor    | 标签颜色字体   | #fff                           |
-| hoverBg       | 标签颜色背景   | #000                           |
-| borderColor   | 尺子外边框颜色 | #eeeeef                        |
+| 属性名称        | 描述             | 默认值                         |
+| --------------- | ---------------- | ------------------------------ |
+| bgColor         | 画布背景         | #f6f7f9                        |
+| longfgColor     | 刻度背景         | #BABBBC                        |
+| fontColor       | 刻度字体颜色     | #7D8694                        |
+| fontShadowColor | 刻度阴影字体颜色 | #106ebe                        |
+| shadowColor     | 激活阴影背景     | #E8E8E8                        |
+| lineColor       | 对准线颜色       | #51d6a9                        |
+| lineType        | 对准线类型       | solid (solid \dashed \ dotted) |
+| lockLineColor   | 锁定对准线颜色   | #d4d7dc                        |
+| hoverColor      | 标签颜色字体     | #fff                           |
+| hoverBg         | 标签颜色背景     | #000                           |
+| borderColor     | 尺子外边框颜色   | #eeeeef                        |
 
 > 更多pazoom插件的配置的panzoomOption参数，可以参考[pazoom document](https://github.com/timmywil/panzoom)
 
@@ -178,6 +179,10 @@ document.addEventListener('keyup', function (e) {
 <a href="https://github.com/kakajun/react-sketch-ruler/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=kakajun/react-sketch-ruler" />
 </a>
+
+## 最后
+
+这是个开源业余做的功能，欢迎加强该插件的小伙伴加入, 如果插件`vue3-sketch-ruler`对您有帮助，请给个star，您的鼓励是我最大的动力。
 
 ## 引用
 

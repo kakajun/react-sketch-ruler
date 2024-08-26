@@ -4,6 +4,7 @@ export interface PaletteType {
   bgColor?: string
   longfgColor?: string
   fontColor?: string
+  fontShadowColor?: string
   shadowColor?: string
   lineColor?: string
   lineType?: string
@@ -18,6 +19,7 @@ export interface FinalPaletteType {
   bgColor: string
   longfgColor: string
   fontColor: string
+  fontShadowColor: string
   shadowColor: string
   lineColor: string
   lineType: string
@@ -52,6 +54,7 @@ export interface SketchRulerProps {
   paddingRatio?: number
   autoCenter?: boolean
   shadow?: ShadowType
+  showShadowText?: boolean
   lines?: LineType
   isShowReferLine?: boolean
   canvasWidth?: number
@@ -71,6 +74,7 @@ export interface SketchRulerProps {
 
 export interface RulerWrapperProps {
   vertical: boolean
+  showShadowText: boolean
   scale: number
   width: number
   height: number
@@ -114,6 +118,7 @@ export interface LineProps {
 export interface CanvasProps {
   start: number
   vertical: boolean
+  showShadowText: boolean
   canvasWidth: number
   canvasHeight: number
   palette: FinalPaletteType
