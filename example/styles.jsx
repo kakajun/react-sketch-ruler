@@ -16,6 +16,16 @@ const Demo = styled.div`
     background-image: linear-gradient(#18181c 20px, transparent 0),
       linear-gradient(90deg, transparent 20px, #86909c 0);
   }
+
+  .target {
+  position: absolute;
+  text-align: center;
+  color: #333;
+  font-size: 30px;
+  font-weight: bold;
+  border: 1px solid #333;
+  box-sizing: border-box;
+  }
 `
 
 const Top = styled.div`

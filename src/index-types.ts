@@ -29,7 +29,7 @@ export interface FinalPaletteType {
   borderColor: string
 }
 
-interface ShadowType {
+export  interface ShadowType {
   x: number
   y: number
   width: number

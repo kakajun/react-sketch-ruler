@@ -31,7 +31,7 @@ const DemoComponent = () => {
       h: [0, 250],
       v: [0, 500]
     },
-    showShadowText: false,
+    showShadowText: true,
     thick: 20,
     shadow: {
       x: 0,
@@ -105,6 +105,17 @@ const DemoComponent = () => {
     height: `${canvasHeight}px`
   }
 
+  interface ShadowType {
+    x: number
+    y: number
+    width: number
+    height: number
+  }
+
+  const updateShadow = (shadow: ShadowType) => {
+    setState((prevState) => ({ ...prevState, shadow }))
+  }
+
   return (
     <>
       <Demo>
@@ -139,7 +150,7 @@ const DemoComponent = () => {
             lines={state.lines}
           >
             <div slot="default" data-type="page" style={canvasStyle}>
-              <MovebleCom />
+              <MovebleCom updateShadow={updateShadow} />
             </div>
 
             <Btns slot="btn">

@@ -1,9 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import Moveable from 'react-moveable' // 假设 Moveable 已经适配了 React
+interface MovebleComProps {
+  updateShadow: (props: string) => void
+}
 
-const App = () => {
+type TargetItem = {
+  id: string
+  className: string
+  left: number
+  top: number
+  background: string
+  width: number
+  height: number
+  zIndex?: number // 可选字段
+}
+
+const MovebleCom = ({ updateShadow }: MovebleComProps) => {
   const [targetId, setTargetId] = useState(null)
-  const [targetList, setTargetList] = useState([
+  const [targetList, setTargetList] = useState<TargetItem[]>([
     {
       id: 'target0',
       className: 'element0',
@@ -56,9 +70,21 @@ const App = () => {
     middle: true
   }
 
-  const copyTargetList = useRef()
+  const copyTargetList = useRef<TargetItem[]>([])
 
-  const handleClick = (event, item) => {
+  const handleClick = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    item: {
+      id: any
+      className?: string
+      left?: number
+      top?: number
+      background?: string
+      width?: number
+      height?: number
+      zIndex?: number | undefined
+    }
+  ) => {
     setTargetList((prevList) =>
       prevList.map((o) => ({
         ...o,
@@ -71,22 +97,38 @@ const App = () => {
     }
   }
 
-  const onDragStart = (e) => {
-    copyTargetList.current = JSON.parse(JSON.stringify(targetList))
+  const onDragStart = () => {
+    copyTargetList.current = JSON.parse(JSON.stringify(targetList)) as TargetItem[]
   }
 
-  const onDrag = (params) => {
+  const onDrag = (params: { target: any; translate: any }) => {
+    // 使用 setTargetList
     const { target, translate } = params
     const { id } = target.dataset
-    const { left, top, width, height } = copyTargetList.current.find((o) => o.id === id)
+    const arr = copyTargetList.current.find((o) => o.id === id)
+    if (!arr) return
+    const { left, top, width, height } = arr
     const [x, y] = translate
-    const obj = targetList.find((o) => o.id === id)
-    obj.left = left + x
-    obj.top = top + y
-    console.log({ x: obj.left, y: obj.top, width, height }) // 这里替换为实际的更新逻辑
+    // 获取当前对象并更新其位置
+    const updatedList = targetList.map((o) =>
+      o.id === id ? { ...o, left: left + x, top: top + y } : o
+    )
+
+    // 更新状态
+    setTargetList(updatedList)
+    updateShadow({ x: left + x, y: top + y, width, height })
   }
 
-  const getStyle = (item) => ({
+  const getStyle = (item: {
+    id?: string
+    className?: string
+    left: any
+    top: any
+    background: any
+    width: any
+    height: any
+    zIndex: any
+  }) => ({
     left: `${item.left}px`,
     top: `${item.top}px`,
     lineHeight: `${item.height}px`,
@@ -97,7 +139,7 @@ const App = () => {
     background: item.background
   })
 
-  const onDragEnd = (e) => {
+  const onDragEnd = (e: any) => {
     if (moveableRef.current) {
       moveableRef.current.updateRect()
     }
@@ -141,4 +183,4 @@ const App = () => {
   )
 }
 
-export default App
+export default MovebleCom
