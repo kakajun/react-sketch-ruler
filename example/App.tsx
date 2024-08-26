@@ -12,10 +12,12 @@ function App() {
   }
 
   return (
-    <div style={{ textAlign: 'center' }}>
+    <div style={{ textAlign: 'center', paddingTop: '10px' }}>
       {/* Tab 按钮 */}
-      <button onClick={() => handleTabChange('tab1')}>demo1</button>
-      <button onClick={() => handleTabChange('tab2')}>demo2</button>
+      <button onClick={() => handleTabChange('tab1')}>常规</button>
+      <button style={{ marginLeft: '10px' }} onClick={() => handleTabChange('tab2')}>
+        阴影demo
+      </button>
 
       {/* 根据 activeTab 显示不同的内容 */}
       {activeTab === 'tab1' && <UserRuler />}
