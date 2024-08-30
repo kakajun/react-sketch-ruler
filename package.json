@@ -1,6 +1,6 @@
 {
   "name": "react-sketch-ruler",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "type": "module",
   "author": "kakajun <253495832@qq.com>",
   "license": "MIT",
@@ -65,5 +65,8 @@
   ],
   "bugs": {
     "url": "https://github.com/kakajun/react-sketch-ruler/issues"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   }
 }
