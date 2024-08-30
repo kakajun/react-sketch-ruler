@@ -162,13 +162,12 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       const detail = e.detail as PanzoomEventDetail
       const { scale: newScale, dimsOut } = detail
       if (dimsOut) {
-        const tempScale = Number(newScale.toFixed(2))
-        setOwnScale(tempScale)
+        setOwnScale(newScale)
         if (updateScale) {
-          updateScale(tempScale)
+          updateScale(newScale)
         }
-        const left = (dimsOut.parent.left - dimsOut.elem.left) / tempScale
-        const top = (dimsOut.parent.top - dimsOut.elem.top) / tempScale
+        const left = (dimsOut.parent.left - dimsOut.elem.left) / newScale
+        const top = (dimsOut.parent.top - dimsOut.elem.top) / newScale
         setStartX(left)
         if (onZoomChange) {
           onZoomChange(detail)
@@ -187,7 +186,6 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
           updateScale(tempScale)
         }
       }
-      console.log('init', tempScale)
       const panzoom = Panzoom(elem as HTMLElement, getPanOptions(tempScale))
       panzoomInstance.current = panzoom
       if (elem) {
