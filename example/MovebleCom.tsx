@@ -95,9 +95,12 @@ const MovebleCom = ({ updateShadow, updateSnapsObj }: MovebleComProps) => {
       }))
     )
     setTargetId(item.id)
-    if (moveableRef.current) {
-      moveableRef.current.dragStart(event)
-    }
+    setTimeout(() => {
+      debugger
+      if (moveableRef.current) {
+        moveableRef.current.dragStart(event)
+      }
+    }, 0)
   }
 
   const onDragStart = () => {
