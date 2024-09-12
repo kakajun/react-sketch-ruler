@@ -28,9 +28,9 @@ const CanvasRuler = ({
 
   useEffect(() => {
     if (canvasRef.current && canvasContext) {
-      canvasRef.current.width = width
-      canvasRef.current.height = height
-      canvasContext.font = `${12 * window.devicePixelRatio}px -apple-system, "Helvetica Neue", ".SFNSText-Regular", "SF UI Text", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Zen Hei", sans-serif`
+      canvasRef.current.width = width * window.devicePixelRatio
+      canvasRef.current.height = height * window.devicePixelRatio
+      canvasContext.font = `11px -apple-system, "Helvetica Neue", ".SFNSText-Regular", "SF UI Text", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Zen Hei", sans-serif`
       canvasContext.lineWidth = 1
       canvasContext.textBaseline = 'middle'
     }
@@ -72,6 +72,8 @@ const CanvasRuler = ({
 
   const rulerStyle = useMemo(() => {
     return {
+      width: width + 'px',
+      height: height + 'px',
       cursor: vertical ? 'ew-resize' : 'ns-resize',
       [vertical ? 'borderRight' : 'borderBottom']: `1px solid ${palette.borderColor || '#eeeeef'}`
     }
