@@ -154,6 +154,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       startX: zoomStartX,
       startY: zoomStartY,
       smoothScroll: true,
+      canvas: true,
       ...panzoomOption
     })
 
@@ -279,7 +280,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     return (
       <StyledRuler id="sketch-ruler" $thickness={thick}>
         {btnSlot}
-        <div className="canvasedit-parent" style={rectStyle}>
+        <div className={'canvasedit-parent ' + cursorClass} style={rectStyle}>
           <div className={'canvasedit ' + cursorClass}>{defaultSlot}</div>
         </div>
         {showRuler && (
