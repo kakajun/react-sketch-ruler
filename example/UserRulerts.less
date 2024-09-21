@@ -1,6 +1,4 @@
-import styled from 'styled-components'
-
-const Demo = styled.div`
+.demo {
   width: 100%;
   padding-top: 10px;
   display: flex;
@@ -18,51 +16,51 @@ const Demo = styled.div`
   }
 
   .target {
-  position: absolute;
-  text-align: center;
-  color: #333;
-  font-size: 30px;
-  font-weight: bold;
-  border: 1px solid #333;
-  box-sizing: border-box;
+    position: absolute;
+    text-align: center;
+    color: #333;
+    font-size: 30px;
+    font-weight: bold;
+    border: 1px solid #333;
+    box-sizing: border-box;
   }
-`
+}
 
-const Top = styled.div`
+.top {
   display: flex;
   margin-bottom: 10px;
   justify-content: center;
   width: 100%;
   font-size: 20px;
-`
+}
 
-const Button = styled.button`
+.button {
   font-size: 18px;
   margin-right: 10px;
-`
+}
 
-const Wrapper = styled.div`
+.wrapper {
   margin: 0 auto;
   background-size:
     21px 21px,
     21px 21px;
   border: 1px solid #dadadc;
-`
+}
 
-const ImgStyle = styled.img`
+.imgStyle {
   width: 100%;
   height: 100%;
-`
+}
 
-const Btns = styled.div`
+.btns {
   position: absolute;
   display: flex;
   bottom: 20px;
   right: 40px;
   z-index: 999;
-`
+}
 
-const Switch = styled.input.attrs({ type: 'checkbox' })`
+.switch {
   outline: none;
   appearance: none;
   -webkit-appearance: none;
@@ -100,6 +98,4 @@ const Switch = styled.input.attrs({ type: 'checkbox' })`
     left: 55%;
     top: 2px;
   }
-`
-
-export { Demo, Top, Button, Wrapper, ImgStyle, Btns, Switch }
+}

@@ -1,12 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react'
-import SketchRule from '../src/index'
-import type { SketchRulerMethods } from '../src/index-types'
-import bgImg from './assets/bg.png'
-import 'module'
-import './UserRulerts.less'
-const DemoComponent = () => {
-  // const [rectWidth] = useState(770)
-  // const [rectHeight] = useState(472)
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>Hello React!</title>
+
+<script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/react/18.2.0/umd/react.production.min.js" ></script>
+<script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/babel-standalone/6.26.0/babel.min.js" ></script>
+<script src="../lib/index.umd.cjs"></script>
+</head>
+<body>
+
+<div id="example"></div>
+<script type="text/babel">
+  const SketchRule = window.SketchRuler
   const [rectWidth] = useState(1470)
   const [rectHeight] = useState(800)
   const [canvasWidth] = useState(1920)
@@ -18,7 +25,7 @@ const DemoComponent = () => {
     minScale: 0.1,
     disablePan: false,
     disableZoom: false,
-    handleStartEvent: (event: Event) => {
+    handleStartEvent: (event) => {
       event.preventDefault()
       console.log('handleStartEvent', event)
     }
@@ -54,13 +61,13 @@ const DemoComponent = () => {
 
   const handleResize = () => {
     if (sketchruleRef.current) {
-      ;(sketchruleRef.current as SketchRulerMethods).initPanzoom()
+      ;(sketchruleRef.current ).initPanzoom()
     }
   }
 
   const resetMethod = () => {
     if (sketchruleRef.current) {
-      ;(sketchruleRef.current as SketchRulerMethods).reset()
+      ;(sketchruleRef.current ).reset()
     }
   }
 
@@ -68,19 +75,19 @@ const DemoComponent = () => {
     setState((prevState) => ({ ...prevState, isBlack: !prevState.isBlack }))
   }
 
-  const handleLine = (lines: Record<'h' | 'v', number[]>) => {
+  const handleLine = (lines) => {
     setState((prevState) => ({ ...prevState, lines }))
   }
 
   const zoomOutMethod = () => {
     if (sketchruleRef.current) {
-      ;(sketchruleRef.current as SketchRulerMethods).zoomOut()
+      ;(sketchruleRef.current ).zoomOut()
     }
   }
 
   const zoomInMethod = () => {
     if (sketchruleRef.current) {
-      ;(sketchruleRef.current as SketchRulerMethods).zoomIn()
+      ;(sketchruleRef.current ).zoomIn()
     }
   }
 
@@ -88,12 +95,12 @@ const DemoComponent = () => {
     setShowRuler(!showRuler)
   }
 
-  const scaleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const scaleChange = (event) => {
     const { value } = event.target
     if (value) {
       setState((prevState) => ({ ...prevState, scale: Number(value) }))
       if (sketchruleRef.current) {
-        ;(sketchruleRef.current as SketchRulerMethods).panzoomInstance.current?.zoom(Number(value))
+        ;(sketchruleRef.current).panzoomInstance.current?.zoom(Number(value))
       }
     }
   }
@@ -103,24 +110,24 @@ const DemoComponent = () => {
     console.log(state.isShowReferLine, 'state.isShowReferLine')
   }
 
-  const snapsChange = (e: { target: { value: string } }) => {
+  const snapsChange = (e) => {
     const arr = e.target.value.split(',')
     setSnapsObj((prevState) => ({ ...prevState, h: arr.map((item) => Number(item)) }))
   }
 
-  const snapsChangeV = (e: { target: { value: string } }) => {
+  const snapsChangeV = (e) => {
     const arr = e.target.value.split(',')
     setSnapsObj((prevState) => ({ ...prevState, v: arr.map((item) => Number(item)) }))
   }
 
-  const changeScale = (e: { target: { checked: boolean } }) => {
+  const changeScale = (e) => {
     setPanzoomOption((prevState) => ({ ...prevState, disableZoom: e.target.checked }))
   }
-  const updateScale = (scale: number) => {
+  const updateScale = (scale) => {
     setState((prevState) => ({ ...prevState, scale }))
   }
 
-  const changeMove = (e: { target: { checked: boolean } }) => {
+  const changeMove = (e) => {
     setPanzoomOption((prevState) => ({ ...prevState, disablePan: e.target.checked }))
   }
 
@@ -134,7 +141,7 @@ const DemoComponent = () => {
       }
     }))
   }
-  const handleCornerClick = (e: boolean) => {
+  const handleCornerClick = (e) => {
     console.log('handleCornerClick', e)
   }
   const cpuScale = state.scale.toFixed(2)
@@ -163,36 +170,26 @@ const DemoComponent = () => {
     height: `${canvasHeight}px`
   }
 
-  return (
+// 简单的 React 组件
+function App() {
+     return (
     <>
-      <div className="demo">
-        <div className="top">
+      <Demo>
+        <Top>
           <div style={{ marginRight: '10px' }}> 缩放比例:{cpuScale} </div>
-          <button className="btn" onClick={showRuler ? () => setShowRuler(false) : handleShowRuler}>
+          <Button onClick={showRuler ? () => setShowRuler(false) : handleShowRuler}>
             隐藏规尺
-          </button>
-          <button className="btn" onClick={handleShowReferLine}>
-            辅助线开关
-          </button>
-          <button className="btn" onClick={() => setLockLine(true)}>
-            锁定参考线
-          </button>
-          <button className="btn" onClick={changeShadow}>
-            模拟阴影切换
-          </button>
-          <button className="btn" onClick={changeTheme}>
-            主题切换
-          </button>
-          <button className="btn" onClick={resetMethod}>
-            还原
-          </button>
-          <button className="btn" onClick={zoomOutMethod}>
-            缩小
-          </button>
+          </Button>
+          <Button onClick={handleShowReferLine}>辅助线开关</Button>
+          <Button onClick={() => setLockLine(true)}>锁定参考线</Button>
+          <Button onClick={changeShadow}>模拟阴影切换</Button>
+          <Button onClick={changeTheme}>主题切换</Button>
+          <Button onClick={resetMethod}>还原</Button>
+          <Button onClick={zoomOutMethod}>缩小</Button>
           <span>禁止缩放</span>
-          <input type="checkbox" className="switch" onChange={changeScale} />
+          <Switch onChange={changeScale} />
           <span>禁止移动</span>
-          <input type="checkbox" className="switch" onChange={changeMove} />
+          <Switch onChange={changeMove} />
           <input
             style={{ marginRight: '10px' }}
             type="range"
@@ -222,12 +219,9 @@ const DemoComponent = () => {
           >
             <i className="fas fa-external-link-alt"></i> git源码
           </a>
-        </div>
+        </Top>
 
-        <div
-          style={rectStyle}
-          className={`wrapper ${state.isBlack ? 'blackwrapper' : 'whitewrapper'}`}
-        >
+        <Wrapper style={rectStyle} className={state.isBlack ? 'balckwrapper' : 'whitewrapper'}>
           <SketchRule
             scale={state.scale}
             lockLine={lockLine}
@@ -250,19 +244,29 @@ const DemoComponent = () => {
             lines={state.lines}
           >
             <div slot="default" data-type="page" style={canvasStyle}>
-              <img className="imgStyle" src={bgImg} alt="" />
+              <ImgStyle src={bgImg} alt="" />
             </div>
 
-            <div className="btns" slot="btn">
+            <Btns slot="btn">
               <button onClick={resetMethod}>还原</button>
               <button onClick={zoomInMethod}>放大</button>
               <button onClick={zoomOutMethod}>缩小</button>
-            </div>
+            </Btns>
           </SketchRule>
-        </div>
-      </div>
+        </Wrapper>
+      </Demo>
     </>
   )
 }
 
-export default DemoComponent
+const root = ReactDOM.createRoot(document.getElementById("example"));
+// 渲染 React 组件到 DOM
+root.render(<App />);
+</script>
+
+</body>
+</html>
+</script>
+
+</body>
+</html>

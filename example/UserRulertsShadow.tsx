@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import SketchRule from '../src/index'
 import MovebleCom from './MovebleCom'
-
+import './UserRulerts.less'
 import type { SketchRulerMethods } from '../src/index-types'
-import { Demo, Top, Wrapper, Btns } from './styles'
 
 const DemoComponent = () => {
   // const [rectWidth] = useState(770)

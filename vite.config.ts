@@ -22,16 +22,13 @@ export default defineConfig({
       entry: resolve(__dirname, 'src/index.tsx'),
       name: 'SketchRuler',
       fileName: 'index',
-      formats: ['es', 'cjs']
+      formats: ['es', 'cjs','umd']
     },
     rollupOptions: {
       // 确保外部化处理那些你不想打包进库的依赖
-      external: ['styled-components',  'panzoom', 'react', 'react-dom'],
+      external: [ 'react', 'react-dom'],
       output: {
-        banner,
-        globals: {
-          panzoom: 'simple-panzoom' // 这里假设 panzoom 暴露在全局变量 Panzoom 下
-        }
+        banner
       }
     }
   }

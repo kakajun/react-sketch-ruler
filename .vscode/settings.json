@@ -135,5 +135,6 @@
       "source.fixAll.eslint": "never",
       "source.fixAll.stylelint": "explicit"
     }
-  }
+  },
+  "liveServer.settings.port": 5501
 }

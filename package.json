@@ -1,6 +1,6 @@
 {
   "name": "react-sketch-ruler",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "type": "module",
   "author": "kakajun <253495832@qq.com>",
   "license": "MIT",
@@ -23,18 +23,15 @@
     "build": "vite build",
     "tsc": "tsc -p tsconfig.app.json",
     "build:demo": "vite build --config vite.demo.ts",
-    "format": "prettier --write --loglevel warn \"src/**/*.{js,ts,json,tsx,css,less,scss,vue,html,md}\"",
+    "format": "prettier --write --loglevel warn \"src/**/*.{js,ts,json,tsx,css,less,vue,html,md}\"",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "release": "release-it"
   },
-  "dependencies": {
-    "prop-types": "^15.5.10",
-    "simple-panzoom": "^1.0.8",
-    "styled-components": "^6.1.12",
-    "stylis": "^4.3.2"
-  },
   "devDependencies": {
+    "less": "^3.11.1",
+    "simple-panzoom": "^1.0.8",
+    "prop-types": "^15.5.10",
     "gh-pages": "^6.1.1",
     "@types/node": "^22.1.0",
     "@types/react": "^18.3.3",

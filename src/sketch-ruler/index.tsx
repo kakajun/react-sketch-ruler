@@ -2,7 +2,7 @@ import { eye64, closeEye64 } from './cornerImg64'
 import Panzoom from 'simple-panzoom'
 import type { PanzoomObject, PanzoomEventDetail } from 'simple-panzoom'
 import React, { useState, useEffect, useMemo, useImperativeHandle, useRef } from 'react'
-import { StyledRuler } from './styles'
+import './index.less'
 import RulerWrapper from './RulerWrapper'
 import type { SketchRulerProps, PaletteType, SketchRulerMethods } from '../index-types'
 
@@ -114,7 +114,10 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
 
     const rectStyle = useMemo(() => {
       return {
+        position: 'absolute',
         background: paletteConfig.bgColor,
+        left: thick + 'px',
+        top: thick + 'px',
         width: rectWidth + 'px',
         height: rectHeight + 'px'
       }
@@ -278,7 +281,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       [null, null] // 初始化 acc 为数组
     )
     return (
-      <StyledRuler id="sketch-ruler" $thickness={thick}>
+      <div className="StyledRuler" id="sketch-ruler">
         {btnSlot}
         <div className={'canvasedit-parent ' + cursorClass} style={rectStyle}>
           <div className={'canvasedit ' + cursorClass}>{defaultSlot}</div>
@@ -311,7 +314,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
           />
         )}
         {showRuler && <a className="corner" style={cornerStyle} onClick={handleCornerClick} />}
-      </StyledRuler>
+      </div>
     )
   }
 )
