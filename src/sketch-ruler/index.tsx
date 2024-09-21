@@ -114,7 +114,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
 
     const rectStyle = useMemo(() => {
       return {
-        position: 'absolute',
+        // position: 'absolute',
         background: paletteConfig.bgColor,
         left: thick + 'px',
         top: thick + 'px',

@@ -34,7 +34,6 @@ export const drawCanvasRuler = (
   // 缩放ctx, 以简化计算
   ctx.scale(ratio, ratio)
   ctx.clearRect(0, 0, width, height)
-
   // 1. 画标尺底色
   ctx.fillStyle = bgColor
   ctx.fillRect(0, 0, width, height)
@@ -134,7 +133,6 @@ export const drawCanvasRuler = (
   function setLast(x: number, value: number) {
     isHorizontal ? ctx.moveTo(x, 0) : ctx.moveTo(0, x)
     ctx.save()
-
     isHorizontal ? ctx.translate(x + 5, height * 0.2) : ctx.translate(width * 0.1, x + 32)
     if (!isHorizontal) ctx.rotate(-Math.PI / 2)
     ctx.fillText(Math.round(value).toString(), 4, 7)
@@ -151,7 +149,6 @@ export const drawCanvasRuler = (
     ctx.save()
     ctx.translate(x, y)
     if (!isHorizontal) ctx.rotate(-Math.PI / 2)
-
     ctx.strokeText(String(num), 0, 0)
     ctx.fillText(String(num), 0, 0)
     ctx.restore()

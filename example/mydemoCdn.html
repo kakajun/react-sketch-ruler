@@ -1,272 +1,376 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-<meta charset="UTF-8" />
-<title>Hello React!</title>
-
-<script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/react/18.2.0/umd/react.production.min.js" ></script>
-<script src="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://lf9-cdn-tos.bytecdntp.com/cdn/expire-1-M/babel-standalone/6.26.0/babel.min.js" ></script>
-<script src="../lib/index.umd.cjs"></script>
-</head>
-<body>
-
-<div id="example"></div>
-<script type="text/babel">
-  const SketchRule = window.SketchRuler
-  const [rectWidth] = useState(1470)
-  const [rectHeight] = useState(800)
-  const [canvasWidth] = useState(1920)
-  const [canvasHeight] = useState(1080)
-  const sketchruleRef = useRef(null)
-  const [showRuler, setShowRuler] = useState(true)
-  const [panzoomOption, setPanzoomOption] = useState({
-    maxScale: 3,
-    minScale: 0.1,
-    disablePan: false,
-    disableZoom: false,
-    handleStartEvent: (event) => {
-      event.preventDefault()
-      console.log('handleStartEvent', event)
-    }
-  })
-  const [lockLine, setLockLine] = useState(false)
-  const [snapsObj, setSnapsObj] = useState({ h: [0, 100, 200], v: [130] })
-
-  const [state, setState] = useState({
-    scale: 1,
-    isBlack: false,
-    lines: {
-      h: [0, 250],
-      v: [0, 500]
-    },
-    showShadowText: false,
-    thick: 20,
-    shadow: {
-      x: 0,
-      y: 0,
-      width: 300,
-      height: 300
-    },
-    isShowRuler: true,
-    isShowReferLine: true
-  })
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize)
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [])
-
-  const handleResize = () => {
-    if (sketchruleRef.current) {
-      ;(sketchruleRef.current ).initPanzoom()
-    }
-  }
-
-  const resetMethod = () => {
-    if (sketchruleRef.current) {
-      ;(sketchruleRef.current ).reset()
-    }
-  }
-
-  const changeTheme = () => {
-    setState((prevState) => ({ ...prevState, isBlack: !prevState.isBlack }))
-  }
-
-  const handleLine = (lines) => {
-    setState((prevState) => ({ ...prevState, lines }))
-  }
-
-  const zoomOutMethod = () => {
-    if (sketchruleRef.current) {
-      ;(sketchruleRef.current ).zoomOut()
-    }
-  }
-
-  const zoomInMethod = () => {
-    if (sketchruleRef.current) {
-      ;(sketchruleRef.current ).zoomIn()
-    }
-  }
-
-  const handleShowRuler = () => {
-    setShowRuler(!showRuler)
-  }
-
-  const scaleChange = (event) => {
-    const { value } = event.target
-    if (value) {
-      setState((prevState) => ({ ...prevState, scale: Number(value) }))
-      if (sketchruleRef.current) {
-        ;(sketchruleRef.current).panzoomInstance.current?.zoom(Number(value))
+  <head>
+    <meta charset="UTF-8" />
+    <title>React Hello World</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="../lib/index.umd.cjs"></script>
+    <link rel="stylesheet" href="../lib/style.css" />
+    <style>
+      .demo {
+        width: 100%;
+        padding-top: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
       }
-    }
-  }
 
-  const handleShowReferLine = () => {
-    setState((prevState) => ({ ...prevState, isShowReferLine: !prevState.isShowReferLine }))
-    console.log(state.isShowReferLine, 'state.isShowReferLine')
-  }
-
-  const snapsChange = (e) => {
-    const arr = e.target.value.split(',')
-    setSnapsObj((prevState) => ({ ...prevState, h: arr.map((item) => Number(item)) }))
-  }
-
-  const snapsChangeV = (e) => {
-    const arr = e.target.value.split(',')
-    setSnapsObj((prevState) => ({ ...prevState, v: arr.map((item) => Number(item)) }))
-  }
-
-  const changeScale = (e) => {
-    setPanzoomOption((prevState) => ({ ...prevState, disableZoom: e.target.checked }))
-  }
-  const updateScale = (scale) => {
-    setState((prevState) => ({ ...prevState, scale }))
-  }
-
-  const changeMove = (e) => {
-    setPanzoomOption((prevState) => ({ ...prevState, disablePan: e.target.checked }))
-  }
-
-  const changeShadow = () => {
-    setState((prevState) => ({
-      ...prevState,
-      shadow: {
-        ...prevState.shadow,
-        x: Math.random() * canvasWidth,
-        y: Math.random() * canvasHeight
+      .demo .whitewrapper {
+        background-color: #fafafc;
+        background-image: linear-gradient(#fafafc 20px, transparent 0),
+          linear-gradient(90deg, transparent 20px, #373739 0);
       }
-    }))
-  }
-  const handleCornerClick = (e) => {
-    console.log('handleCornerClick', e)
-  }
-  const cpuScale = state.scale.toFixed(2)
-  const rectStyle = {
-    width: `${rectWidth}px`,
-    height: `${rectHeight}px`
-  }
-  const cpuPalette = state.isBlack
-    ? {
-        bgColor: 'transparent',
-        hoverBg: '#fff',
-        hoverColor: '#000',
-        longfgColor: '#BABBBC', // ruler longer mark color
-        fontColor: '#DEDEDE', // ruler font color
-        shadowColor: '#525252', // ruler shadow color
-        lineColor: '#51d6a9',
-        borderColor: '#B5B5B5'
+
+      .demo .balckwrapper {
+        background-color: #18181c;
+        background-image: linear-gradient(#18181c 20px, transparent 0),
+          linear-gradient(90deg, transparent 20px, #86909c 0);
       }
-    : {
-        bgColor: 'transparent',
-        lineColor: '#51d6a9',
-        lineType: 'dashed'
+
+      .demo .target {
+        position: absolute;
+        text-align: center;
+        color: #333;
+        font-size: 30px;
+        font-weight: bold;
+        border: 1px solid #333;
+        box-sizing: border-box;
       }
-  const canvasStyle = {
-    width: `${canvasWidth}px`,
-    height: `${canvasHeight}px`
-  }
 
-// 简单的 React 组件
-function App() {
-     return (
-    <>
-      <Demo>
-        <Top>
-          <div style={{ marginRight: '10px' }}> 缩放比例:{cpuScale} </div>
-          <Button onClick={showRuler ? () => setShowRuler(false) : handleShowRuler}>
-            隐藏规尺
-          </Button>
-          <Button onClick={handleShowReferLine}>辅助线开关</Button>
-          <Button onClick={() => setLockLine(true)}>锁定参考线</Button>
-          <Button onClick={changeShadow}>模拟阴影切换</Button>
-          <Button onClick={changeTheme}>主题切换</Button>
-          <Button onClick={resetMethod}>还原</Button>
-          <Button onClick={zoomOutMethod}>缩小</Button>
-          <span>禁止缩放</span>
-          <Switch onChange={changeScale} />
-          <span>禁止移动</span>
-          <Switch onChange={changeMove} />
-          <input
-            style={{ marginRight: '10px' }}
-            type="range"
-            value={state.scale}
-            onChange={scaleChange}
-            min="0.1"
-            max="3"
-            step="0.1"
-          />
-          <div style={{ marginRight: '10px' }}> 吸附横线: </div>
-          <input
-            style={{ marginRight: '10px' }}
-            defaultValue={snapsObj.h.join(',')}
-            onBlur={snapsChange}
-          />
-          <div style={{ marginRight: '10px' }}> 吸附纵线: </div>
-          <input
-            style={{ marginRight: '10px' }}
-            defaultValue={snapsObj.v.join(',')}
-            onBlur={snapsChangeV}
-          />
+      .top {
+        display: flex;
+        margin-bottom: 10px;
+        justify-content: center;
+        width: 100%;
+        font-size: 20px;
+      }
 
-          <a
-            href="https://github.com/kakajun/react-sketch-ruler"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <i className="fas fa-external-link-alt"></i> git源码
-          </a>
-        </Top>
+      .button {
+        font-size: 18px;
+        margin-right: 10px;
+      }
 
-        <Wrapper style={rectStyle} className={state.isBlack ? 'balckwrapper' : 'whitewrapper'}>
-          <SketchRule
-            scale={state.scale}
-            lockLine={lockLine}
-            thick={state.thick}
-            width={rectWidth}
-            showRuler={showRuler}
-            height={rectHeight}
-            palette={cpuPalette}
-            snapsObj={snapsObj}
-            shadow={state.shadow}
-            showShadowText={state.showShadowText}
-            canvasWidth={canvasWidth}
-            canvasHeight={canvasHeight}
-            panzoomOption={panzoomOption}
-            ref={sketchruleRef}
-            isShowReferLine={state.isShowReferLine}
-            onHandleCornerClick={handleCornerClick}
-            updateScale={updateScale}
-            handleLine={handleLine}
-            lines={state.lines}
-          >
-            <div slot="default" data-type="page" style={canvasStyle}>
-              <ImgStyle src={bgImg} alt="" />
+      .wrapper {
+        margin: 0 auto;
+        background-size:
+          21px 21px,
+          21px 21px;
+        border: 1px solid #dadadc;
+      }
+
+      .imgStyle {
+        width: 100%;
+        height: 100%;
+      }
+
+      .btns {
+        position: absolute;
+        display: flex;
+        bottom: 20px;
+        right: 40px;
+        z-index: 999;
+      }
+
+      .switch {
+        outline: none;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        position: relative;
+        width: 40px;
+        height: 20px;
+        background: #ccc;
+        border-radius: 10px;
+        transition:
+          border-color 0.3s,
+          background-color 0.3s;
+      }
+
+      .switch::after {
+        content: '';
+        display: inline-block;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0, 0, 2px, #999;
+        transition: 0.4s;
+        top: 2px;
+        position: absolute;
+        left: 2px;
+      }
+
+      .switch:checked {
+        background: #13ce66;
+      }
+
+      .switch:checked::after {
+        content: '';
+        position: absolute;
+        left: 55%;
+        top: 2px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      const { useState, useEffect, useRef } = React
+      const SketchRule = window.SketchRuler
+      const bgImg = './assets/bg.png'
+      // 函数组件，无状态组件
+      function MyApp() {
+        const [rectWidth] = useState(1470)
+        const [rectHeight] = useState(800)
+        const [canvasWidth] = useState(1920)
+        const [canvasHeight] = useState(1080)
+        const sketchruleRef = useRef(null)
+
+        const [showRuler, setShowRuler] = useState(true)
+        const [panzoomOption, setPanzoomOption] = useState({
+          maxScale: 3,
+          minScale: 0.1,
+          disablePan: false,
+          disableZoom: false,
+          handleStartEvent: (event) => {
+            event.preventDefault()
+            console.log('handleStartEvent', event)
+          }
+        })
+        const [lockLine, setLockLine] = useState(false)
+        const [snapsObj, setSnapsObj] = useState({ h: [0, 100, 200], v: [130] })
+
+        const [state, setState] = useState({
+          scale: 1,
+          isBlack: false,
+          lines: {
+            h: [0, 250],
+            v: [0, 500]
+          },
+          showShadowText: false,
+          thick: 20,
+          shadow: {
+            x: 0,
+            y: 0,
+            width: 300,
+            height: 300
+          },
+          isShowRuler: true,
+          isShowReferLine: true
+        })
+
+        useEffect(() => {
+          window.addEventListener('resize', handleResize)
+          return () => {
+            window.removeEventListener('resize', handleResize)
+          }
+        }, [])
+
+        const handleResize = () => {
+          if (sketchruleRef.current) {
+            sketchruleRef.current.initPanzoom()
+          }
+        }
+
+        const resetMethod = () => {
+          if (sketchruleRef.current) {
+            sketchruleRef.current.reset()
+          }
+        }
+
+        const changeTheme = () => {
+          setState((prevState) => ({ ...prevState, isBlack: !prevState.isBlack }))
+        }
+
+        const handleLine = (lines) => {
+          setState((prevState) => ({ ...prevState, lines }))
+        }
+
+        const zoomOutMethod = () => {
+          if (sketchruleRef.current) {
+            sketchruleRef.current.zoomOut()
+          }
+        }
+
+        const zoomInMethod = () => {
+          if (sketchruleRef.current) {
+            sketchruleRef.current.zoomIn()
+          }
+        }
+
+        const handleShowRuler = () => {
+          setShowRuler(!showRuler)
+        }
+
+        const scaleChange = (event) => {
+          const { value } = event.target
+          if (value) {
+            setState((prevState) => ({ ...prevState, scale: Number(value) }))
+            if (sketchruleRef.current) {
+              sketchruleRef.current.panzoomInstance.current?.zoom(Number(value))
+            }
+          }
+        }
+
+        const handleShowReferLine = () => {
+          setState((prevState) => ({ ...prevState, isShowReferLine: !prevState.isShowReferLine }))
+          console.log(state.isShowReferLine, 'state.isShowReferLine')
+        }
+
+        const snapsChange = (e) => {
+          const arr = e.target.value.split(',')
+          setSnapsObj((prevState) => ({ ...prevState, h: arr.map((item) => Number(item)) }))
+        }
+
+        const snapsChangeV = (e) => {
+          const arr = e.target.value.split(',')
+          setSnapsObj((prevState) => ({ ...prevState, v: arr.map((item) => Number(item)) }))
+        }
+
+        const changeScale = (e) => {
+          setPanzoomOption((prevState) => ({ ...prevState, disableZoom: e.target.checked }))
+        }
+        const updateScale = (scale) => {
+          setState((prevState) => ({ ...prevState, scale }))
+        }
+
+        const changeMove = (e) => {
+          setPanzoomOption((prevState) => ({ ...prevState, disablePan: e.target.checked }))
+        }
+
+        const changeShadow = () => {
+          setState((prevState) => ({
+            ...prevState,
+            shadow: {
+              ...prevState.shadow,
+              x: Math.random() * canvasWidth,
+              y: Math.random() * canvasHeight
+            }
+          }))
+        }
+        const handleCornerClick = (e) => {
+          console.log('handleCornerClick', e)
+        }
+        const cpuScale = state.scale.toFixed(2)
+        const rectStyle = {
+          width: `${rectWidth}px`,
+          height: `${rectHeight}px`
+        }
+        const cpuPalette = state.isBlack
+          ? {
+              bgColor: 'transparent',
+              hoverBg: '#fff',
+              hoverColor: '#000',
+              longfgColor: '#BABBBC', // ruler longer mark color
+              fontColor: '#DEDEDE', // ruler font color
+              shadowColor: '#525252', // ruler shadow color
+              lineColor: '#51d6a9',
+              borderColor: '#B5B5B5'
+            }
+          : {
+              bgColor: 'transparent',
+              lineColor: '#51d6a9',
+              lineType: 'dashed'
+            }
+        const canvasStyle = {
+          width: `${canvasWidth}px`,
+          height: `${canvasHeight}px`
+        }
+
+        return (
+          <div className="demo">
+            <div className="top">
+              <div style={{ marginRight: '10px' }}> 缩放比例:{cpuScale} </div>
+              <button onClick={showRuler ? () => setShowRuler(false) : handleShowRuler}>
+                隐藏规尺
+              </button>
+              <button onClick={handleShowReferLine}>辅助线开关</button>
+              <button onClick={() => setLockLine(true)}>锁定参考线</button>
+              <button onClick={changeShadow}>模拟阴影切换</button>
+              <button onClick={changeTheme}>主题切换</button>
+              <button onClick={resetMethod}>还原</button>
+              <button onClick={zoomOutMethod}>缩小</button>
+              <span>禁止缩放</span>
+              <input type="checkbox" className="switch" onChange={changeScale} />
+              <span>禁止移动</span>
+              <input type="checkbox" className="switch" onChange={changeMove} />
+              <input
+                style={{ marginRight: '10px' }}
+                type="range"
+                value={state.scale}
+                onChange={scaleChange}
+                min="0.1"
+                max="3"
+                step="0.1"
+              />
+              <div style={{ marginRight: '10px' }}> 吸附横线: </div>
+              <input
+                style={{ marginRight: '10px' }}
+                defaultValue={snapsObj.h.join(',')}
+                onBlur={snapsChange}
+              />
+              <div style={{ marginRight: '10px' }}> 吸附纵线: </div>
+              <input
+                style={{ marginRight: '10px' }}
+                defaultValue={snapsObj.v.join(',')}
+                onBlur={snapsChangeV}
+              />
+
+              <a
+                href="https://github.com/kakajun/react-sketch-ruler"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i className="fas fa-external-link-alt"></i> git源码
+              </a>
             </div>
 
-            <Btns slot="btn">
-              <button onClick={resetMethod}>还原</button>
-              <button onClick={zoomInMethod}>放大</button>
-              <button onClick={zoomOutMethod}>缩小</button>
-            </Btns>
-          </SketchRule>
-        </Wrapper>
-      </Demo>
-    </>
-  )
-}
+            <div
+              style={rectStyle}
+              className={`wrapper ${state.isBlack ? 'blackwrapper' : 'whitewrapper'}`}
+            >
+              <SketchRule
+                scale={state.scale}
+                lockLine={lockLine}
+                thick={state.thick}
+                width={rectWidth}
+                showRuler={showRuler}
+                height={rectHeight}
+                palette={cpuPalette}
+                snapsObj={snapsObj}
+                shadow={state.shadow}
+                showShadowText={state.showShadowText}
+                canvasWidth={canvasWidth}
+                canvasHeight={canvasHeight}
+                panzoomOption={panzoomOption}
+                ref={sketchruleRef}
+                isShowReferLine={state.isShowReferLine}
+                onHandleCornerClick={handleCornerClick}
+                updateScale={updateScale}
+                handleLine={handleLine}
+                lines={state.lines}
+              >
+                <div slot="default" data-type="page" style={canvasStyle}>
+                  <img className="imgStyle" src={bgImg} alt="" />
+                </div>
 
-const root = ReactDOM.createRoot(document.getElementById("example"));
-// 渲染 React 组件到 DOM
-root.render(<App />);
-</script>
+                <div className="btns" slot="btn">
+                  <button onClick={resetMethod}>还原</button>
+                  <button onClick={zoomInMethod}>放大</button>
+                  <button onClick={zoomOutMethod}>缩小</button>
+                </div>
+              </SketchRule>
+            </div>
+          </div>
+        )
+      }
 
-</body>
-</html>
-</script>
-
-</body>
+      const container = document.getElementById('root')
+      const root = ReactDOM.createRoot(container)
+      root.render(<MyApp />)
+    </script>
+  </body>
 </html>

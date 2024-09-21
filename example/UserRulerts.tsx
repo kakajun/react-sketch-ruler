@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import SketchRule from '../src/index'
+// import SketchRule from '../lib/index.js'
 import type { SketchRulerMethods } from '../src/index-types'
 import bgImg from './assets/bg.png'
 import 'module'
