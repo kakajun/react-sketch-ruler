@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>React Hello World</title>
+    <title>react-sketch-ruler</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -308,13 +308,13 @@
               />
               <div style={{ marginRight: '10px' }}> 吸附横线: </div>
               <input
-                style={{ marginRight: '10px' }}
+                style={{ marginRight: '10px', width: '90px' }}
                 defaultValue={snapsObj.h.join(',')}
                 onBlur={snapsChange}
               />
               <div style={{ marginRight: '10px' }}> 吸附纵线: </div>
               <input
-                style={{ marginRight: '10px' }}
+                style={{ marginRight: '10px', width: '90px' }}
                 defaultValue={snapsObj.v.join(',')}
                 onBlur={snapsChangeV}
               />

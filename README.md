@@ -6,6 +6,9 @@
 
 [![Cloud Studio Template](https://cs-res.codehub.cn/common/assets/icon-badge.svg)](https://cloudstudio.net/a/21009125697445888?channel=share&sharetype=Markdown)
 
+<a href="https://codepen.io/kakajun/pen/WNVeYap" target="_blank">
+  <img src="./example/assets/codepen.svg" alt="CodePen Demo" width="150" height="30" />
+</a>
 <div align=center>
 <img src="https://github.com/kakajun/react-sketch-ruler/blob/main/example/assets/logo.png" width="392" height="300">
 </div>
@@ -191,7 +194,7 @@ panzoomInstance panzoom实例
 
 ## 最后
 
-这是个开源业余做的功能，欢迎加强该插件的小伙伴加入, 如果插件`vue3-sketch-ruler`对您有帮助，请给个star，您的鼓励是我最大的动力。
+这是个开源业余做的功能，欢迎加强该插件的小伙伴加入, 如果插件`react-sketch-ruler`对您有帮助，请给个star，您的鼓励是我最大的动力。
 
 ## 引用
 
