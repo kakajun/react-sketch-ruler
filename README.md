@@ -56,6 +56,17 @@ import 'react-sketch-ruler/lib/style.css'
 
 ```
 
+CDN 引入
+
+```js
+<script src="https://unpkg.com/react-sketch-ruler/lib/index.umd.js"></script>
+<link type="text/css" rel="stylesheet" href="https://unpkg.com/react-sketch-ruler/lib/style.css" />
+
+const SketchRule = window.SketchRuler
+```
+
+详情参见 [CDN demo](https://github.com/kakajun/react-sketch-ruler/blob/master/example/mydemoCdn.html)
+
 ## 支持的功能
 
 - [x] 标尺渲染
