@@ -177,11 +177,11 @@ document.addEventListener('keyup', function (e) {
 ### 插槽提供方法
 
 | 事件名称    | 描述              | 回调参数 |
-| ----------- | ----------------- | -------- | --- |
+| ----------- | ----------------- | -------- |
 | reset       | 画布重置位置      |          |
 | zoomIn      | 画布放大          |          |
 | zoomOut     | 画布缩小          |          |
-| initPanzoom | 初始化panzoom实例 |          |     |
+| initPanzoom | 初始化panzoom实例 |          |
 
 ### 插槽ref
 
