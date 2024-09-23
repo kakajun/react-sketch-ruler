@@ -32,6 +32,7 @@ export default function useLine(props: Props, vertical: boolean) {
   }
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>, propValue?: number) => {
+    e.stopPropagation() // 阻止冒泡
     return new Promise<void>((resolve) => {
       if (props.lockLine) return
       const startPosition = vertical ? e.clientY : e.clientX

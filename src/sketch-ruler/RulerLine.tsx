@@ -73,7 +73,8 @@ const LineComponent = ({
   useEffect(() => {
     setStartValue(value)
   }, [value])
-  const handleMouseenter = () => {
+  const handleMouseenter = (e: React.MouseEvent) => {
+    e.stopPropagation() // 阻止冒泡
     if (!lockLine) {
       setShowLabel(true)
     }
