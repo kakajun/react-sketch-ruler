@@ -152,7 +152,8 @@ const DemoComponent = () => {
         fontColor: '#DEDEDE', // ruler font color
         shadowColor: '#525252', // ruler shadow color
         lineColor: '#51d6a9',
-        borderColor: '#B5B5B5'
+        borderColor: '#B5B5B5',
+        lineType: 'dashed'
       }
     : {
         bgColor: 'transparent',
@@ -205,13 +206,13 @@ const DemoComponent = () => {
           />
           <div style={{ marginRight: '10px' }}> 吸附横线: </div>
           <input
-            style={{ marginRight: '10px' }}
+            style={{ marginRight: '10px', width: '80px' }}
             defaultValue={snapsObj.h.join(',')}
             onBlur={snapsChange}
           />
           <div style={{ marginRight: '10px' }}> 吸附纵线: </div>
           <input
-            style={{ marginRight: '10px' }}
+            style={{ marginRight: '10px', width: '80px' }}
             defaultValue={snapsObj.v.join(',')}
             onBlur={snapsChangeV}
           />
