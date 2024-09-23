@@ -102,7 +102,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
 
     const cornerStyle = useMemo(() => {
       return {
-        backgroundImage: isShowReferLine
+        backgroundImage: showReferLine
           ? `url(${eyeIcon || eye64})`
           : `url(${closeEyeIcon || closeEye64})`,
         width: `${thick}px`,
@@ -110,7 +110,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
         borderRight: `1px solid ${paletteConfig.borderColor}`,
         borderBottom: `1px solid ${paletteConfig.borderColor}`
       }
-    }, [isShowReferLine, eyeIcon, closeEyeIcon, paletteConfig])
+    }, [showReferLine, eyeIcon, closeEyeIcon, paletteConfig])
 
     const rectStyle = useMemo(() => {
       return {
@@ -263,7 +263,6 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
 
     useEffect(() => {
       setOtions()
-      console.log('setOtions执行了')
     }, [panzoomOption])
 
     // 处理children
