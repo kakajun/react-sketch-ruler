@@ -9,6 +9,44 @@ const getGridSize = (scale: number) => {
   return 1
 }
 
+export function setLast(
+  x: number,
+  value: number,
+  width: number,
+  height: number,
+  ctx: CanvasRenderingContext2D,
+  isHorizontal?: boolean
+) {
+  isHorizontal ? ctx.moveTo(x, 0) : ctx.moveTo(0, x)
+  ctx.save()
+  isHorizontal ? ctx.translate(x + 5, height * 0.2) : ctx.translate(width * 0.1, x + 32)
+  if (!isHorizontal) ctx.rotate(-Math.PI / 2) // 旋转 -90 度
+  ctx.fillText(Math.round(value).toString(), 4, 7)
+  ctx.restore()
+  isHorizontal ? ctx.lineTo(x, height) : ctx.lineTo(width, x)
+  ctx.stroke()
+  ctx.closePath()
+  ctx.setTransform(1, 0, 0, 1, 0, 0)
+}
+
+export function drawShadowText(
+  x: number,
+  y: number,
+  num: number,
+  ctx: CanvasRenderingContext2D,
+  palette: any,
+  isHorizontal?: boolean
+) {
+  ctx.fillStyle = palette.fontShadowColor
+  ctx.strokeStyle = palette.longfgColor
+  ctx.save()
+  ctx.translate(x, y)
+  if (!isHorizontal) ctx.rotate(-Math.PI / 2)
+  ctx.strokeText(String(num), 0, 0)
+  ctx.fillText(String(num), 0, 0)
+  ctx.restore()
+}
+
 export const drawCanvasRuler = (
   ctx: CanvasRenderingContext2D,
   start: number,
@@ -57,13 +95,27 @@ export const drawCanvasRuler = (
     // 画阴影文字起始
     if (showShadowText) {
       if (isHorizontal) {
-        drawShadowText(shadowX, height * 0.3, Math.round(selectStart))
+        drawShadowText(shadowX, height * 0.4, Math.round(selectStart), ctx, palette, isHorizontal)
         const shadowEnd = (selectStart + selectLength - start) * scale
-        drawShadowText(shadowEnd, height * 0.3, Math.round(selectStart + selectLength))
+        drawShadowText(
+          shadowEnd,
+          height * 0.4,
+          Math.round(selectStart + selectLength),
+          ctx,
+          palette,
+          isHorizontal
+        )
       } else {
-        drawShadowText(width * 0.3, shadowX, Math.round(selectStart))
+        drawShadowText(width * 0.4, shadowX, Math.round(selectStart), ctx, palette, isHorizontal)
         const shadowEnd = (selectStart + selectLength - start) * scale
-        drawShadowText(width * 0.3, shadowEnd, Math.round(selectStart + selectLength))
+        drawShadowText(
+          width * 0.4,
+          shadowEnd,
+          Math.round(selectStart + selectLength),
+          ctx,
+          palette,
+          isHorizontal
+        )
       }
     }
   }
@@ -78,7 +130,7 @@ export const drawCanvasRuler = (
     if ((value - gridSize10 < endNum && value > endNum) || value == endNum) {
       // 如果尾数画最后一个刻度
       const xl = offsetX10 + count * gridPixel10 + 0.5 + (endNum - value) * scale
-      setLast(xl, endNum)
+      setLast(xl, endNum, width, height, ctx, isHorizontal)
       return
     }
 
@@ -130,29 +182,6 @@ export const drawCanvasRuler = (
   }
   ctx.stroke()
   ctx.closePath()
-  function setLast(x: number, value: number) {
-    isHorizontal ? ctx.moveTo(x, 0) : ctx.moveTo(0, x)
-    ctx.save()
-    isHorizontal ? ctx.translate(x + 5, height * 0.2) : ctx.translate(width * 0.1, x + 32)
-    if (!isHorizontal) ctx.rotate(-Math.PI / 2)
-    ctx.fillText(Math.round(value).toString(), 4, 7)
-    ctx.restore()
-    isHorizontal ? ctx.lineTo(x, height) : ctx.lineTo(width, x)
-    ctx.stroke()
-    ctx.closePath()
-    ctx.setTransform(1, 0, 0, 1, 0, 0)
-  }
-
-  function drawShadowText(x: number, y: number, num: number) {
-    ctx.fillStyle = fontShadowColor
-    ctx.strokeStyle = longfgColor
-    ctx.save()
-    ctx.translate(x, y)
-    if (!isHorizontal) ctx.rotate(-Math.PI / 2)
-    ctx.strokeText(String(num), 0, 0)
-    ctx.fillText(String(num), 0, 0)
-    ctx.restore()
-  }
 }
 
 export function debounce(func: () => void, wait: number) {
