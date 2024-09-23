@@ -121,8 +121,8 @@ const DemoComponent = () => {
 
   return (
     <>
-      <Demo>
-        <Top>
+      <div className="demo">
+        <div className="top">
           <div style={{ marginRight: '10px' }}> 缩放比例:{cpuScale} </div>
           <a
             href="https://github.com/kakajun/react-sketch-ruler"
@@ -131,9 +131,9 @@ const DemoComponent = () => {
           >
             <i className="fas fa-external-link-alt"></i> git源码
           </a>
-        </Top>
+        </div>
 
-        <Wrapper style={rectStyle} className={state.isBlack ? 'balckwrapper' : 'whitewrapper'}>
+        <div className={`wrapper ${state.isBlack ? 'blackwrapper' : 'whitewrapper'}`}>
           <SketchRule
             scale={state.scale}
             thick={state.thick}
@@ -156,13 +156,13 @@ const DemoComponent = () => {
               <MovebleCom updateShadow={updateShadow} updateSnapsObj={updateSnapsObj} />
             </div>
 
-            <Btns slot="btn">
+            <div className="btns" slot="btn">
               <button onClick={resetMethod}>还原</button>
               <button onClick={zoomOutMethod}>缩小</button>
-            </Btns>
+            </div>
           </SketchRule>
-        </Wrapper>
-      </Demo>
+        </div>
+      </div>
     </>
   )
 }
