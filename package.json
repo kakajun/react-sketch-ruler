@@ -1,34 +1,20 @@
 {
-  "name": "react-sketch-ruler",
+  "name": "root",
   "version": "1.2.4",
   "author": "kakajun <253495832@qq.com>",
   "license": "MIT",
-  "private": false,
-  "files": [
-    "lib",
-    "src"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/kakajun/react-sketch-ruler"
-  },
-  "sideEffects": false,
-  "main": "lib/index.js",
-  "module": "lib/index.mjs",
-  "style": "lib/style.css",
-  "types": "lib/index.d.ts",
+  "private": true,
   "scripts": {
-    "dev": "vite --config vite.demo.ts",
-    "build": "vite build",
-    "tsc": "tsc -p tsconfig.app.json",
-    "build:demo": "vite build --config vite.demo.ts",
+    "dev": "pnpm build && pnpm --filter ./packages/docs dev",
+    "build": "pnpm --filter ./packages/sketch-ruler build",
+   "build:demo": "pnpm build && pnpm --filter ./packages/docs build",
     "format": "prettier --write --loglevel warn \"src/**/*.{js,ts,json,tsx,css,less,vue,html,md}\"",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "release": "release-it"
+      "changelog": "pnpm --filter ./packages/sketch-ruler changelog",
+    "release": "pnpm --filter ./packages/sketch-ruler release"
   },
   "devDependencies": {
+    "react-sketch-ruler": "workspace:*",
     "less": "^3.11.1",
     "simple-panzoom": "^1.0.8",
     "prop-types": "^15.5.10",
@@ -62,11 +48,5 @@
     "react-sketch-ruler",
     "room",
     "panzoom"
-  ],
-  "bugs": {
-    "url": "https://github.com/kakajun/react-sketch-ruler/issues"
-  },
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
-  }
+  ]
 }
