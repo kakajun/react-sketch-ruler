@@ -1,26 +1,22 @@
 // eslint-disable-next-line no-restricted-imports
 import { createBrowserRouter, ScrollRestoration } from "react-router-dom";
 
-import { Layout } from "shared/Layout";
+import HomeLayout from "./views/Home";
 
-import { cartPageLoader } from "./Cart/loader";
-import { homePageLoader } from "./Home/loader";
-import { productPageLoader } from "./Product/loader";
-import { productsPageLoader } from "./Products/loader";
-
-export const router = createBrowserRouter([
+ const router = createBrowserRouter([
   {
     element: (
       <>
         <ScrollRestoration getKey={(location) => location.pathname} />
-        <Layout />
+        <HomeLayout />
       </>
     ),
     children: [
       {
         path: "/",
-        lazy: () => import("./Home"),
+        lazy: () => import("./examples/UserRulerts"),
       },
     ],
   },
 ]);
+export default router

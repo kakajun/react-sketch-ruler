@@ -35,7 +35,7 @@ const EsHeader: React.FC<Props> = ({ title = 'vue3-sketch-ruler' }) => {
   return (
     <div className="es-header">
       <h1 className="es-logo">
-        <img className="es-logo-img" src="/logo.png" alt="vue3-sketch-ruler" />
+        <img className="es-logo-img" src="@/assets/logo.png" alt="react-sketch-ruler" />
        <Link to="/">
           <span>{title}</span>
         </Link>
