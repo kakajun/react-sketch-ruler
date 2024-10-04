@@ -1,0 +1,36 @@
+{
+  "route": {
+    "basic": "Basic Example",
+    "comprehensive": "comprehensive",
+    "comprehensive2": "comprehensive2",
+    "customizeButtons": "customizeButtons",
+    "Selecto": "Selecto test"
+  },
+  "common": {
+    "code": "Code",
+    "editorDemo": "ES Drager Editor",
+    "copy": "Copy",
+    "basicDemo": "Basic Demo"
+  },
+  "examples": {
+    "move": "Move",
+    "moveAndResize": "Move+Resize",
+    "rotate": "Rotate",
+    "rotateAndResize": "Rotate+Resize",
+    "boundary": "Boundary",
+    "disabled": "disabled",
+    "checkCollision": "Collision",
+    "minSzie": "min width and min height",
+    "snap": "snap",
+    "markline": "Markline",
+    "snapAndMarkline": "snap and markline",
+    "undo": "Undo",
+    "redo": "Redo",
+    "group": "Group",
+    "unGroup": "UnGroup",
+    "export": "Export",
+    "import": "Import",
+    "uploadImage": "Upload Image",
+    "chartTitle": "ECharts Demo"
+  }
+}

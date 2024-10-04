@@ -39,7 +39,9 @@
     "vite": "^5.3.5",
     "release-it": "^17.6.0",
     "vite-plugin-dts": "3.9.1",
-    "react-moveable": "^0.56.0"
+    "react-moveable": "^0.56.0",
+     "react-router-dom": "^6.25.1",
+     "react-i18next":"^15.0.2"
   },
   "keywords": [
     "react",

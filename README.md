@@ -7,10 +7,10 @@
 [![Cloud Studio Template](https://cs-res.codehub.cn/common/assets/icon-badge.svg)](https://cloudstudio.net/a/21009125697445888?channel=share&sharetype=Markdown)
 
 <a href="https://codepen.io/kakajun/pen/WNVeYap" target="_blank">
-  <img src="./example/assets/codepen.svg" alt="CodePen Demo" width="150" height="30" />
+  <img src="./packages/docs/src/assets/codepen.svg" alt="CodePen Demo" width="150" height="30" />
 </a>
 <div align=center>
-<img src="https://github.com/kakajun/react-sketch-ruler/blob/main/example/assets/logo.png" width="392" height="300">
+<img src="https://github.com/kakajun/react-sketch-ruler/blob/main/packages/docs/src/assets/logo.png" width="392" height="300">
 </div>
 
 ## 🚀 Features
@@ -34,7 +34,7 @@
 
 ## 🦄 demo
 
-案例浏览: [https://kakajun.github.io/react-sketch-ruler](https://kakajun.github.io/react-sketch-ruler) ![image](https://github.com/kakajun/react-sketch-ruler/blob/main/example/assets/1.png)
+案例浏览: [https://kakajun.github.io/react-sketch-ruler](https://kakajun.github.io/react-sketch-ruler) ![image](https://github.com/kakajun/react-sketch-ruler/blob/main/packages/docs/src/assets/1.png)
 
 ## 安装
 
@@ -65,7 +65,7 @@ CDN 引入
 const SketchRule = window.SketchRuler
 ```
 
-详情参见 [CDN demo](https://github.com/kakajun/react-sketch-ruler/blob/master/example/mydemoCdn.html)
+详情参见 [CDN demo](https://github.com/kakajun/react-sketch-ruler/blob/master/packages/docs/src/mydemoCdn.html)
 
 ## 支持的功能
 
@@ -87,7 +87,7 @@ const SketchRule = window.SketchRuler
 
 - [] 加入单元测试功能
 
-参考一个完整的例子，[点击这里](https://github.com/kakajun/react-sketch-ruler/blob/main/example/UserRulerts.tsx)
+参考一个完整的例子，[点击这里](https://github.com/kakajun/react-sketch-ruler/blob/main/packages/docs/src/UserRulerts.tsx)
 
 ## api
 
@@ -191,10 +191,10 @@ panzoomInstance panzoom实例
 
 欢迎大家一起参与插件建设
 
-<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=oqnBX-qn7gkWsdfYQdvNCzYbkeNknuOc&jump_from=webapi&authKey=4YXd2jvmWYU0cN8zUky5DoCD6kz+fjUyWv782GLUjDEIHctXYviSXD/pbqxm/ZDD"><img border="0" src="https://github.com/kakajun/react-sketch-ruler/blob/main/example/assets/group.png" alt="react-sketch-ruler" title="点击这里加入QQ群640166628"></a>
+<a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=oqnBX-qn7gkWsdfYQdvNCzYbkeNknuOc&jump_from=webapi&authKey=4YXd2jvmWYU0cN8zUky5DoCD6kz+fjUyWv782GLUjDEIHctXYviSXD/pbqxm/ZDD"><img border="0" src="https://github.com/kakajun/react-sketch-ruler/blob/main/packages/docs/src/assets/group.png" alt="react-sketch-ruler" title="点击这里加入QQ群640166628"></a>
 
 <div align=center>
-<img src="https://github.com/kakajun/react-sketch-ruler/blob/main/example/assets/qq.png" width="243" height="287">
+<img src="https://github.com/kakajun/react-sketch-ruler/blob/main/packages/docs/src/assets/qq.png" width="243" height="287">
 </div>
 
 ## 贡献者

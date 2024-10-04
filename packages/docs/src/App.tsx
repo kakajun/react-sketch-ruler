@@ -1,29 +1,23 @@
-import { useState } from 'react'
-import UserRuler from './UserRulerts'
-import UserRulertsShadow from './UserRulertsShadow'
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-function App() {
-  // 定义当前激活的 tab 的状态
-  const [activeTab, setActiveTab] = useState('tab1')
+// 示例组件，用于演示路由配置
+const Home = () => <div>Home Page</div>;
+const About = () => <div>About Page</div>;
 
-  // 处理 tab 切换的函数
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab)
-  }
-
+const App: React.FC = () => {
   return (
-    <div style={{ textAlign: 'center', paddingTop: '10px' }}>
-      {/* Tab 按钮 */}
-      <button onClick={() => handleTabChange('tab1')}>常规</button>
-      <button style={{ marginLeft: '10px' }} onClick={() => handleTabChange('tab2')}>
-        阴影demo
-      </button>
+    <Router>
+      <div>
 
-      {/* 根据 activeTab 显示不同的内容 */}
-      {activeTab === 'tab1' && <UserRuler />}
-      {activeTab === 'tab2' && <UserRulertsShadow />}
-    </div>
-  )
-}
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
 
-export default App
+        </Routes>
+      </div>
+    </Router>
+  );
+};
+
+export default App;

@@ -1,0 +1,37 @@
+{
+  "route": {
+    "basic": "基础示例",
+    "comprehensive": "综合",
+    "comprehensive2": "综合(另外写法)",
+    "customizeButtons": "自定义按键",
+    "moveble": "moveble插件结合",
+    "Selecto": "Selecto测试"
+  },
+  "common": {
+    "code": "代码",
+    "editorDemo": "编辑器案例",
+    "copy": "复制",
+    "basicDemo": "基础案例"
+  },
+  "examples": {
+    "move": "移动",
+    "moveAndResize": "移动+缩放",
+    "rotate": "旋转",
+    "rotateAndResize": "旋转+缩放",
+    "boundary": "边界",
+    "disabled": "禁用",
+    "checkCollision": "碰撞检测",
+    "minSzie": "最小宽高",
+    "snap": "吸附",
+    "markline": "辅助线",
+    "snapAndMarkline": "吸附+辅助线",
+    "undo": "撤销",
+    "redo": "重做",
+    "group": "组合",
+    "unGroup": "拆分",
+    "export": "导出",
+    "import": "导入",
+    "uploadImage": "插入图片",
+    "chartTitle": "ECharts 入门示例"
+  }
+}
