@@ -1,4 +1,9 @@
 {
+  "extends": "./tsconfig.common.json",
+
+  // This tsconfig exists solely to provide nice code completion for IDEs.
+  // See the tsconfigs in /src/server etc for the real versions.
+
   "files": [],
   "references": [{ "path": "./packages/docs" }, { "path": "./packages/sketch-ruler" }]
 }
