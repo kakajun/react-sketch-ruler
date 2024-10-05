@@ -1,7 +1,4 @@
-
-
 import globals from 'globals'
-import parser from 'vue-eslint-parser'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import js from '@eslint/js'
@@ -26,15 +23,13 @@ export default [
     'prettier'
   ),
   {
-   plugins: ['react-refresh'],
-
+    plugins: ['react-refresh'],
+    parser: '@typescript-eslint/parser',
     languageOptions: {
       globals: {
         ...globals.browser,
         ...globals.node
       },
-
-      parser: parser,
       ecmaVersion: 5,
       parserOptions: {
         parser: '@typescript-eslint/parser',

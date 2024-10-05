@@ -7,9 +7,18 @@
     "target": "ES2020",
     "module": "ES2022",
     "moduleResolution": "node",
-     "baseUrl": ".",
-     "paths": {
+    "baseUrl": ".",
+    "paths": {
       "@/*": ["src/*"]
     }
-  }
+  },
+  "include": [
+    "src/**/*", // 包含 src 目录下的所有文件
+    "src/i18n/locales/zh.json", // 显式指定需要包含的 JSON 文件
+    "src/i18n/locales/en.json" // 显式指定需要包含的 JSON 文
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts" // 排除测试文件
+  ]
 }
