@@ -30,8 +30,9 @@
   display: flex;
   margin-bottom: 10px;
   justify-content: center;
+  align-items: center; /* 垂直居中 */
   width: 100%;
-  font-size: 20px;
+  font-size: 16px;
 }
 
 .button {
@@ -59,43 +60,6 @@
   right: 40px;
   z-index: 999;
 }
-
-.switch {
-  outline: none;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  position: relative;
-  width: 40px;
-  height: 20px;
-  background: #ccc;
-  border-radius: 10px;
-  transition:
-    border-color 0.3s,
-    background-color 0.3s;
-
-  &::after {
-    content: '';
-    display: inline-block;
-    width: 1rem;
-    height: 1rem;
-    border-radius: 50%;
-    background: #fff;
-    box-shadow: 0, 0, 2px, #999;
-    transition: 0.4s;
-    top: 2px;
-    position: absolute;
-    left: 2px;
-  }
-
-  &:checked {
-    background: rgb(19, 206, 102);
-  }
-
-  &:checked::after {
-    content: '';
-    position: absolute;
-    left: 55%;
-    top: 2px;
-  }
+.btn {
+  margin-right: 5px;
 }

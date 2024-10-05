@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Outlet } from 'react-router-dom'
 import { menuRoutes } from '../router'
 import 'highlight.js/styles/panda-syntax-light.css'
 import hljs from 'highlight.js'
@@ -97,11 +97,7 @@ const HomeLayout: React.FC = () => {
           </div>
         </Aside>
         <div className="es-content">
-          {/* <Switch>
-            <Route path="/" exact component={Home} />
-            <Route path="/about" component={About} />
-            <Route path="/contact" component={Contact} />
-          </Switch> */}
+           <Outlet />
         </div>
 
         <Drawer open={showCode} onClose={() => setShowCode(false)} title={t('common.code')}>

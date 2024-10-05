@@ -3,12 +3,13 @@ import SketchRule from 'react-sketch-ruler'
 import 'react-sketch-ruler/lib/style.css'
 import type { SketchRulerMethods } from 'react-sketch-ruler'
 import bgImg from '@/assets/bg.png'
-import './UserRulerts.less'
+import { Button, Input, Slider, Switch } from 'antd'
+import './Comprehensive.less'
 const DemoComponent = () => {
   // const [rectWidth] = useState(770)
   // const [rectHeight] = useState(472)
   const [rectWidth] = useState(1470)
-  const [rectHeight] = useState(800)
+  const [rectHeight] = useState(750)
   const [canvasWidth] = useState(1920)
   const [canvasHeight] = useState(1080)
   const sketchruleRef = useRef(null)
@@ -46,6 +47,7 @@ const DemoComponent = () => {
   })
 
   useEffect(() => {
+    setState((prevState) => ({ ...prevState, isBlack: localStorage.getItem('theme') !== 'light' }))
     window.addEventListener('resize', handleResize)
     return () => {
       window.removeEventListener('resize', handleResize)
@@ -62,10 +64,6 @@ const DemoComponent = () => {
     if (sketchruleRef.current) {
       ;(sketchruleRef.current as SketchRulerMethods).reset()
     }
-  }
-
-  const changeTheme = () => {
-    setState((prevState) => ({ ...prevState, isBlack: !prevState.isBlack }))
   }
 
   const handleLine = (lines: Record<'h' | 'v', number[]>) => {
@@ -88,12 +86,11 @@ const DemoComponent = () => {
     setShowRuler(!showRuler)
   }
 
-  const scaleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target
+  const scaleChange = (value: number) => {
     if (value) {
-      setState((prevState) => ({ ...prevState, scale: Number(value) }))
+      setState((prevState) => ({ ...prevState, scale: value }))
       if (sketchruleRef.current) {
-        ;(sketchruleRef.current as SketchRulerMethods).panzoomInstance.current?.zoom(Number(value))
+        ;(sketchruleRef.current as SketchRulerMethods).panzoomInstance.current?.zoom(value)
       }
     }
   }
@@ -105,7 +102,9 @@ const DemoComponent = () => {
 
   const snapsChange = (e: { target: { value: string } }) => {
     const arr = e.target.value.split(',')
-    setSnapsObj((prevState) => ({ ...prevState, h: arr.map((item) => Number(item)) }))
+    console.log(arr, 'arr')
+
+    // setSnapsObj((prevState) => ({ ...prevState, h: arr.map((item) => Number(item)) }))
   }
 
   const snapsChangeV = (e: { target: { value: string } }) => {
@@ -113,15 +112,15 @@ const DemoComponent = () => {
     setSnapsObj((prevState) => ({ ...prevState, v: arr.map((item) => Number(item)) }))
   }
 
-  const changeScale = (e: { target: { checked: boolean } }) => {
-    setPanzoomOption((prevState) => ({ ...prevState, disableZoom: e.target.checked }))
+  const changeScale = (checked: boolean) => {
+    setPanzoomOption((prevState) => ({ ...prevState, disableZoom: checked }))
   }
   const updateScale = (scale: number) => {
     setState((prevState) => ({ ...prevState, scale }))
   }
 
-  const changeMove = (e: { target: { checked: boolean } }) => {
-    setPanzoomOption((prevState) => ({ ...prevState, disablePan: e.target.checked }))
+  const changeMove = (checked: boolean) => {
+    setPanzoomOption((prevState) => ({ ...prevState, disablePan: checked }))
   }
 
   const changeShadow = () => {
@@ -169,48 +168,53 @@ const DemoComponent = () => {
       <div className="demo">
         <div className="top">
           <div style={{ marginRight: '10px' }}> 缩放比例:{cpuScale} </div>
-          <button className="btn" onClick={showRuler ? () => setShowRuler(false) : handleShowRuler}>
+          <Button
+            size="small"
+            className="btn"
+            onClick={showRuler ? () => setShowRuler(false) : handleShowRuler}
+          >
             隐藏规尺
-          </button>
-          <button className="btn" onClick={handleShowReferLine}>
+          </Button>
+          <Button size="small" className="btn" onClick={handleShowReferLine}>
             辅助线开关
-          </button>
-          <button className="btn" onClick={() => setLockLine(true)}>
+          </Button>
+          <Button size="small" className="btn" onClick={() => setLockLine(true)}>
             锁定参考线
-          </button>
-          <button className="btn" onClick={changeShadow}>
+          </Button>
+          <Button size="small" className="btn" onClick={changeShadow}>
             模拟阴影切换
-          </button>
-          <button className="btn" onClick={changeTheme}>
-            主题切换
-          </button>
-          <button className="btn" onClick={resetMethod}>
+          </Button>
+          <Button size="small" className="btn" onClick={resetMethod}>
             还原
-          </button>
-          <button className="btn" onClick={zoomOutMethod}>
+          </Button>
+          <Button size="small" className="btn" onClick={zoomOutMethod}>
             缩小
-          </button>
-          <span>禁止缩放</span>
-          <input type="checkbox" className="switch" onChange={changeScale} />
-          <span>禁止移动</span>
-          <input type="checkbox" className="switch" onChange={changeMove} />
-          <input
-            style={{ marginRight: '10px' }}
-            type="range"
+          </Button>
+          <span className="btn">禁止缩放</span>
+          <Switch onChange={changeScale} />
+
+          <span className="btn">禁止移动</span>
+          <Switch onChange={changeMove} />
+
+          <Slider
+            style={{ marginRight: '10px', width: '90px' }}
             value={state.scale}
+            disabled={panzoomOption.disableZoom}
             onChange={scaleChange}
-            min="0.1"
-            max="3"
-            step="0.1"
+            min={0.1}
+            max={3}
+            step={0.1}
           />
+
           <div style={{ marginRight: '10px' }}> 吸附横线: </div>
-          <input
-            style={{ marginRight: '10px', width: '80px' }}
+          <Input
+            style={{ marginRight: '10px', width: '90px' }}
             defaultValue={snapsObj.h.join(',')}
             onBlur={snapsChange}
           />
+
           <div style={{ marginRight: '10px' }}> 吸附纵线: </div>
-          <input
+          <Input
             style={{ marginRight: '10px', width: '80px' }}
             defaultValue={snapsObj.v.join(',')}
             onBlur={snapsChangeV}
@@ -255,9 +259,15 @@ const DemoComponent = () => {
             </div>
 
             <div className="btns" slot="btn">
-              <button onClick={resetMethod}>还原</button>
-              <button onClick={zoomInMethod}>放大</button>
-              <button onClick={zoomOutMethod}>缩小</button>
+              <Button size="small" className="btn" onClick={resetMethod}>
+                还原
+              </Button>
+              <Button size="small" className="btn" onClick={zoomInMethod}>
+                放大
+              </Button>
+              <Button size="small" className="btn" onClick={zoomOutMethod}>
+                缩小
+              </Button>
             </div>
           </SketchRule>
         </div>
