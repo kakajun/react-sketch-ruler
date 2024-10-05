@@ -7,10 +7,13 @@ import { CopyOutlined, DownOutlined } from '@ant-design/icons'
 import { message, Button, Tooltip, Drawer, Dropdown } from 'antd'
 import Header from '../components/layout/Header'
 import Aside from '../components/layout/Aside'
-// import examplesSource from '../examples/*.tsx?raw';
 import type { MenuProps } from 'antd'
 import { useTranslation } from 'react-i18next'
 import './home.less'
+const examplesSource = import.meta.glob('../examples/*.tsx', {
+  eager: true,
+  as: 'raw'
+})
 
 type MenuItemType = {
   key: string
@@ -25,14 +28,10 @@ const HomeLayout: React.FC = () => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
-  console.log(location, 'location')
-
   const [currentPath, setCurrent] = useState(location.pathname)
   const [showCode, setShowCode] = useState(false)
   const [codeHtml, setCodeHtml] = useState('')
-
   const [currentLan, setCurrentLan] = useState('中文')
-
   const handleClick = (item: any) => {
     console.log(item, 'iiiiiii')
     setCurrent(item.path)
@@ -44,16 +43,25 @@ const HomeLayout: React.FC = () => {
       const tempElement = document.createElement('div')
       tempElement.innerHTML = codeHtml
       const plainText = tempElement.innerText
-
       await navigator.clipboard.writeText(plainText)
       message.success('复制成功')
     } catch (err) {
       message.error(err as string)
     }
   }
-  useEffect(() => {
-    console.log(i18n, 'i18n')
 
+  useEffect(() => {
+    const name = location.pathname.replace('/', '')
+    if (name) {
+      const pathName = name.charAt(0).toUpperCase() + name.slice(1)
+      const code = hljs.highlight(examplesSource[`../examples/${pathName}.tsx`], {
+        language: 'tsx'
+      }).value
+      setCodeHtml(code)
+    }
+  }, [location])
+
+  useEffect(() => {
     setLang(i18n.language)
   }, [i18n])
   const setLang = (key: string) => {
