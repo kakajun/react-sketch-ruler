@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Router, Route, Link, useLocation } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { menuRoutes } from '../router'
 import 'highlight.js/styles/panda-syntax-light.css'
 import hljs from 'highlight.js'
@@ -12,23 +12,26 @@ import type { MenuProps } from 'antd'
 import { useTranslation } from 'react-i18next'
 import './home.less'
 
-const langs = { en: { nativeName: 'English' }, zh: { nativeName: '中文' } }
-const items: MenuProps['items'] = [
+type MenuItemType = {
+  key: string
+  label: string
+}
+const items: MenuItemType[] = [
   { key: 'en', label: 'English' },
   { key: 'zh', label: '中文' }
 ]
 
 const HomeLayout: React.FC = () => {
   const { t, i18n } = useTranslation()
-  const [current, setCurrent] = useState(menuRoutes[0])
+  const [currentPath, setCurrent] = useState(menuRoutes[1].path)
   const [showCode, setShowCode] = useState(false)
   const [codeHtml, setCodeHtml] = useState('')
-  // const history = useHistory();
-  const location = useLocation()
   const [currentLan, setCurrentLan] = useState('中文')
-
+  const navigate = useNavigate()
   const handleClick = (item: any) => {
-    // history.push(item.path);
+    console.log(item, 'iiiiiii')
+    setCurrent(item.path)
+    navigate(item.path)
   }
 
   const copyCode = async () => {
@@ -43,15 +46,34 @@ const HomeLayout: React.FC = () => {
       message.error(err as string)
     }
   }
+  useEffect(() => {
+    console.log(i18n, 'i18n')
 
+    setLang(i18n.language)
+  }, [i18n])
+  const setLang = (key: string) => {
+    const obj = items.find((item: MenuItemType) => item.key === key)
+    if (obj) {
+      setCurrentLan(obj.label)
+    }
+  }
+  const handleMenuClick: MenuProps['onClick'] = (e) => {
+    // console.log('click', e)
+    setLang(e.key)
+    i18n.changeLanguage(e.key)
+  }
   return (
     <div className="es-app">
       <Header>
-        <Dropdown className="es-header-lang" trigger={['click']} menu={{ items }}>
-          <span className="el-dropdown-link">
+        <Dropdown
+          className="es-header-lang"
+          trigger={['click']}
+          menu={{ items, onClick: (e) => handleMenuClick(e) }}
+        >
+          <a className="el-dropdown-link">
             {currentLan}
             <DownOutlined style={{ marginLeft: '8px' }} />
-          </span>
+          </a>
         </Dropdown>
 
         <a className="es-header-cube" onClick={() => setShowCode(true)}>
@@ -62,10 +84,10 @@ const HomeLayout: React.FC = () => {
         <Aside>
           <div className="es-sidebar">
             {menuRoutes.map(
-              (item: { path: React.Key | null | undefined; meta: { title: any } }) => (
+              (item: { path: React.Key | null | undefined; meta: { title: string } }) => (
                 <div
                   key={item.path}
-                  className={['es-sidebar-item', { active: current.path === item.path }].join(' ')}
+                  className={`es-sidebar-item ${currentPath === item.path ? 'active' : ''}`}
                   onClick={() => handleClick(item)}
                 >
                   {t(`route.${item.meta?.title}`)}

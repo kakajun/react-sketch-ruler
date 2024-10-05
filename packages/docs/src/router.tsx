@@ -1,27 +1,45 @@
-// eslint-disable-next-line no-restricted-imports
-import { createBrowserRouter, ScrollRestoration } from 'react-router-dom'
-
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 import HomeLayout from './views/Home'
-import React from 'react'
+import React, { Suspense } from 'react'
+
+const LazyComponent = ({ loader }: { loader: () => Promise<{ default: React.ComponentType }> }) => {
+  const Component = React.lazy(loader)
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Component />
+    </Suspense>
+  )
+}
+
+export default LazyComponent
 
 export const menuRoutes = [
   {
-    path: '/',
-    lazy: () => import('./examples/basic'),
+    path: '/basic',
+    element: <LazyComponent loader={() => import('./examples/Basic')} />,
     meta: {
       title: 'basic'
+    }
+  },
+  {
+    path: '/comprehensive',
+    element: <LazyComponent loader={() => import('./examples/Comprehensive')} />,
+    meta: {
+      title: 'comprehensive'
     }
   }
 ]
 
 export const router = createBrowserRouter([
   {
-    element: (
-      <>
-        <ScrollRestoration getKey={(location) => location.pathname} />
-        <HomeLayout />
-      </>
-    ),
-    children: menuRoutes
+    path: '/',
+    element: <HomeLayout />,
+    children: [
+      {
+        path: '/',
+        element: <Navigate to="/comprehensive" replace />
+      },
+      ...menuRoutes
+    ]
   }
 ])
