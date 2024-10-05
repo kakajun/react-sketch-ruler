@@ -5,9 +5,12 @@ import type { SketchRulerMethods } from 'react-sketch-ruler'
 import bgImg from '@/assets/bg.png'
 import { Button, Input, Slider, Switch } from 'antd'
 import './Comprehensive.less'
+import { useTheme } from 'antd-style'
 const DemoComponent = () => {
   // const [rectWidth] = useState(770)
   // const [rectHeight] = useState(472)
+  const { appearance } = useTheme()
+
   const [rectWidth] = useState(1470)
   const [rectHeight] = useState(750)
   const [canvasWidth] = useState(1920)
@@ -45,14 +48,15 @@ const DemoComponent = () => {
     isShowRuler: true,
     isShowReferLine: true
   })
-
   useEffect(() => {
-    setState((prevState) => ({ ...prevState, isBlack: localStorage.getItem('theme') !== 'light' }))
+    setState((prevState) => ({ ...prevState, isBlack: appearance !== 'light' }))
+  }, [appearance])
+  useEffect(() => {
     window.addEventListener('resize', handleResize)
     return () => {
       window.removeEventListener('resize', handleResize)
     }
-  }, [])
+  })
 
   const handleResize = () => {
     if (sketchruleRef.current) {
@@ -103,8 +107,6 @@ const DemoComponent = () => {
   const snapsChange = (e: { target: { value: string } }) => {
     const arr = e.target.value.split(',')
     console.log(arr, 'arr')
-
-    // setSnapsObj((prevState) => ({ ...prevState, h: arr.map((item) => Number(item)) }))
   }
 
   const snapsChangeV = (e: { target: { value: string } }) => {

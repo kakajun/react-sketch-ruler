@@ -10,10 +10,9 @@ import './Header.less'
 interface Props {
   title?: string
   children: React.ReactNode
-  changeTheme: () => void
 }
 
-const EsHeader: React.FC<Props> = ({ title = 'react-sketch-ruler', children, changeTheme }) => {
+const EsHeader: React.FC<Props> = ({ title = 'react-sketch-ruler', children }) => {
   const [isLight, setIsLight] = useState(localStorage.getItem('theme') === 'light')
 
   useEffect(() => {
@@ -31,7 +30,6 @@ const EsHeader: React.FC<Props> = ({ title = 'react-sketch-ruler', children, cha
 
   const handleThemeChange = () => {
     setIsLight(!isLight)
-    changeTheme(isLight)
   }
 
   return (

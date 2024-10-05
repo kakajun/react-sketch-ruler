@@ -27,6 +27,13 @@ export const menuRoutes = [
     meta: {
       title: 'comprehensive'
     }
+  },
+  {
+    path: '/moveble',
+    element: <LazyComponent loader={() => import('./examples/Moveble')} />,
+    meta: {
+      title: 'moveble'
+    }
   }
 ]
 

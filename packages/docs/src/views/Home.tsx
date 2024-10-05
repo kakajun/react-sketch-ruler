@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useNavigate, Outlet } from 'react-router-dom'
+import { useLocation, useNavigate, Outlet } from 'react-router-dom'
 import { menuRoutes } from '../router'
 import 'highlight.js/styles/panda-syntax-light.css'
 import hljs from 'highlight.js'
@@ -23,11 +23,14 @@ const items: MenuItemType[] = [
 
 const HomeLayout: React.FC = () => {
   const { t, i18n } = useTranslation()
-  const [currentPath, setCurrent] = useState(menuRoutes[1].path)
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [currentPath, setCurrent] = useState(location.pathname)
   const [showCode, setShowCode] = useState(false)
   const [codeHtml, setCodeHtml] = useState('')
+
   const [currentLan, setCurrentLan] = useState('中文')
-  const navigate = useNavigate()
+
   const handleClick = (item: any) => {
     console.log(item, 'iiiiiii')
     setCurrent(item.path)
@@ -97,7 +100,7 @@ const HomeLayout: React.FC = () => {
           </div>
         </Aside>
         <div className="es-content">
-           <Outlet />
+          <Outlet />
         </div>
 
         <Drawer open={showCode} onClose={() => setShowCode(false)} title={t('common.code')}>

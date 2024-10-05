@@ -2,10 +2,13 @@ import { useState, useEffect, useRef } from 'react'
 import SketchRule from 'react-sketch-ruler'
 import 'react-sketch-ruler/lib/style.css'
 import MovebleCom from './MovebleCom'
-import './UserRulerts.less'
+import './Comprehensive.less'
 import type { SketchRulerMethods } from 'react-sketch-ruler'
+import { useTheme } from 'antd-style'
+import { Button } from 'antd'
 
 const DemoComponent = () => {
+  const { appearance } = useTheme()
   // const [rectWidth] = useState(770)
   // const [rectHeight] = useState(472)
   const [rectWidth] = useState(1470)
@@ -42,7 +45,9 @@ const DemoComponent = () => {
     isShowRuler: true,
     isShowReferLine: true
   })
-
+  useEffect(() => {
+    setState((prevState) => ({ ...prevState, isBlack: appearance !== 'light' }))
+  }, [appearance])
   useEffect(() => {
     window.addEventListener('resize', handleResize)
     return () => {
@@ -72,6 +77,11 @@ const DemoComponent = () => {
     }
   }
 
+  const zoomInMethod = () => {
+    if (sketchruleRef.current) {
+      ;(sketchruleRef.current as SketchRulerMethods).zoomIn()
+    }
+  }
   const updateScale = (scale: number) => {
     setState((prevState) => ({ ...prevState, scale }))
   }
@@ -158,8 +168,15 @@ const DemoComponent = () => {
             </div>
 
             <div className="btns" slot="btn">
-              <button onClick={resetMethod}>还原</button>
-              <button onClick={zoomOutMethod}>缩小</button>
+              <Button size="small" className="btn" onClick={resetMethod}>
+                还原
+              </Button>
+              <Button size="small" className="btn" onClick={zoomInMethod}>
+                放大
+              </Button>
+              <Button size="small" className="btn" onClick={zoomOutMethod}>
+                缩小
+              </Button>
             </div>
           </SketchRule>
         </div>
