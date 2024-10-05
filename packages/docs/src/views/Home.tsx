@@ -25,6 +25,8 @@ const HomeLayout: React.FC = () => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
+  console.log(location, 'location')
+
   const [currentPath, setCurrent] = useState(location.pathname)
   const [showCode, setShowCode] = useState(false)
   const [codeHtml, setCodeHtml] = useState('')
@@ -90,7 +92,7 @@ const HomeLayout: React.FC = () => {
               (item: { path: React.Key | null | undefined; meta: { title: string } }) => (
                 <div
                   key={item.path}
-                  className={`es-sidebar-item ${currentPath === item.path ? 'active' : ''}`}
+                  className={`es-sidebar-item ${currentPath === item.path || currentPath === '/' ? 'active' : ''}`}
                   onClick={() => handleClick(item)}
                 >
                   {t(`route.${item.meta?.title}`)}

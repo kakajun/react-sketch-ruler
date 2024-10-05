@@ -1,36 +1,28 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import HomeLayout from './views/Home'
-import React, { Suspense } from 'react'
-
-const LazyComponent = ({ loader }: { loader: () => Promise<{ default: React.ComponentType }> }) => {
-  const Component = React.lazy(loader)
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <Component />
-    </Suspense>
-  )
-}
-
-export default LazyComponent
+import React from 'react'
+import Basic from './examples/Basic'
+import Comprehensive from './examples/Comprehensive'
+import Moveble from './examples/Moveble'
 
 export const menuRoutes = [
   {
     path: '/basic',
-    element: <LazyComponent loader={() => import('./examples/Basic')} />,
+    element: <Basic></Basic>,
     meta: {
       title: 'basic'
     }
   },
   {
     path: '/comprehensive',
-    element: <LazyComponent loader={() => import('./examples/Comprehensive')} />,
+    element: <Comprehensive />,
     meta: {
       title: 'comprehensive'
     }
   },
   {
     path: '/moveble',
-    element: <LazyComponent loader={() => import('./examples/Moveble')} />,
+    element: <Moveble />,
     meta: {
       title: 'moveble'
     }
