@@ -29,7 +29,7 @@ export interface FinalPaletteType {
   borderColor: string
 }
 
-export  interface ShadowType {
+export interface ShadowType {
   x: number
   y: number
   width: number
@@ -129,7 +129,7 @@ export interface CanvasProps {
   selectStart: number
   gridRatio: number
   selectLength: number
-  onDragStart: (e: React.MouseEvent<HTMLDivElement>) => Promise<void>
+  onDragStart: (e: React.MouseEvent<HTMLCanvasElement>) => Promise<void>
 }
 
 export interface SketchRulerMethods {

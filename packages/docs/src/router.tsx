@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { createHashRouter, createBrowserRouter, Navigate } from 'react-router-dom'
 import HomeLayout from './views/Home'
 import React from 'react'
 import Basic from './examples/Basic'
@@ -29,7 +29,7 @@ export const menuRoutes = [
   }
 ]
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   {
     path: '/',
     element: <HomeLayout />,

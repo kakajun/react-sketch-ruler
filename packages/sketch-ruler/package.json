@@ -15,6 +15,7 @@
   },
   "sideEffects": false,
   "main": "lib/index.js",
+  "main_": "src/index.tsx",
   "style": "lib/style.css",
   "types": "lib/index.d.ts",
   "scripts": {

@@ -67,7 +67,7 @@ const RulerComponent = ({
     }
   }, [startValue, startOther, vertical, palette.lineType, scale, palette.lineColor, thick])
 
-  const mousedown = async (e: React.MouseEvent<HTMLDivElement>) => {
+  const mousedown = async (e: React.MouseEvent<HTMLCanvasElement>) => {
     const { offsetX, offsetY } = e.nativeEvent as MouseEvent
     setIsDragle(true)
     setIsLockLine(false)

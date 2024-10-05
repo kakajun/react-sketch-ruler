@@ -31,7 +31,10 @@ export default function useLine(props: Props, vertical: boolean) {
     setOffsetLine(vertical ? offsetX : offsetY)
   }
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>, propValue?: number) => {
+  const handleMouseDown = (
+    e: React.MouseEvent<HTMLDivElement | HTMLCanvasElement>,
+    propValue?: number
+  ) => {
     e.stopPropagation() // 阻止冒泡
     return new Promise<void>((resolve) => {
       if (props.lockLine) return

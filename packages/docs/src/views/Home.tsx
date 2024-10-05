@@ -92,7 +92,7 @@ const HomeLayout: React.FC = () => {
               (item: { path: React.Key | null | undefined; meta: { title: string } }) => (
                 <div
                   key={item.path}
-                  className={`es-sidebar-item ${currentPath === item.path || currentPath === '/' ? 'active' : ''}`}
+                  className={`es-sidebar-item ${currentPath === item.path || (currentPath == '/' && item.path == '/comprehensive') ? 'active' : ''}`}
                   onClick={() => handleClick(item)}
                 >
                   {t(`route.${item.meta?.title}`)}

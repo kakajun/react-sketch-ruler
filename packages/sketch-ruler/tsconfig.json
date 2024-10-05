@@ -3,6 +3,7 @@
 
   "compilerOptions": {
     "outDir": "lib",
+    "jsx": "react-jsx",
     "allowImportingTsExtensions": true,
     "emitDeclarationOnly": true,
     "moduleResolution": "node",
