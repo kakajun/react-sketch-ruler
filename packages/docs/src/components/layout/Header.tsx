@@ -3,14 +3,16 @@ import lightGithubIcon from '@/assets/images/light-github.svg';
 import darkGithubIcon from '@/assets/images/dark-github.svg';
 import lightThemeIcon from '@/assets/images/light-theme.svg';
 import darkThemeIcon from '@/assets/images/dark-theme.svg';
+import logo from '/logo.png';
 import { Link } from 'react-router-dom';
-
+import   './Header.less';
 
 interface Props {
   title?: string;
+  children: React.ReactNode
 }
 
-const EsHeader: React.FC<Props> = ({ title = 'vue3-sketch-ruler' }) => {
+const EsHeader: React.FC<Props> = ({ title = 'react-sketch-ruler',children }) => {
   const [isLight, setIsLight] = useState(true);
 
 
@@ -35,14 +37,12 @@ const EsHeader: React.FC<Props> = ({ title = 'vue3-sketch-ruler' }) => {
   return (
     <div className="es-header">
       <h1 className="es-logo">
-        <img className="es-logo-img" src="@/assets/logo.png" alt="react-sketch-ruler" />
+        <img className="es-logo-img" src={logo} alt="react-sketch-ruler" />
        <Link to="/">
           <span>{title}</span>
         </Link>
       </h1>
-      <slot /> {/* 无法直接使用slot，需要手动渲染children */}
       <div className="es-navbar">
-        <slot name="navbar-start" /> {/* 无法直接使用slot，需要手动渲染children */}
         <a
           className={['es-header-link', isLight ? 'light' : 'dark'].join(' ')}
           onClick={(e) => e.preventDefault()}
@@ -53,7 +53,7 @@ const EsHeader: React.FC<Props> = ({ title = 'vue3-sketch-ruler' }) => {
         <a className="es-header-link" href="https://github.com/kakajun/vue3-sketch-ruler" target="_blank">
           <img src={isLight ? lightGithubIcon : darkGithubIcon} />
         </a>
-        <slot name="navbar-end" /> {/* 无法直接使用slot，需要手动渲染children */}
+             {children}
       </div>
     </div>
   );

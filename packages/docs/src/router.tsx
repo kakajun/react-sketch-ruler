@@ -1,9 +1,20 @@
 // eslint-disable-next-line no-restricted-imports
-import { createBrowserRouter, ScrollRestoration } from "react-router-dom";
+import { createBrowserRouter, ScrollRestoration } from 'react-router-dom'
 
-import HomeLayout from "./views/Home";
+import HomeLayout from './views/Home'
+import React from 'react'
 
- const router = createBrowserRouter([
+export const menuRoutes = [
+  {
+    path: '/',
+    lazy: () => import('./examples/basic'),
+    meta: {
+      title: 'basic'
+    }
+  }
+]
+
+export const router = createBrowserRouter([
   {
     element: (
       <>
@@ -11,12 +22,6 @@ import HomeLayout from "./views/Home";
         <HomeLayout />
       </>
     ),
-    children: [
-      {
-        path: "/",
-        lazy: () => import("./examples/UserRulerts"),
-      },
-    ],
-  },
-]);
-export default router
+    children: menuRoutes
+  }
+])
