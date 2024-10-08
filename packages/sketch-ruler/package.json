@@ -1,6 +1,6 @@
 {
   "name": "react-sketch-ruler",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "author": "kakajun <253495832@qq.com>",
   "license": "MIT",
   "type": "module",
@@ -13,6 +13,7 @@
     "type": "git",
     "url": "https://github.com/kakajun/react-sketch-ruler"
   },
+  "homepage": "https://kakajun.github.io/react-sketch-ruler",
   "main": "lib/index.js",
   "main_": "src/index.tsx",
   "style": "lib/style.css",
