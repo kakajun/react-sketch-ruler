@@ -85,6 +85,8 @@ export default function useLine(props: Props, vertical: boolean) {
     if (typeof index !== 'number') {
       linesArrs.push(value)
       props.handleLine && props.handleLine(props.lines)
+    } else {
+      props.handleLine && props.handleLine(props.lines)
     }
   }
 
