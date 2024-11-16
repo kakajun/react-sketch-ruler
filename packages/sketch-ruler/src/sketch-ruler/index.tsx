@@ -132,6 +132,19 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     }
 
     const handleSpaceKeyDown = (e: KeyboardEvent) => {
+      // 检查当前焦点元素
+      const activeElement = document.activeElement;
+      const isEditableElement =
+        activeElement instanceof HTMLInputElement ||
+        activeElement instanceof HTMLTextAreaElement ||
+        activeElement?.classList.contains('monaco-editor') ||
+        activeElement?.getAttribute('contenteditable') === 'true';
+
+      // 如果焦点在可编辑元素中,则不处理空格事件
+      if (isEditableElement) {
+        return;
+      }
+
       if (e.key === ' ') {
         if (panzoomInstance.current) {
           setCursorClass('grabCursor')

@@ -13,8 +13,8 @@
     "type": "git",
     "url": "https://github.com/kakajun/react-sketch-ruler"
   },
-  "main": "lib/index.js",
-  "main_": "src/index.tsx",
+  "main1": "lib/index.js",
+  "main": "src/index.tsx",
   "style": "lib/style.css",
   "types": "lib/index.d.ts",
   "scripts": {

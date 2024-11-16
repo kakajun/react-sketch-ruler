@@ -1,9 +1,10 @@
-import { createHashRouter, createBrowserRouter, Navigate } from 'react-router-dom'
+import { createHashRouter, Navigate } from 'react-router-dom'
 import HomeLayout from './views/Home'
 import React from 'react'
 import Basic from './examples/Basic'
 import Comprehensive from './examples/Comprehensive'
 import Moveble from './examples/Moveble'
+import InputTest from './examples/InputTest'
 
 export const menuRoutes = [
   {
@@ -25,6 +26,13 @@ export const menuRoutes = [
     element: <Moveble />,
     meta: {
       title: 'moveble'
+    }
+  },
+  {
+    path: '/inputTest',
+    element: <InputTest />,
+    meta: {
+      title: 'inputTest'
     }
   }
 ]

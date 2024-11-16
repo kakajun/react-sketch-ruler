@@ -136,5 +136,9 @@
       "source.fixAll.stylelint": "explicit"
     }
   },
-  "liveServer.settings.port": 5501
+  "liveServer.settings.port": 5501,
+  "i18n-ally.localesPaths": [
+    "packages/docs/src/i18n",
+    "packages/docs/src/i18n/locales"
+  ]
 }
