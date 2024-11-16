@@ -1,6 +1,6 @@
 {
   "name": "react-sketch-ruler",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "author": "kakajun <253495832@qq.com>",
   "license": "MIT",
   "type": "module",
@@ -13,14 +13,14 @@
     "type": "git",
     "url": "https://github.com/kakajun/react-sketch-ruler"
   },
-  "main1": "lib/index.js",
-  "main": "src/index.tsx",
+  "homepage": "https://kakajun.github.io/react-sketch-ruler",
+  "main": "lib/index.js",
+  "main_": "src/index.tsx",
   "style": "lib/style.css",
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "vite build",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "release": "release-it"
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0"
   },
   "keywords": [
     "react",

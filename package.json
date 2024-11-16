@@ -11,7 +11,7 @@
     "format": "prettier --write  \"packages/**/src/**/*.{js,ts,json,tsx,less,vue,html,md}\"",
     "lint": "esprint check --workers=4 --fix",
     "changelog": "pnpm --filter ./packages/sketch-ruler changelog",
-    "release": "pnpm --filter ./packages/sketch-ruler release"
+    "release": "pnpm build && node ./scripts/release.js"
   },
   "devDependencies": {
     "react-sketch-ruler": "workspace:*",

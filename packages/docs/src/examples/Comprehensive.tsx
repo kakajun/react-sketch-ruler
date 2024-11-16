@@ -51,18 +51,6 @@ const DemoComponent = () => {
   useEffect(() => {
     setState((prevState) => ({ ...prevState, isBlack: appearance !== 'light' }))
   }, [appearance])
-  useEffect(() => {
-    window.addEventListener('resize', handleResize)
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  })
-
-  const handleResize = () => {
-    if (sketchruleRef.current) {
-      ;(sketchruleRef.current as SketchRulerMethods).initPanzoom()
-    }
-  }
 
   const resetMethod = () => {
     if (sketchruleRef.current) {
