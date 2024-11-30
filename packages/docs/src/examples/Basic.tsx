@@ -83,7 +83,7 @@ const DemoComponent = () => {
             ref={sketchruleRef}
             lines={state.lines}
           >
-            <div slot="default" data-type="page" style={canvasStyle}>
+            <div style={canvasStyle}>
               <img className="imgStyle" src={bgImg} alt="" />
             </div>
 

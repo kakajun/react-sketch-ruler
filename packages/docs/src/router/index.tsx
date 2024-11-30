@@ -1,29 +1,25 @@
-
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
 export default function Router() {
+  let baseRouter: any[] = [
+    {
+      path: '/',
+      children: [
+        {
+          index: true,
+          lazy: () => import('@/pages/Home')
+        }
+      ]
+    }
+  ]
 
-	let baseRouter: any[] = [
-		{
-			path: "/",
-			children: [
-				{
-					index: true,
-					lazy: () => import("@/pages/Home"),
-				},
-			],
-		},
-	];
+  const routers = baseRouter
 
+  const router = createBrowserRouter(routers)
 
-
-	const routers =baseRouter;
-
-	const router = createBrowserRouter(routers);
-
-	return (
-		<>
-			<RouterProvider router={router} fallbackElement={<p>Loading...</p>} />
-		</>
-	);
+  return (
+    <>
+      <RouterProvider router={router} fallbackElement={<p>Loading...</p>} />
+    </>
+  )
 }

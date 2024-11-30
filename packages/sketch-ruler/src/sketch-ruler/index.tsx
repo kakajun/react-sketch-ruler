@@ -133,16 +133,16 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
 
     const handleSpaceKeyDown = (e: KeyboardEvent) => {
       // 检查当前焦点元素
-      const activeElement = document.activeElement;
+      const activeElement = document.activeElement
       const isEditableElement =
         activeElement instanceof HTMLInputElement ||
         activeElement instanceof HTMLTextAreaElement ||
         activeElement?.classList.contains('monaco-editor') ||
-        activeElement?.getAttribute('contenteditable') === 'true';
+        activeElement?.getAttribute('contenteditable') === 'true'
 
       // 如果焦点在可编辑元素中,则不处理空格事件
       if (isEditableElement) {
-        return;
+        return
       }
 
       if (e.key === ' ') {
@@ -282,7 +282,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     const [defaultSlot, btnSlot] = React.Children.toArray(children).reduce(
       (acc: [React.ReactNode | null, React.ReactNode | null], child: React.ReactNode) => {
         if (React.isValidElement(child)) {
-          if (child.props.slot === 'default') {
+          if (child.props.slot === 'default' || !child.props.slot) {
             acc[0] = child
           } else if (child.props.slot === 'btn') {
             acc[1] = child

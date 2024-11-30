@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import SketchRule from 'react-sketch-ruler'
 import 'react-sketch-ruler/lib/style.css'
-import { Input } from 'antd';
+import { Input } from 'antd'
 import './Basic.less'
-const { TextArea } = Input;
+const { TextArea } = Input
 const DemoComponent = () => {
-
   const [rectWidth] = useState(1470)
   const [rectHeight] = useState(800)
   const [canvasWidth] = useState(1920)
@@ -20,7 +19,6 @@ const DemoComponent = () => {
     },
     thick: 20
   })
-
 
   const rectStyle = {
     width: `${rectWidth}px`,
@@ -51,7 +49,7 @@ const DemoComponent = () => {
           >
             <div slot="default" data-type="page" style={canvasStyle}>
               <Input placeholder="Basic usage" style={{ marginBottom: 20 }} />
-                <TextArea rows={4} />
+              <TextArea rows={4} />
             </div>
           </SketchRule>
         </div>
