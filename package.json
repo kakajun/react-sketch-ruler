@@ -1,6 +1,6 @@
 {
   "name": "root",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "author": "kakajun <253495832@qq.com>",
   "license": "MIT",
   "private": true,
@@ -60,5 +60,8 @@
     "react-sketch-ruler",
     "room",
     "panzoom"
-  ]
+  ],
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  }
 }
