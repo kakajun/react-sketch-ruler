@@ -156,8 +156,13 @@ const DemoComponent = () => {
   return (
     <>
       <div className="demo">
+        <div className="top font16">
+          <div className="mr10"> Ctrl+鼠标滚轮缩放画布 </div>
+          <div className="mr10"> 空白键+鼠标左键键移动画布 </div>
+          <div className="mr10"> 缩放比:{cpuScale} </div>
+          <div className="mr10"> 参考线:{JSON.stringify(state.lines)} </div>
+        </div>
         <div className="top">
-          <div style={{ marginRight: '10px' }}> 缩放比例:{cpuScale} </div>
           <Button
             size="small"
             className="btn"

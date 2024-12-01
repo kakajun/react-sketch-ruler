@@ -114,7 +114,6 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
 
     const rectStyle = useMemo(() => {
       return {
-        // position: 'absolute',
         background: paletteConfig.bgColor,
         left: thick + 'px',
         top: thick + 'px',
@@ -139,7 +138,6 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
         activeElement instanceof HTMLTextAreaElement ||
         activeElement?.classList.contains('monaco-editor') ||
         activeElement?.getAttribute('contenteditable') === 'true'
-
       // 如果焦点在可编辑元素中,则不处理空格事件
       if (isEditableElement) {
         return

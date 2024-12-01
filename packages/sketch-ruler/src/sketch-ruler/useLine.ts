@@ -18,6 +18,7 @@ interface Props {
 export default function useLine(props: Props, vertical: boolean) {
   const [offsetLine, setOffsetLine] = useState(0)
   const [startValue, setStartValue] = useState(0)
+  /* 记录hover标签 */
   const actionStyle = {
     backgroundColor: props.palette.hoverBg,
     color: props.palette.hoverColor,
@@ -74,6 +75,9 @@ export default function useLine(props: Props, vertical: boolean) {
   const handleLineRelease = (value: number, index?: number) => {
     const linesArrs = vertical ? props.lines.h : props.lines.v
     const isOutOfRange = checkBoundary(value)
+    if (!linesArrs) {
+      return
+    }
     if (isOutOfRange) {
       if (typeof index === 'number') {
         linesArrs.splice(index, 1)
@@ -81,12 +85,15 @@ export default function useLine(props: Props, vertical: boolean) {
       } else {
         return // 新增越界,什么也不做
       }
-    }
-    if (typeof index !== 'number') {
-      linesArrs.push(value)
-      props.handleLine && props.handleLine(props.lines)
     } else {
-      props.handleLine && props.handleLine(props.lines)
+      if (typeof index !== 'number') {
+        linesArrs.push(value)
+        props.handleLine && props.handleLine(props.lines)
+      } else {
+        // 移动修改
+        linesArrs[index] = value
+        props.handleLine && props.handleLine({ ...props.lines, [vertical ? 'h' : 'v']: linesArrs })
+      }
     }
   }
 
