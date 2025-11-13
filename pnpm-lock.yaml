@@ -131,6 +131,9 @@ importers:
       i18next-browser-languagedetector:
         specifier: ^8.0.0
         version: 8.0.0
+      react-es-drager:
+        specifier: ^1.0.4
+        version: 1.0.4
       react-i18next:
         specifier: ^15.0.2
         version: 15.0.2(i18next@23.15.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -2200,6 +2203,9 @@ packages:
     resolution: {integrity: sha512-UlbRu4cAiGaIewkPyiRGJk0imDN2T3JjieT6spoL2UeSf5od4n5LB/mQ4ejmxhCFT1tYe8IvaFulzynWovsEFQ==}
     peerDependencies:
       react: ^19.2.0
+
+  react-es-drager@1.0.4:
+    resolution: {integrity: sha512-IP6c0WIkL4EBHaRCLJpHWvJ8PB/CAOPWsQGG3z+JK6Y9qQSnSTds7789ufj6tB6RZv1Qtiz4fy2X44CiWcbHtQ==}
 
   react-i18next@15.0.2:
     resolution: {integrity: sha512-z0W3/RES9Idv3MmJUcf0mDNeeMOUXe+xoL0kPfQPbDoZHmni/XsIoq5zgT2MCFUiau283GuBUK578uD/mkAbLQ==}
