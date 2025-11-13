@@ -3,6 +3,8 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import js from '@eslint/js'
 import { FlatCompat } from '@eslint/eslintrc'
+import tsParser from '@typescript-eslint/parser'
+import reactRefreshPlugin from 'eslint-plugin-react-refresh'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -19,20 +21,20 @@ export default [
   ...compat.extends(
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:react-hooks/recommended',
     'prettier'
   ),
   {
-    plugins: ['react-refresh'],
-    parser: '@typescript-eslint/parser',
+    plugins: {
+      'react-refresh': reactRefreshPlugin
+    },
     languageOptions: {
+      parser: tsParser,
       globals: {
         ...globals.browser,
         ...globals.node
       },
-      ecmaVersion: 5,
+      ecmaVersion: 2022,
       parserOptions: {
-        parser: '@typescript-eslint/parser',
         project: './tsconfig.eslint.json'
       }
     },

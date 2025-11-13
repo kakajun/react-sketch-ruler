@@ -81,18 +81,24 @@ export default function useLine(props: Props, vertical: boolean) {
     if (isOutOfRange) {
       if (typeof index === 'number') {
         linesArrs.splice(index, 1)
-        props.handleLine && props.handleLine(props.lines)
+        if (props.handleLine) {
+          props.handleLine(props.lines)
+        }
       } else {
         return // 新增越界,什么也不做
       }
     } else {
       if (typeof index !== 'number') {
         linesArrs.push(value)
-        props.handleLine && props.handleLine(props.lines)
+        if (props.handleLine) {
+          props.handleLine(props.lines)
+        }
       } else {
         // 移动修改
         linesArrs[index] = value
-        props.handleLine && props.handleLine({ ...props.lines, [vertical ? 'h' : 'v']: linesArrs })
+        if (props.handleLine) {
+          props.handleLine({ ...props.lines, [vertical ? 'h' : 'v']: linesArrs })
+        }
       }
     }
   }

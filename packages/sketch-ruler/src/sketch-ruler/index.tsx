@@ -172,7 +172,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       ...panzoomOption
     })
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const handlePanzoomChange = (e: any) => {
       const detail = e.detail as PanzoomEventDetail
       const { scale: newScale, dimsOut } = detail
@@ -234,7 +234,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     const zoomIn = () => panzoomInstance.current?.zoomIn()
     const zoomOut = () => panzoomInstance.current?.zoomOut()
     const setOtions = () => {
-      let centerScale = calculateTransform()
+      const centerScale = calculateTransform()
       panzoomInstance.current?.setOptions(getPanOptions(centerScale))
     }
 
@@ -280,15 +280,16 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     const [defaultSlot, btnSlot] = React.Children.toArray(children).reduce(
       (acc: [React.ReactNode | null, React.ReactNode | null], child: React.ReactNode) => {
         if (React.isValidElement(child)) {
-          if (child.props.slot === 'default' || !child.props.slot) {
-            acc[0] = child
-          } else if (child.props.slot === 'btn') {
-            acc[1] = child
+          const el = child as React.ReactElement<any>
+          if (el.props.slot === 'default' || !el.props.slot) {
+            acc[0] = el
+          } else if (el.props.slot === 'btn') {
+            acc[1] = el
           }
         }
         return acc
       },
-      [null, null] // 初始化 acc 为数组
+      [null, null]
     )
     return (
       <div className="sketch-ruler" id="sketch-ruler">

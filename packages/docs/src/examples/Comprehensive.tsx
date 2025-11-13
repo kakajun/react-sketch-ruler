@@ -15,7 +15,7 @@ const DemoComponent = () => {
   const [rectHeight] = useState(750)
   const [canvasWidth] = useState(1920)
   const [canvasHeight] = useState(1080)
-  const sketchruleRef = useRef(null)
+  const sketchruleRef = useRef<SketchRulerMethods>(null)
   const [showRuler, setShowRuler] = useState(true)
   const [panzoomOption, setPanzoomOption] = useState({
     maxScale: 3,

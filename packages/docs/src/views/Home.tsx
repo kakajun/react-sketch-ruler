@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useLocation, useNavigate, Outlet } from 'react-router-dom'
 import { menuRoutes } from '../router'
 import 'highlight.js/styles/panda-syntax-light.css'

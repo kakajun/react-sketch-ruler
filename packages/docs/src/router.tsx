@@ -37,7 +37,7 @@ export const menuRoutes = [
   }
 ]
 
-export const router = createHashRouter([
+export const router: ReturnType<typeof createHashRouter> = createHashRouter([
   {
     path: '/',
     element: <HomeLayout />,

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import SketchRule from 'react-sketch-ruler'
 import 'react-sketch-ruler/lib/style.css'
 import MovebleCom from './MovebleCom'
@@ -16,7 +16,7 @@ const DemoComponent = () => {
   const [canvasWidth] = useState(1920)
   const [canvasHeight] = useState(1080)
   const sketchruleRef = useRef(null)
-  const [panzoomOption, setPanzoomOption] = useState({
+  const [panzoomOption] = useState({
     maxScale: 3,
     minScale: 0.1,
     disablePan: false,
@@ -81,10 +81,7 @@ const DemoComponent = () => {
     console.log('handleCornerClick', e)
   }
   const cpuScale = state.scale.toFixed(2)
-  const rectStyle = {
-    width: `${rectWidth}px`,
-    height: `${rectHeight}px`
-  }
+
   const cpuPalette = state.isBlack
     ? {
         bgColor: 'transparent',

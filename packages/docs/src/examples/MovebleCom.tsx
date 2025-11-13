@@ -1,6 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react'
 import Moveable from 'react-moveable' // 假设 Moveable 已经适配了 React
-import type { ShadowType } from '../src/index-types'
+// 临时定义 ShadowType，避免找不到模块报错
+type ShadowType = {
+  x: number
+  y: number
+  width: number
+  height: number
+}
 
 interface MovebleComProps {
   updateShadow: (props: ShadowType) => void
@@ -97,7 +103,7 @@ const MovebleCom = ({ updateShadow, updateSnapsObj }: MovebleComProps) => {
     setTargetId(item.id)
     setTimeout(() => {
       if (moveableRef.current) {
-        moveableRef.current.dragStart(event)
+        ;(moveableRef.current as any).dragStart(event)
       }
     }, 0)
   }
@@ -144,9 +150,9 @@ const MovebleCom = ({ updateShadow, updateSnapsObj }: MovebleComProps) => {
     background: item.background
   })
 
-  const onDragEnd = (e: any) => {
+  const onDragEnd = () => {
     if (moveableRef.current) {
-      moveableRef.current.updateRect()
+      ;(moveableRef.current as any).updateRect()
     }
   }
 
@@ -166,7 +172,7 @@ const MovebleCom = ({ updateShadow, updateSnapsObj }: MovebleComProps) => {
           data-left={item.left}
           data-top={item.top}
           id={item.id}
-          style={getStyle(item)}
+          style={getStyle({ ...item, zIndex: item.zIndex ?? 1 })}
           onMouseDown={(event) => handleClick(event, item)}
         >
           {item.className}

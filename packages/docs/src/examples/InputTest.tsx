@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import SketchRule from 'react-sketch-ruler'
 import 'react-sketch-ruler/lib/style.css'
 import { Input } from 'antd'
@@ -10,7 +10,7 @@ const DemoComponent = () => {
   const [canvasWidth] = useState(1920)
   const [canvasHeight] = useState(1080)
   const sketchruleRef = useRef(null)
-  const [state, setState] = useState({
+  const [state] = useState({
     scale: 1,
     isBlack: false,
     lines: {

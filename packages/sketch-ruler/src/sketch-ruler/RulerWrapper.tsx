@@ -55,9 +55,9 @@ const RulerComponent = ({
 
   const indicatorStyle = useMemo(() => {
     const lineType = palette.lineType
-    let positionKey = vertical ? 'left' : 'top'
-    let gepKey = vertical ? 'top' : 'left'
-    let boderKey = vertical ? 'borderLeft' : 'borderBottom'
+    const positionKey = vertical ? 'left' : 'top'
+    const gepKey = vertical ? 'top' : 'left'
+    const boderKey = vertical ? 'borderLeft' : 'borderBottom'
     const offsetPx = (startValue - startOther) * scale + thick
     return {
       [positionKey]: offsetPx + 'px',
@@ -71,7 +71,7 @@ const RulerComponent = ({
     const { offsetX, offsetY } = e.nativeEvent as MouseEvent
     setIsDragle(true)
     setIsLockLine(false)
-    let tempStartValue = Math.round(
+    const tempStartValue = Math.round(
       startOther - thick / scale + (vertical ? offsetX : offsetY) / scale
     )
     setStartValue(tempStartValue)

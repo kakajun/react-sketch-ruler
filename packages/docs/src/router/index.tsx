@@ -1,13 +1,14 @@
+import React from 'react'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
 export default function Router() {
-  let baseRouter: any[] = [
+  const baseRouter: any[] = [
     {
       path: '/',
       children: [
         {
           index: true,
-          lazy: () => import('@/pages/Home')
+          lazy: () => import('@/views/Home')
         }
       ]
     }

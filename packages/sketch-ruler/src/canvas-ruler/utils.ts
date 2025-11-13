@@ -17,13 +17,25 @@ export function setLast(
   ctx: CanvasRenderingContext2D,
   isHorizontal?: boolean
 ) {
-  isHorizontal ? ctx.moveTo(x, 0) : ctx.moveTo(0, x)
+  if (isHorizontal) {
+    ctx.moveTo(x, 0)
+  } else {
+    ctx.moveTo(0, x)
+  }
   ctx.save()
-  isHorizontal ? ctx.translate(x + 5, height * 0.2) : ctx.translate(width * 0.1, x + 32)
+  if (isHorizontal) {
+    ctx.translate(x + 5, height * 0.2)
+  } else {
+    ctx.translate(width * 0.1, x + 32)
+  }
   if (!isHorizontal) ctx.rotate(-Math.PI / 2) // 旋转 -90 度
   ctx.fillText(Math.round(value).toString(), 4, 7)
   ctx.restore()
-  isHorizontal ? ctx.lineTo(x, height) : ctx.lineTo(width, x)
+  if (isHorizontal) {
+    ctx.lineTo(x, height)
+  } else {
+    ctx.lineTo(width, x)
+  }
   ctx.stroke()
   ctx.closePath()
   ctx.setTransform(1, 0, 0, 1, 0, 0)
@@ -66,7 +78,7 @@ export const drawCanvasRuler = (
   isHorizontal?: boolean //横向为true,纵向缺省
 ) => {
   const { scale, width, height, ratio, palette, gridRatio, showShadowText } = options
-  const { bgColor, fontColor, fontShadowColor, shadowColor, longfgColor } = palette
+  const { bgColor, fontColor, shadowColor, longfgColor } = palette
   const endNum = isHorizontal ? options.canvasWidth : options.canvasHeight
   ctx.setTransform(1, 0, 0, 1, 0, 0) // 还原,否则scale变大后会错乱
   // 缩放ctx, 以简化计算
@@ -88,9 +100,11 @@ export const drawCanvasRuler = (
     const shadowWidth = selectLength * scale // 阴影宽度
     ctx.fillStyle = shadowColor
 
-    isHorizontal
-      ? ctx.fillRect(shadowX, 0, shadowWidth, height)
-      : ctx.fillRect(0, shadowX, width, shadowWidth)
+    if (isHorizontal) {
+      ctx.fillRect(shadowX, 0, shadowWidth, height)
+    } else {
+      ctx.fillRect(0, shadowX, width, shadowWidth)
+    }
 
     // 画阴影文字起始
     if (showShadowText) {
@@ -156,9 +170,17 @@ export const drawCanvasRuler = (
       ctx.save()
       // 影响文字位置
       if (value == 0) {
-        isHorizontal ? ctx.translate(x - 15, height * 0.2) : ctx.translate(width * 0.3, x - 5)
+        if (isHorizontal) {
+          ctx.translate(x - 15, height * 0.2)
+        } else {
+          ctx.translate(width * 0.3, x - 5)
+        }
       } else {
-        isHorizontal ? ctx.translate(x - 12, height * 0.05) : ctx.translate(width * 0.05, x + 12)
+        if (isHorizontal) {
+          ctx.translate(x - 12, height * 0.05)
+        } else {
+          ctx.translate(width * 0.05, x + 12)
+        }
       }
 
       if (!isHorizontal) {
