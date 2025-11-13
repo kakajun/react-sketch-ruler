@@ -5,7 +5,7 @@ import Basic from './examples/Basic'
 import Comprehensive from './examples/Comprehensive'
 import Moveble from './examples/Moveble'
 import InputTest from './examples/InputTest'
-import Snap from './examples/Snap'
+// import Snap from './examples/Snap'
 
 export const menuRoutes = [
   {
@@ -35,14 +35,14 @@ export const menuRoutes = [
     meta: {
       title: 'inputTest'
     }
-  },
-  {
-    path: '/snap',
-    element: <Snap></Snap>,
-    meta: {
-      title: 'snap'
-    }
   }
+  // {
+  //   path: '/snap',
+  //   element: <Snap></Snap>,
+  //   meta: {
+  //     title: 'snap'
+  //   }
+  // }
 ]
 
 export const router: ReturnType<typeof createHashRouter> = createHashRouter([

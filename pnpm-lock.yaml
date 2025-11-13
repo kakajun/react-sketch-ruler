@@ -4968,6 +4968,8 @@ snapshots:
       react: 19.2.0
       scheduler: 0.27.0
 
+  react-es-drager@1.0.4: {}
+
   react-i18next@15.0.2(i18next@23.15.1)(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
       '@babel/runtime': 7.25.7
