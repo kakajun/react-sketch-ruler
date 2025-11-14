@@ -12,7 +12,8 @@ import { useTranslation } from 'react-i18next'
 import './home.less'
 const examplesSource = import.meta.glob('../examples/*.tsx', {
   eager: true,
-  as: 'raw'
+  query: '?raw',
+  import: 'default'
 })
 
 type MenuItemType = {
@@ -54,7 +55,8 @@ const HomeLayout: React.FC = () => {
     const name = location.pathname.replace('/', '')
     if (name) {
       const pathName = name.charAt(0).toUpperCase() + name.slice(1)
-      const code = hljs.highlight(examplesSource[`../examples/${pathName}.tsx`], {
+      const rawCode = examplesSource[`../examples/${pathName}.tsx`] as string
+      const code = hljs.highlight(rawCode, {
         language: 'tsx'
       }).value
       setCodeHtml(code)

@@ -75,8 +75,8 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     const [startX, setStartX] = useState(0)
     const [startY, setStartY] = useState(0)
     const [cursorClass, setCursorClass] = useState('defaultCursor')
-    let zoomStartX = 0
-    let zoomStartY = 0
+    const zoomStartXRef = useRef(0)
+    const zoomStartYRef = useRef(0)
     const [ownScale, setOwnScale] = useState(1)
     const [showReferLine, setShowReferLine] = useState(isShowReferLine)
     const panzoomInstance = useRef<PanzoomObject | null>(null)
@@ -165,8 +165,8 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       noBind: true,
       startScale: scale,
       // cursor: 'default',
-      startX: zoomStartX,
-      startY: zoomStartY,
+      startX: zoomStartXRef.current,
+      startY: zoomStartYRef.current,
       smoothScroll: true,
       canvas: true,
       ...panzoomOption
@@ -215,17 +215,17 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       const scaleX = (rectWidth * (1 - paddingRatio)) / canvasWidth
       const scaleY = (rectHeight * (1 - paddingRatio)) / canvasHeight
       const scale = Math.min(scaleX, scaleY)
-      zoomStartX = rectWidth / 2 - canvasWidth / 2
+      zoomStartXRef.current = rectWidth / 2 - canvasWidth / 2
       if (scale < 1) {
-        zoomStartY =
+        zoomStartYRef.current =
           ((canvasHeight * scale) / 2 - canvasHeight / 2) / scale -
           (canvasHeight * scale - rectHeight) / scale / 2
       } else if (scale > 1) {
-        zoomStartY =
+        zoomStartYRef.current =
           (canvasHeight * scale - canvasHeight) / 2 / scale +
           (rectHeight - canvasHeight * scale) / scale / 2
       } else {
-        zoomStartY = 0
+        zoomStartYRef.current = 0
       }
       return scale
     }

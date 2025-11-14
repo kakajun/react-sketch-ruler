@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import SketchRule from 'react-sketch-ruler'
-import 'react-sketch-ruler/lib/style.css'
+import 'react-sketch-ruler/index.css'
 import type { SketchRulerMethods } from 'react-sketch-ruler'
 import bgImg from '@/assets/bg.png'
 import { Button, Input, Slider, Switch } from 'antd'

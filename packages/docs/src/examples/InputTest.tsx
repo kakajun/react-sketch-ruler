@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import SketchRule from 'react-sketch-ruler'
-import 'react-sketch-ruler/lib/style.css'
+import 'react-sketch-ruler/index.css'
 import { Input } from 'antd'
 import './Basic.less'
 const { TextArea } = Input

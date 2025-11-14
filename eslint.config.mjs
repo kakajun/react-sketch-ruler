@@ -16,13 +16,15 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['**/node_modules', '**/lib']
+    ignores: ['**/node_modules', '**/lib', '**/*.d.ts']
   },
-  ...compat.extends(
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'prettier'
-  ),
+  {
+    files: ['**/*.d.ts'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off'
+    }
+  },
+  ...compat.extends('eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'),
   {
     plugins: {
       'react-refresh': reactRefreshPlugin
@@ -66,6 +68,12 @@ export default [
       'no-redeclare': 'off',
       'no-dupe-class-members': 'off',
       'no-undef': 'off'
+    }
+  },
+  {
+    files: ['**/*.d.ts'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off'
     }
   }
 ]

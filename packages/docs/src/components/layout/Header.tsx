@@ -43,7 +43,7 @@ const EsHeader: React.FC<Props> = ({ title = 'react-sketch-ruler', children }) =
       <div className="es-navbar">
         <a
           className={['es-header-link', isLight ? 'light' : 'dark'].join(' ')}
-          onClick={() => handleThemeChange()}
+          onClick={(e) => { e.preventDefault(); handleThemeChange(); }}
           href="#"
         >
           <img src={isLight ? lightThemeIcon : darkThemeIcon} />
