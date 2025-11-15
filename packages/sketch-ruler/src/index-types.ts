@@ -1,5 +1,5 @@
-import type { PanzoomObject, PanzoomEventDetail } from 'simple-panzoom'
-import { MutableRefObject } from 'react'
+import type { PanzoomObject, PanzoomEventDetail, PanzoomOptions } from 'simple-panzoom'
+import type { RefObject } from 'react'
 export interface PaletteType {
   bgColor?: string
   longfgColor?: string
@@ -64,7 +64,7 @@ export interface SketchRulerProps {
   gridRatio?: number
   lockLine?: boolean
   selfHandle?: boolean
-  panzoomOption?: object // 需要具体类型，这里假设为object
+  panzoomOption?: Partial<PanzoomOptions>
   children: React.ReactNode
   updateScale?: (props: number) => void
   onZoomChange?: (props: PanzoomEventDetail) => void
@@ -137,5 +137,5 @@ export interface SketchRulerMethods {
   zoomIn: () => void
   zoomOut: () => void
   initPanzoom: () => void
-  panzoomInstance: MutableRefObject<PanzoomObject | null>
+  panzoomInstance: RefObject<PanzoomObject | null>
 }

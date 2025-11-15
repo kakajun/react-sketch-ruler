@@ -148,7 +148,11 @@ const DemoComponent = () => {
             lines={state.lines}
           >
             <div slot="default" data-type="page" style={canvasStyle}>
-              <MovebleCom updateShadow={updateShadow} updateSnapsObj={updateSnapsObj} />
+              <MovebleCom
+                updateShadow={updateShadow}
+                updateSnapsObj={updateSnapsObj}
+                zoom={state.scale}
+              />
             </div>
 
             <div className="btns" slot="btn">

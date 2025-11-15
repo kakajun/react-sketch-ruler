@@ -80,6 +80,8 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     const [ownScale, setOwnScale] = useState(1)
     const [showReferLine, setShowReferLine] = useState(isShowReferLine)
     const panzoomInstance = useRef<PanzoomObject | null>(null)
+    const canvasEditRef = useRef<HTMLDivElement | null>(null)
+    const panElemRef = useRef<HTMLElement | null>(null)
     const rectWidth = useMemo(() => width - thick, [width, thick])
     const rectHeight = useMemo(() => height - thick, [height, thick])
 
@@ -192,7 +194,13 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     }
 
     const initPanzoom = () => {
-      const elem = document.querySelector('.canvasedit')
+      const elem = canvasEditRef.current
+      if (panElemRef.current) {
+        panElemRef.current.removeEventListener('panzoomchange', handlePanzoomChange)
+      }
+      if (panzoomInstance.current) {
+        panzoomInstance.current.destroy()
+      }
       let tempScale = scale
       if (autoCenter) {
         tempScale = calculateTransform()
@@ -201,10 +209,11 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
           updateScale(tempScale)
         }
       }
-      const panzoom = Panzoom(elem as HTMLElement, getPanOptions(tempScale))
+      const panzoom = Panzoom((elem as HTMLElement)!, getPanOptions(tempScale))
       panzoomInstance.current = panzoom
       if (elem) {
-        elem.addEventListener('panzoomchange', handlePanzoomChange)
+        panElemRef.current = elem as HTMLElement
+        panElemRef.current.addEventListener('panzoomchange', handlePanzoomChange)
       }
     }
 
@@ -269,8 +278,15 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
         document.removeEventListener('wheel', handleWheel)
         document.removeEventListener('keydown', handleSpaceKeyDown)
         document.removeEventListener('keyup', handleSpaceKeyUp)
+        if (panElemRef.current) {
+          panElemRef.current.removeEventListener('panzoomchange', handlePanzoomChange)
+        }
+        if (panzoomInstance.current) {
+          panzoomInstance.current.destroy()
+          panzoomInstance.current = null
+        }
       }
-    }, [canvasWidth, canvasHeight, width, height])
+    }, [canvasWidth, canvasHeight, width, height, selfHandle])
 
     useEffect(() => {
       setOtions()
@@ -295,7 +311,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       <div className="sketch-ruler" id="sketch-ruler">
         {btnSlot}
         <div className={'canvasedit-parent ' + cursorClass} style={rectStyle}>
-          <div className={'canvasedit ' + cursorClass}>{defaultSlot}</div>
+          <div ref={canvasEditRef} className={'canvasedit ' + cursorClass}>{defaultSlot}</div>
         </div>
         {showRuler && (
           <RulerWrapper
