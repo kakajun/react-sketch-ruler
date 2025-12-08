@@ -5,6 +5,7 @@ import Basic from './examples/Basic'
 import Comprehensive from './examples/Comprehensive'
 import Moveble from './examples/Moveble'
 import InputTest from './examples/InputTest'
+import Bigscreen from './examples/bigscreen/Bigscreen'
 // import Snap from './examples/Snap'
 
 export const menuRoutes = [
@@ -34,6 +35,13 @@ export const menuRoutes = [
     element: <InputTest />,
     meta: {
       title: 'inputTest'
+    }
+  },
+  {
+    path: '/bigscreen',
+    element: <Bigscreen />,
+    meta: {
+      title: 'bigscreen'
     }
   }
   // {

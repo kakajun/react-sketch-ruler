@@ -7,7 +7,8 @@
     "moveble": "moveble插件结合",
     "Selecto": "Selecto测试",
     "inputTest": "输入框测试",
-    "snap": "参考线吸附"
+    "snap": "参考线吸附",
+    "bigscreen": "大屏辅助simple-panzoom"
   },
   "common": {
     "code": "代码",

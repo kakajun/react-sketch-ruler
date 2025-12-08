@@ -172,7 +172,6 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       ...panzoomOption
     })
 
-
     const handlePanzoomChange = (e: any) => {
       const detail = e.detail as PanzoomEventDetail
       const { scale: newScale, dimsOut } = detail
@@ -215,18 +214,8 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       const scaleX = (rectWidth * (1 - paddingRatio)) / canvasWidth
       const scaleY = (rectHeight * (1 - paddingRatio)) / canvasHeight
       const scale = Math.min(scaleX, scaleY)
-      zoomStartXRef.current = rectWidth / 2 - canvasWidth / 2
-      if (scale < 1) {
-        zoomStartYRef.current =
-          ((canvasHeight * scale) / 2 - canvasHeight / 2) / scale -
-          (canvasHeight * scale - rectHeight) / scale / 2
-      } else if (scale > 1) {
-        zoomStartYRef.current =
-          (canvasHeight * scale - canvasHeight) / 2 / scale +
-          (rectHeight - canvasHeight * scale) / scale / 2
-      } else {
-        zoomStartYRef.current = 0
-      }
+      zoomStartXRef.current = (rectWidth - canvasWidth) / 2 / scale
+      zoomStartYRef.current = (rectHeight - canvasHeight) / 2 / scale
       return scale
     }
 
@@ -295,7 +284,12 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       <div className="sketch-ruler" id="sketch-ruler">
         {btnSlot}
         <div className={'canvasedit-parent ' + cursorClass} style={rectStyle}>
-          <div className={'canvasedit ' + cursorClass}>{defaultSlot}</div>
+          <div
+            className={'canvasedit ' + cursorClass}
+            style={{ width: canvasWidth + 'px', height: canvasHeight + 'px' }}
+          >
+            {defaultSlot}
+          </div>
         </div>
         {showRuler && (
           <RulerWrapper

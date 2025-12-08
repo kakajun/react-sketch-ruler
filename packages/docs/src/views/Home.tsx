@@ -10,7 +10,7 @@ import Aside from '../components/layout/Aside'
 import type { MenuProps } from 'antd'
 import { useTranslation } from 'react-i18next'
 import './home.less'
-const examplesSource = import.meta.glob('../examples/*.tsx', {
+const examplesSource = import.meta.glob('../examples/**/*.tsx', {
   eager: true,
   query: '?raw',
   import: 'default'
@@ -55,11 +55,21 @@ const HomeLayout: React.FC = () => {
     const name = location.pathname.replace('/', '')
     if (name) {
       const pathName = name.charAt(0).toUpperCase() + name.slice(1)
-      const rawCode = examplesSource[`../examples/${pathName}.tsx`] as string
-      const code = hljs.highlight(rawCode, {
-        language: 'tsx'
-      }).value
-      setCodeHtml(code)
+      let rawCode = examplesSource[`../examples/${pathName}.tsx`] as string
+
+      if (!rawCode) {
+        const key = Object.keys(examplesSource).find((k) => k.endsWith(`/${pathName}.tsx`))
+        if (key) {
+          rawCode = examplesSource[key] as string
+        }
+      }
+
+      if (rawCode) {
+        const code = hljs.highlight(rawCode, {
+          language: 'tsx'
+        }).value
+        setCodeHtml(code)
+      }
     }
   }, [location])
 
