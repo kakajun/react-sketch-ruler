@@ -22,6 +22,7 @@ const DemoComponent = () => {
     minScale: 0.1,
     disablePan: false,
     disableZoom: false,
+    contain: 'none', // 'inside' | 'outside' | 'none'
     handleStartEvent: (event: Event) => {
       event.preventDefault()
       console.log('handleStartEvent', event)
@@ -113,6 +114,10 @@ const DemoComponent = () => {
     setPanzoomOption((prevState) => ({ ...prevState, disablePan: checked }))
   }
 
+  const changeInsideMove = (checked: boolean) => {
+    setPanzoomOption((prevState) => ({ ...prevState, contain: checked ? 'inside' : 'none' }))
+  }
+
   const changeShadow = () => {
     setState((prevState) => ({
       ...prevState,
@@ -190,7 +195,8 @@ const DemoComponent = () => {
 
           <span className="btn">禁止移动</span>
           <Switch onChange={changeMove} />
-
+          <span className="btn">框内移动</span>
+          <Switch onChange={changeInsideMove} />
           <Slider
             style={{ marginRight: '10px', width: '90px' }}
             value={state.scale}
