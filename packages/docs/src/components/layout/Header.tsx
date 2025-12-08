@@ -50,7 +50,7 @@ const EsHeader: React.FC<Props> = ({ title = 'react-sketch-ruler', children }) =
         </a>
         <a
           className="es-header-link"
-          href="https://github.com/kakajun/vue3-sketch-ruler"
+          href="https://github.com/kakajun/react-sketch-ruler"
           target="_blank"
         >
           <img src={isLight ? lightGithubIcon : darkGithubIcon} />
