@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, memo } from 'react'
 import useLine from './useLine'
 import { debounce } from '../canvas-ruler/utils'
 import type { LineProps } from '../index-types'
@@ -97,4 +97,4 @@ const LineComponent = ({
   )
 }
 
-export default LineComponent
+export default memo(LineComponent)

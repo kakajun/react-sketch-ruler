@@ -11,6 +11,7 @@ type ShadowType = {
 interface MovebleComProps {
   updateShadow: (props: ShadowType) => void
   updateSnapsObj: (props: { h: number[]; v: number[] }) => void
+  zoom?: number
 }
 
 type TargetItem = {
@@ -24,8 +25,9 @@ type TargetItem = {
   zIndex?: number // 可选字段
 }
 
-const MovebleCom = ({ updateShadow, updateSnapsObj }: MovebleComProps) => {
-  const [targetId, setTargetId] = useState(null)
+const MovebleCom = ({ updateShadow, updateSnapsObj, zoom = 1 }: MovebleComProps) => {
+  const [targetId, setTargetId] = useState<string | null>('target0')
+  const [targetEl, setTargetEl] = useState<HTMLElement | null>(null)
   const [targetList, setTargetList] = useState<TargetItem[]>([
     {
       id: 'target0',
@@ -108,6 +110,14 @@ const MovebleCom = ({ updateShadow, updateSnapsObj }: MovebleComProps) => {
     }, 0)
   }
 
+  useEffect(() => {
+    const el = targetId ? document.getElementById(targetId) : null
+    setTargetEl(el)
+    if (el && moveableRef.current) {
+      ;(moveableRef.current as any).updateRect()
+    }
+  }, [targetId])
+
   const onDragStart = () => {
     copyTargetList.current = JSON.parse(JSON.stringify(targetList)) as TargetItem[]
   }
@@ -160,7 +170,7 @@ const MovebleCom = ({ updateShadow, updateSnapsObj }: MovebleComProps) => {
     const h = targetList.map((item: TargetItem) => item.top)
     const v = targetList.map((item: TargetItem) => item.left)
     updateSnapsObj({ h, v })
-  }, [targetId])
+  }, [targetList])
 
   return (
     <div className="container">
@@ -185,8 +195,9 @@ const MovebleCom = ({ updateShadow, updateSnapsObj }: MovebleComProps) => {
         snapGap
         snapDirections={snapDirections}
         elementSnapDirections={elementSnapDirections}
-        snapThreshold={5 / 1} // 假设 scale 为 1
-        target={`#${targetId}`}
+        snapThreshold={5 / zoom}
+        target={targetEl || undefined}
+        visible={!!targetEl}
         draggable
         throttleDrag={1}
         edgeDraggable={false}
@@ -195,6 +206,9 @@ const MovebleCom = ({ updateShadow, updateSnapsObj }: MovebleComProps) => {
         onDrag={onDrag}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
+        zoom={zoom}
+        rootContainer={document.querySelector('.canvasedit') as HTMLElement}
+        container={document.querySelector('.canvasedit') as HTMLElement}
       />
     </div>
   )

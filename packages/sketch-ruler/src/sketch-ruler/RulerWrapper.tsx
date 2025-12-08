@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, memo } from 'react'
 import RulerLine from './RulerLine'
 import CanvasRuler from '../canvas-ruler/index'
 import useLine from './useLine'
@@ -143,4 +143,4 @@ const RulerComponent = ({
   )
 }
 
-export default RulerComponent
+export default memo(RulerComponent)

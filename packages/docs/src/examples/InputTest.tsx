@@ -48,8 +48,11 @@ const DemoComponent = () => {
             lines={state.lines}
           >
             <div slot="default" data-type="page" style={canvasStyle}>
-              <Input placeholder="Basic usage" style={{ marginBottom: 20 }} />
-              <TextArea rows={4} />
+              <Input
+                placeholder="Basic usage"
+                style={{ marginBottom: 20, fontSize: '28px', height: 'auto' }}
+              />
+              <TextArea rows={4} style={{ fontSize: '28px' }} />
             </div>
           </SketchRule>
         </div>
