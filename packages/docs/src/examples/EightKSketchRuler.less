@@ -1,0 +1,51 @@
+.eight-k-sketch-ruler {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+
+  .whitewrapper {
+    background-color: #fafafc;
+    background-image: linear-gradient(#fafafc 20px, transparent 0),
+      linear-gradient(90deg, transparent 20px, #373739 0);
+  }
+  .blackwrapper {
+    background-color: #18181c;
+    background-image: linear-gradient(#18181c 20px, transparent 0),
+      linear-gradient(90deg, transparent 20px, #86909c 0);
+  }
+  .wrapper {
+    background-size:
+      21px 21px,
+      21px 21px;
+    border: 1px solid #dadadc;
+    width: 100%;
+    height: 100%;
+  }
+
+  .description {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    font-size: 16px;
+    padding: 5px;
+    width: 100%;
+    text-align: center;
+    color: #000;
+    z-index: 1000;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+  }
+  .btns {
+    position: absolute;
+    display: flex;
+    bottom: 20px;
+    right: 40px;
+    z-index: 999;
+
+    button {
+      margin-left: 10px;
+      padding: 4px 10px;
+      cursor: pointer;
+    }
+  }
+}

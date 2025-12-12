@@ -6,6 +6,7 @@ import Comprehensive from './examples/Comprehensive'
 import Moveble from './examples/Moveble'
 import InputTest from './examples/InputTest'
 import Bigscreen from './examples/bigscreen/Bigscreen'
+import EightKSketchRuler from './examples/EightKSketchRuler'
 // import Snap from './examples/Snap'
 
 export const menuRoutes = [
@@ -43,7 +44,14 @@ export const menuRoutes = [
     meta: {
       title: 'bigscreen'
     }
-  }
+  },
+  {
+    path: '/sketch-ruler',
+    element: <EightKSketchRuler />,
+    meta: {
+      title: 'sketch-ruler'
+    }
+  },
   // {
   //   path: '/snap',
   //   element: <Snap></Snap>,

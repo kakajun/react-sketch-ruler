@@ -52,7 +52,7 @@ yarn add react-sketch-ruler  -S
 
 ```
 import SketchRule from 'react-sketch-ruler'
-import 'react-sketch-ruler/style.css'
+import 'react-sketch-ruler/index.css'
 
 ```
 
@@ -87,7 +87,7 @@ const SketchRule = window.SketchRuler
 
 - [] 加入单元测试功能
 
-参考一个完整的例子，[点击这里](https://github.com/kakajun/react-sketch-ruler/blob/main/packages/docs/src/UserRulerts.tsx)
+参考一个完整的例子，[点击这里](https://github.com/kakajun/react-sketch-ruler/blob/main/packages/docs/src/examples/Comprehensive.tsx)
 
 ## api
 
@@ -95,7 +95,7 @@ const SketchRule = window.SketchRuler
 
 | 属性名称 | 描述 | 类型 | 默认值 |
 | --- | --- | --- | --- |
-| scale | 初始化标尺的缩放及画布 | Number | 1(autoCenter 默认为true,初始值不生效) |
+| scale | 初始化标尺的缩放 | Number | 1(autoCenter 默认为true,初始值不生效, 后续外面变化不再监听,但内部scale变化会同步到外面) |
 | rate | 初始化标尺的缩放 | Number | 1 |
 | thick | 标尺的厚度 | Number | 16 |
 | width | 放置标尺窗口的宽度 | Number | 1400 |
