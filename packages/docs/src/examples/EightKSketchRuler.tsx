@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import SketchRule, { SketchRulerMethods } from 'react-sketch-ruler'
-import bgImg from'../assets/8k.jpg'
+import bgImg from '../assets/8k.jpg'
 import './EightKSketchRuler.less'
 import { useTheme } from 'antd-style'
 

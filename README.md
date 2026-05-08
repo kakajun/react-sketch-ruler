@@ -82,6 +82,7 @@ const SketchRule = window.SketchRuler
 - [x] 刻度吸附效果
 - [x] 选中阴影阴影响应
 - [x] 阴影刻度数字响应
+- [x] 多实例支持
 
 ## 未来支持功能
 

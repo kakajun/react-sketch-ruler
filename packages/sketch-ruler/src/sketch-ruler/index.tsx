@@ -67,7 +67,8 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       onHandleCornerClick,
       updateScale,
       onZoomChange,
-      handleLine
+      handleLine,
+      deleteLabel
     }: SketchRulerProps,
     ref
   ) => {
@@ -82,6 +83,8 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     const panzoomInstance = useRef<PanzoomObject | null>(null)
     const canvasEditRef = useRef<HTMLDivElement | null>(null)
     const panElemRef = useRef<HTMLElement | null>(null)
+    const containerRef = useRef<HTMLDivElement | null>(null)
+    const isHoveringRef = useRef(false)
     const rectWidth = useMemo(() => width - thick, [width, thick])
     const rectHeight = useMemo(() => height - thick, [height, thick])
 
@@ -99,7 +102,8 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       showShadowText,
       lockLine,
       scale: ownScale,
-      handleLine
+      handleLine,
+      deleteLabel
     }
 
     const cornerStyle = useMemo(() => {
@@ -124,7 +128,15 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       }
     }, [rectHeight, rectWidth, paletteConfig])
 
+    const isEventInContainer = (e: Event) => {
+      if (e instanceof KeyboardEvent) {
+        return isHoveringRef.current
+      }
+      return containerRef.current?.contains(e.target as Node) ?? false
+    }
+
     const handleWheel = (e: WheelEvent) => {
+      if (!isEventInContainer(e)) return
       if (e.ctrlKey || e.metaKey) {
         if (panzoomInstance.current) {
           panzoomInstance.current.zoomWithWheel(e)
@@ -133,6 +145,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     }
 
     const handleSpaceKeyDown = (e: KeyboardEvent) => {
+      if (!isEventInContainer(e)) return
       // 检查当前焦点元素
       const activeElement = document.activeElement
       const isEditableElement =
@@ -155,6 +168,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     }
 
     const handleSpaceKeyUp = (e: KeyboardEvent) => {
+      if (!isEventInContainer(e)) return
       if (e.key === ' ') {
         if (panzoomInstance.current) {
           setCursorClass('defaultCursor')
@@ -301,7 +315,12 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       [null, null]
     )
     return (
-      <div className="sketch-ruler" id="sketch-ruler">
+      <div
+        className="sketch-ruler"
+        ref={containerRef}
+        onMouseEnter={() => { isHoveringRef.current = true }}
+        onMouseLeave={() => { isHoveringRef.current = false }}
+      >
         {btnSlot}
         <div className={'canvasedit-parent ' + cursorClass} style={rectStyle}>
           <div

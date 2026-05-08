@@ -17,7 +17,8 @@ const LineComponent = ({
   snapThreshold,
   snapsObj,
   lockLine,
-  handleLine
+  handleLine,
+  deleteLabel
 }: LineProps) => {
   const [showLabel, setShowLabel] = useState(false)
   const [isInscale, setIsInscale] = useState(false)
@@ -35,7 +36,8 @@ const LineComponent = ({
         index,
         value,
         rate,
-        handleLine
+        handleLine,
+        deleteLabel
       },
       vertical
     )

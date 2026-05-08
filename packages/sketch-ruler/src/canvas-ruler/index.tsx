@@ -59,19 +59,19 @@ const CanvasRuler = ({
       })
     }
   }, [
-      scale,
-      rate,
-      width,
-      height,
-      palette,
-      canvasWidth,
-      canvasHeight,
-      gridRatio,
-      canvasContext,
-      start,
-      selectStart,
-      selectLength,
-      vertical
+    scale,
+    rate,
+    width,
+    height,
+    palette,
+    canvasWidth,
+    canvasHeight,
+    gridRatio,
+    canvasContext,
+    start,
+    selectStart,
+    selectLength,
+    vertical
   ])
 
   useEffect(() => {

@@ -7,6 +7,7 @@ import Moveble from './examples/Moveble'
 import InputTest from './examples/InputTest'
 import Bigscreen from './examples/bigscreen/Bigscreen'
 import EightKSketchRuler from './examples/EightKSketchRuler'
+import MultiInstance from './examples/MultiInstance'
 // import Snap from './examples/Snap'
 
 export const menuRoutes = [
@@ -52,6 +53,13 @@ export const menuRoutes = [
       title: 'sketch-ruler'
     }
   },
+  {
+    path: '/multi-instance',
+    element: <MultiInstance />,
+    meta: {
+      title: 'multi-instance'
+    }
+  }
   // {
   //   path: '/snap',
   //   element: <Snap></Snap>,

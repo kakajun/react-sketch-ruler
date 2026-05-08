@@ -25,7 +25,8 @@ const RulerComponent = ({
   lockLine,
   propStyle,
   showShadowText,
-  handleLine
+  handleLine,
+  deleteLabel
 }: RulerWrapperProps) => {
   const [isLockLine, setIsLockLine] = useState(lockLine)
   const [isdragle, setIsDragle] = useState(false)
@@ -42,7 +43,8 @@ const RulerComponent = ({
         snapThreshold,
         lockLine: isLockLine,
         rate,
-        handleLine
+        handleLine,
+        deleteLabel
       },
       !vertical
     )
@@ -120,6 +122,7 @@ const RulerComponent = ({
               vertical={vertical}
               isShowReferLine={isShowReferLine}
               handleLine={handleLine}
+              deleteLabel={deleteLabel}
               rate={rate}
             />
           ))}

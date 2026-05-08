@@ -1,4 +1,3 @@
-
 declare module 'styled-components' {
   export interface IGlobalStyle {
     Demo: typeof Demo

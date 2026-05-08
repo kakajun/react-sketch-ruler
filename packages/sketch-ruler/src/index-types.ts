@@ -70,6 +70,7 @@ export interface SketchRulerProps {
   onZoomChange?: (props: PanzoomEventDetail) => void
   onHandleCornerClick?: (props: boolean) => void
   handleLine?: (props: LineType) => void
+  deleteLabel?: string
 }
 
 export interface RulerWrapperProps {
@@ -94,6 +95,7 @@ export interface RulerWrapperProps {
   lockLine: boolean
   isShowReferLine: boolean
   handleLine?: (props: LineType) => void
+  deleteLabel?: string
   propStyle: React.CSSProperties
 }
 
@@ -113,6 +115,7 @@ export interface LineProps {
   value: number
   lockLine: boolean
   handleLine?: (props: LineType) => void
+  deleteLabel?: string
 }
 
 export interface CanvasProps {

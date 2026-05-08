@@ -13,6 +13,7 @@ interface Props {
   value?: number
   index?: number
   handleLine?: (props: LineType) => void
+  deleteLabel?: string
 }
 
 export default function useLine(props: Props, vertical: boolean) {
@@ -109,7 +110,7 @@ export default function useLine(props: Props, vertical: boolean) {
   }
 
   const labelContent = checkBoundary(startValue)
-    ? '放开删除'
+    ? props.deleteLabel || '放开删除'
     : `${vertical ? 'Y' : 'X'}: ${startValue * props.rate}`
 
   return {

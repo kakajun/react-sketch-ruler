@@ -69,8 +69,12 @@ const SnapExample: React.FC = () => {
     [state]
   )
   const extraLines = () => {
-    // 可以返回dom元素列表
-    return Array.from(document.querySelectorAll('.sketch-ruler .lines .line'))
+    // 只查询当前实例内部的参考线
+    const container = sketchruleRef.current?.panzoomInstance?.current?.element?.closest('.sketch-ruler')
+    if (container) {
+      return Array.from(container.querySelectorAll('.lines .line'))
+    }
+    return []
   }
   const onChange = (index: number, dragData: DragData) => {
     setData((prevState) => ({

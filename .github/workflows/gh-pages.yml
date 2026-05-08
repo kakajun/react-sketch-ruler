@@ -32,10 +32,13 @@ jobs:
         run: |
           echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
 
-      - name: Install and Build 🔧
+      - name: Install and Test 🔧
         run: |
           pnpm i --no-frozen-lockfile
-          pnpm build:demo
+          pnpm --filter ./packages/sketch-ruler test
+
+      - name: Build 🔧
+        run: pnpm build:demo
 
       - name: Deploy 🚀
         uses: peaceiris/actions-gh-pages@v3
