@@ -1,5 +1,6 @@
 import type { RefObject } from 'react'
-import type { TransformEngine, TransformState } from '@sketch-ruler/core'
+import type { TransformEngine, TransformState, GuideLine } from '@sketch-ruler/core'
+export type { GuideLine } from '@sketch-ruler/core'
 export interface PaletteType {
   bgColor?: string
   longfgColor?: string
@@ -41,6 +42,8 @@ export interface LineType {
   v: number[]
 }
 
+export type ZoomMode = 'pointer' | 'viewport-center' | 'content-center'
+
 export interface SketchRulerProps {
   showRuler?: boolean
   eyeIcon?: string
@@ -70,7 +73,27 @@ export interface SketchRulerProps {
   onZoomChange?: (props: TransformState) => void
   onHandleCornerClick?: (props: boolean) => void
   handleLine?: (props: LineType) => void
+  /** 参考线对象模型（新），优先级高于 `lines` */
+  guideLines?: GuideLine[]
+  /** 参考线变更回调（新，返回 GuideLine[]） */
+  onGuideLineChange?: (lines: GuideLine[]) => void
   deleteLabel?: string
+  /** 是否显示次刻度线 */
+  showMinorTicks?: boolean
+  /** 缩放原点模式 */
+  zoomMode?: ZoomMode
+  /** 缩放步长 */
+  zoomStep?: number
+  /** 最小缩放 */
+  minZoom?: number
+  /** 最大缩放 */
+  maxZoom?: number
+  /** 是否启用动画 */
+  enableAnimation?: boolean
+  /** 动画模式 */
+  animationMode?: 'direct' | 'ease-out' | 'damped' | 'exponential'
+  /** 初始偏移（autoCenter=false 时生效） */
+  initialOffset?: { x: number; y: number }
 }
 
 export interface RulerWrapperProps {
@@ -97,6 +120,11 @@ export interface RulerWrapperProps {
   handleLine?: (props: LineType) => void
   deleteLabel?: string
   propStyle: React.CSSProperties
+  showMinorTicks?: boolean
+  guideLines?: GuideLine[]
+  addLine?: (line: Omit<GuideLine, 'id'>) => void
+  removeLine?: (id: string) => void
+  updateLine?: (id: string, position: number) => void
 }
 
 export interface LineProps {
@@ -116,6 +144,7 @@ export interface LineProps {
   lockLine: boolean
   handleLine?: (props: LineType) => void
   deleteLabel?: string
+  guideLine?: GuideLine
 }
 
 export interface CanvasProps {
@@ -133,6 +162,7 @@ export interface CanvasProps {
   gridRatio: number
   selectLength: number
   onDragStart: (e: React.MouseEvent<HTMLCanvasElement>) => Promise<void>
+  showMinorTicks?: boolean
 }
 
 export interface SketchRulerMethods {
@@ -141,4 +171,7 @@ export interface SketchRulerMethods {
   zoomOut: () => void
   initPanzoom: () => void
   panzoomInstance: RefObject<TransformEngine | null>
+  setTransform: (t: Partial<TransformState>) => void
+  setZoomMode: (mode: ZoomMode) => void
+  zoomToPreset: (preset: number) => void
 }

@@ -74,6 +74,7 @@ export const drawCanvasRuler = (
     canvasWidth: number
     canvasHeight: number
     showShadowText: boolean
+    showMinorTicks?: boolean
   },
   isHorizontal?: boolean //横向为true,纵向缺省
 ) => {
@@ -164,6 +165,22 @@ export const drawCanvasRuler = (
         } else {
           ctx.moveTo(20, x)
           ctx.lineTo(width / 1.3, x)
+        }
+      }
+
+      // 次刻度
+      if (options.showMinorTicks) {
+        for (let sub = 1; sub < 10; sub++) {
+          const subValue = value + sub * gridSize
+          if (subValue >= endValue || subValue > endNum) break
+          const subX = x + sub * gridSize * scale
+          if (isHorizontal) {
+            ctx.moveTo(subX, height * 0.65)
+            ctx.lineTo(subX, height * 0.9)
+          } else {
+            ctx.moveTo(width * 0.65, subX)
+            ctx.lineTo(width * 0.9, subX)
+          }
         }
       }
 

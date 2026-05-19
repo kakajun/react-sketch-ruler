@@ -1,4 +1,5 @@
 import { useState, MouseEventHandler } from 'react'
+import type { GuideLine } from '@sketch-ruler/core'
 import type { PaletteType, LineType } from '../index-types'
 interface Props {
   palette: PaletteType
@@ -14,6 +15,11 @@ interface Props {
   index?: number
   handleLine?: (props: LineType) => void
   deleteLabel?: string
+  guideLines?: GuideLine[]
+  guideLine?: GuideLine
+  addLine?: (line: Omit<GuideLine, 'id'>) => void
+  removeLine?: (id: string) => void
+  updateLine?: (id: string, position: number) => void
 }
 
 export default function useLine(props: Props, vertical: boolean) {
@@ -26,6 +32,12 @@ export default function useLine(props: Props, vertical: boolean) {
     [vertical ? 'top' : 'left']: '-8px',
     [vertical ? 'left' : 'top']: `${offsetLine + 10}px`
   }
+
+  const hasGuideApi =
+    props.guideLines !== undefined &&
+    props.addLine &&
+    props.removeLine &&
+    props.updateLine
 
   const handleMouseMove: MouseEventHandler<HTMLDivElement> = (event) => {
     const offsetX = event.nativeEvent.offsetX
@@ -74,8 +86,35 @@ export default function useLine(props: Props, vertical: boolean) {
   }
 
   const handleLineRelease = (value: number, index?: number) => {
-    const linesArrs = vertical ? props.lines.h : props.lines.v
     const isOutOfRange = checkBoundary(value)
+
+    if (hasGuideApi) {
+      const guideLine =
+        typeof index === 'number'
+          ? props.guideLines!.filter((l) => l.orientation === (vertical ? 'v' : 'h'))[index]
+          : undefined
+
+      if (isOutOfRange) {
+        if (guideLine) {
+          props.removeLine!(guideLine.id)
+        } else if (typeof index !== 'number') {
+          return
+        }
+      } else {
+        if (!guideLine) {
+          props.addLine!({
+            orientation: vertical ? 'v' : 'h',
+            position: value
+          })
+        } else {
+          props.updateLine!(guideLine.id, value)
+        }
+      }
+      return
+    }
+
+    // 旧模式：直接操作 lines 数组
+    const linesArrs = vertical ? props.lines.h : props.lines.v
     if (!linesArrs) {
       return
     }

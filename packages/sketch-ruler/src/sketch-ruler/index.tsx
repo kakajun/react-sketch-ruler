@@ -6,7 +6,10 @@ import './index.less'
 import RulerWrapper from './RulerWrapper'
 import { useTransformEngine } from '../hooks/useTransformEngine'
 import { useInputManager } from '../hooks/useInputManager'
-import type { SketchRulerProps, PaletteType, SketchRulerMethods } from '../index-types'
+import { useGuideLines } from '../hooks/useGuideLines'
+import type { SketchRulerProps, PaletteType, SketchRulerMethods, ZoomMode } from '../index-types'
+
+const ZOOM_PRESETS = [0.1, 0.25, 0.33, 0.5, 0.66, 1, 1.5, 2, 3, 4, 6, 8, 16]
 
 const usePaletteConfig = (palette: PaletteType) => {
   return useMemo(
@@ -42,6 +45,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       paddingRatio = 0.2,
       autoCenter = true,
       showShadowText = true,
+      showMinorTicks = false,
       shadow = { x: 0, y: 0, width: 0, height: 0 },
       lines = { h: [], v: [] },
       isShowReferLine = true,
@@ -53,10 +57,19 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       gridRatio = 1,
       lockLine = false,
       selfHandle = false,
+      zoomMode = 'pointer' as ZoomMode,
+      zoomStep = 0.25,
+      minZoom = 0.1,
+      maxZoom = 10,
+      enableAnimation = false,
+      animationMode = 'ease-out' as const,
+      initialOffset,
       children,
       onHandleCornerClick,
       updateScale,
       onZoomChange,
+      guideLines: guideLinesProp,
+      onGuideLineChange,
       handleLine,
       deleteLabel
     }: SketchRulerProps,
@@ -81,8 +94,8 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
         )
         return { scale: result.scale, x: result.x, y: result.y }
       }
-      return { x: 0, y: 0, scale }
-    }, [autoCenter, canvasWidth, canvasHeight, rectWidth, rectHeight, paddingRatio, scale])
+      return { x: initialOffset?.x ?? 0, y: initialOffset?.y ?? 0, scale }
+    }, [autoCenter, canvasWidth, canvasHeight, rectWidth, rectHeight, paddingRatio, scale, initialOffset])
 
     const initialStateRef = useRef(getInitialState())
 
@@ -94,9 +107,10 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       zoomTo,
       reset
     } = useTransformEngine(initialStateRef.current, {
-      minZoom: 0.1,
-      maxZoom: 10,
-      enableAnimation: false
+      minZoom,
+      maxZoom,
+      enableAnimation,
+      animationMode
     })
 
     // 将引擎的屏幕坐标偏移转换为 ruler 需要的 world 坐标 start
@@ -105,16 +119,25 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     const ownScale = state.scale
 
     // 使用 InputManager 处理输入事件
-    const { getCursorClass } = useInputManager(
+    const { inputManager, getCursorClass } = useInputManager(
       engine,
       canvasEditRef,
       {
-        zoomStep: 0.25,
+        zoomStep,
+        zoomMode,
         viewportSize: { width: rectWidth, height: rectHeight },
+        contentSize: { width: canvasWidth, height: canvasHeight },
         selfHandle
       }
     )
     const cursorClass = getCursorClass()
+
+    const { guideLines, addLine, removeLine, updateLine } = useGuideLines(
+      guideLinesProp,
+      lines,
+      onGuideLineChange,
+      handleLine
+    )
 
     const commonProps = {
       thick,
@@ -128,10 +151,15 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       palette: paletteConfig,
       gridRatio,
       showShadowText,
+      showMinorTicks,
       lockLine,
       scale: ownScale,
       handleLine,
-      deleteLabel
+      deleteLabel,
+      guideLines,
+      addLine,
+      removeLine,
+      updateLine
     }
 
     const cornerStyle = useMemo(() => {
@@ -171,8 +199,32 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       } as any)
     }, [ownScale, state.x, state.y])
 
-    const zoomIn = () => zoomBy(0.25, rectWidth / 2, rectHeight / 2)
-    const zoomOut = () => zoomBy(-0.25, rectWidth / 2, rectHeight / 2)
+    const getZoomOrigin = useCallback((): { x: number; y: number } => {
+      const parent = canvasEditRef.current?.parentElement
+      const rect = parent ? parent.getBoundingClientRect() : new DOMRect(0, 0, 0, 0)
+      return { x: rect.width / 2, y: rect.height / 2 }
+    }, [])
+
+    const zoomIn = useCallback(() => {
+      const { x: cx, y: cy } = getZoomOrigin()
+      zoomBy(zoomStep, cx, cy)
+    }, [zoomBy, zoomStep, getZoomOrigin])
+
+    const zoomOut = useCallback(() => {
+      const { x: cx, y: cy } = getZoomOrigin()
+      zoomBy(-zoomStep, cx, cy)
+    }, [zoomBy, zoomStep, getZoomOrigin])
+
+    const zoomToPreset = useCallback((preset: number) => {
+      const target = ZOOM_PRESETS.find((p) => p >= preset) ?? ZOOM_PRESETS[ZOOM_PRESETS.length - 1]
+      const { x: cx, y: cy } = getZoomOrigin()
+      zoomTo(target, cx, cy)
+    }, [zoomTo, getZoomOrigin])
+
+    const setZoomMode = useCallback((mode: ZoomMode) => {
+      inputManager?.setZoomMode(mode)
+    }, [inputManager])
+
     const initPanzoom = () => {
       // 重新计算居中
       if (autoCenter) {
@@ -192,7 +244,10 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       zoomIn,
       zoomOut,
       initPanzoom,
-      panzoomInstance
+      panzoomInstance,
+      setTransform,
+      setZoomMode,
+      zoomToPreset
     }))
 
     useEffect(() => {

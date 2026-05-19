@@ -23,6 +23,12 @@ export function useInputManager(
     }
   }, [engine, containerRef.current])
 
+  useEffect(() => {
+    if (options?.zoomMode) {
+      inputManagerRef.current?.setZoomMode(options.zoomMode)
+    }
+  }, [options?.zoomMode])
+
   const getCursorClass = useCallback(() => {
     return inputManagerRef.current?.getCursorClass() ?? 'default'
   }, [])

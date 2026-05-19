@@ -15,6 +15,7 @@ const CanvasRuler = ({
   rate,
   showShadowText,
   gridRatio,
+  showMinorTicks,
   onDragStart
 }: CanvasProps) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
@@ -49,7 +50,8 @@ const CanvasRuler = ({
       ratio: typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1,
       rate,
       gridRatio,
-      showShadowText
+      showShadowText,
+      showMinorTicks
     }
 
     if (canvasContext) {
@@ -67,6 +69,7 @@ const CanvasRuler = ({
     canvasWidth,
     canvasHeight,
     gridRatio,
+    showMinorTicks,
     canvasContext,
     start,
     selectStart,

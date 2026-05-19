@@ -14,7 +14,7 @@ export function useTransformEngine(initial: TransformState = { x: 0, y: 0, scale
       engine.destroy()
       engineRef.current = null
     }
-  }, [])
+  }, [options?.minZoom, options?.maxZoom, options?.enableAnimation, options?.animationMode])
 
   const setTransform = useCallback((t: Partial<TransformState>) => {
     engineRef.current?.setTransform(t)

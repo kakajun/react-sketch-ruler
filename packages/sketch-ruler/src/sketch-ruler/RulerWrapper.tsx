@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, memo } from 'react'
+import type { GuideLine } from '@sketch-ruler/core'
 import RulerLine from './RulerLine'
 import CanvasRuler from '../canvas-ruler/index'
 import useLine from './useLine'
@@ -25,12 +26,19 @@ const RulerComponent = ({
   lockLine,
   propStyle,
   showShadowText,
+  showMinorTicks,
   handleLine,
-  deleteLabel
+  deleteLabel,
+  guideLines,
+  addLine,
+  removeLine,
+  updateLine
 }: RulerWrapperProps) => {
   const [isLockLine, setIsLockLine] = useState(lockLine)
   const [isdragle, setIsDragle] = useState(false)
   const [showLabel, setShowLabel] = useState(false)
+  const hasGuideLineApi = guideLines !== undefined && addLine && removeLine && updateLine
+
   const { actionStyle, handleMouseMove, handleMouseDown, labelContent, startValue, setStartValue } =
     useLine(
       {
@@ -44,7 +52,11 @@ const RulerComponent = ({
         lockLine: isLockLine,
         rate,
         handleLine,
-        deleteLabel
+        deleteLabel,
+        guideLines,
+        addLine,
+        removeLine,
+        updateLine
       },
       !vertical
     )
@@ -52,8 +64,15 @@ const RulerComponent = ({
   const rwClassName = vertical ? 'v-container' : 'h-container'
 
   const cpuLines = useMemo(() => {
-    return vertical ? lines.h : lines.v
-  }, [vertical, lines])
+    if (hasGuideLineApi) {
+      return guideLines!.filter((l) => l.orientation === (vertical ? 'v' : 'h'))
+    }
+    return (vertical ? lines.h : lines.v).map((pos, idx) => ({
+      id: `legacy-${vertical ? 'v' : 'h'}-${idx}`,
+      orientation: vertical ? 'v' : 'h',
+      position: pos
+    })) as GuideLine[]
+  }, [vertical, lines, guideLines, hasGuideLineApi])
 
   const indicatorStyle = useMemo(() => {
     const lineType = palette.lineType
@@ -102,15 +121,16 @@ const RulerComponent = ({
         rate={rate}
         onDragStart={mousedown}
         gridRatio={gridRatio}
+        showMinorTicks={showMinorTicks}
       />
       {isShowReferLine && (
         <div className="lines">
-          {cpuLines.map((v, i) => (
+          {cpuLines.map((guideLine, i) => (
             <RulerLine
-              key={`${v}-${i}`}
-              lockLine={isLockLine}
+              key={guideLine.id}
+              lockLine={isLockLine || !!guideLine.locked}
               index={i}
-              value={Math.floor(v)}
+              value={Math.floor(guideLine.position)}
               scale={scale}
               start={start}
               canvasWidth={canvasWidth}
@@ -124,6 +144,7 @@ const RulerComponent = ({
               handleLine={handleLine}
               deleteLabel={deleteLabel}
               rate={rate}
+              guideLine={guideLine}
             />
           ))}
         </div>
