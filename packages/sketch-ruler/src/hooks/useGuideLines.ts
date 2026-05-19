@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import { useState, useCallback, useMemo, useRef } from 'react'
 import type { GuideLine } from '@sketch-ruler/core'
 import type { LineType } from '../index-types'
 
@@ -25,11 +25,18 @@ export function guideLinesToLineType(lines: GuideLine[]): LineType {
   }
 }
 
+export interface GuideLineCallbacks {
+  onLineCreate?: (line: GuideLine) => void
+  onLineDelete?: (line: GuideLine) => void
+  onLineMove?: (line: GuideLine, from: number, to: number) => void
+}
+
 export function useGuideLines(
   externalGuideLines?: GuideLine[],
   externalLines?: LineType,
   onGuideLineChange?: (lines: GuideLine[]) => void,
-  handleLine?: (props: LineType) => void
+  handleLine?: (props: LineType) => void,
+  callbacks?: GuideLineCallbacks
 ) {
   const isControlled = externalGuideLines !== undefined
 
@@ -67,28 +74,37 @@ export function useGuideLines(
       const next = [...currentLines, newLine]
       if (!isControlled) setDerivedLines(next)
       notify(next)
+      callbacks?.onLineCreate?.(newLine)
+      return newLine
     },
-    [currentLines, isControlled, notify]
+    [currentLines, isControlled, notify, callbacks]
   )
 
   const removeLine = useCallback(
     (id: string) => {
+      const line = currentLines.find((l) => l.id === id)
       const next = currentLines.filter((l) => l.id !== id)
       if (!isControlled) setDerivedLines(next)
       notify(next)
+      if (line) callbacks?.onLineDelete?.(line)
     },
-    [currentLines, isControlled, notify]
+    [currentLines, isControlled, notify, callbacks]
   )
 
   const updateLine = useCallback(
     (id: string, position: number) => {
+      const line = currentLines.find((l) => l.id === id)
+      const from = line?.position
       const next = currentLines.map((l) =>
         l.id === id ? { ...l, position } : l
       )
       if (!isControlled) setDerivedLines(next)
       notify(next)
+      if (line && from !== undefined) {
+        callbacks?.onLineMove?.(line, from, position)
+      }
     },
-    [currentLines, isControlled, notify]
+    [currentLines, isControlled, notify, callbacks]
   )
 
   return {

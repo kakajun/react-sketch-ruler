@@ -1,6 +1,6 @@
 import type { RefObject } from 'react'
-import type { TransformEngine, TransformState, GuideLine } from '@sketch-ruler/core'
-export type { GuideLine } from '@sketch-ruler/core'
+import type { TransformEngine, TransformState, GuideLine, SketchRulerPlugin } from '@sketch-ruler/core'
+export type { GuideLine, SketchRulerPlugin } from '@sketch-ruler/core'
 export interface PaletteType {
   bgColor?: string
   longfgColor?: string
@@ -14,6 +14,24 @@ export interface PaletteType {
   hoverBg?: string
   hoverColor?: string
   cornerActiveColor?: string
+  /** Vue 对齐字段：刻度颜色 */
+  tickColor?: string
+  /** Vue 对齐字段：标签颜色 */
+  labelColor?: string
+  /** Vue 对齐字段：参考线颜色 */
+  guideLineColor?: string
+  /** Vue 对齐字段：锁定参考线颜色 */
+  guideLineLockedColor?: string
+  /** Vue 对齐字段：参考线样式 solid | dashed | dotted */
+  guideLineStyle?: string
+  /** Vue 对齐字段：参考线宽度 */
+  guideLineWidth?: number
+  /** Vue 对齐字段：是否显示标签 */
+  labelEnabled?: boolean
+  /** Vue 对齐字段：标签位置 start | center | end */
+  labelPosition?: string
+  /** Vue 对齐字段：标签格式化函数 */
+  labelFormat?: (value: number) => string
 }
 
 export interface FinalPaletteType {
@@ -77,6 +95,8 @@ export interface SketchRulerProps {
   guideLines?: GuideLine[]
   /** 参考线变更回调（新，返回 GuideLine[]） */
   onGuideLineChange?: (lines: GuideLine[]) => void
+  /** 插件列表 */
+  plugins?: SketchRulerPlugin[]
   deleteLabel?: string
   /** 是否显示次刻度线 */
   showMinorTicks?: boolean

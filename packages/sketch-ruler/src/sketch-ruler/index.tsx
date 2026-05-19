@@ -1,7 +1,7 @@
 import { eye64, closeEye64 } from './cornerImg64'
 import React, { useState, useEffect, useMemo, useImperativeHandle, useRef, useCallback } from 'react'
-import { fitRect } from '@sketch-ruler/core'
-import type { TransformEngine, TransformState } from '@sketch-ruler/core'
+import { fitRect, PluginManager } from '@sketch-ruler/core'
+import type { TransformEngine, TransformState, SketchRulerPlugin } from '@sketch-ruler/core'
 import './index.less'
 import RulerWrapper from './RulerWrapper'
 import { useTransformEngine } from '../hooks/useTransformEngine'
@@ -12,8 +12,17 @@ import type { SketchRulerProps, PaletteType, SketchRulerMethods, ZoomMode } from
 const ZOOM_PRESETS = [0.1, 0.25, 0.33, 0.5, 0.66, 1, 1.5, 2, 3, 4, 6, 8, 16]
 
 const usePaletteConfig = (palette: PaletteType) => {
-  return useMemo(
-    () => ({
+  return useMemo(() => {
+    // Vue 字段映射到 React 内部字段
+    const mapped: PaletteType = {
+      ...palette,
+      longfgColor: palette.longfgColor ?? palette.tickColor,
+      fontColor: palette.fontColor ?? palette.labelColor,
+      lineColor: palette.lineColor ?? palette.guideLineColor,
+      lockLineColor: palette.lockLineColor ?? palette.guideLineLockedColor,
+      lineType: palette.lineType ?? palette.guideLineStyle
+    }
+    return {
       bgColor: '#f6f7f9',
       longfgColor: '#BABBBC',
       fontColor: '#7D8694',
@@ -25,10 +34,9 @@ const usePaletteConfig = (palette: PaletteType) => {
       hoverBg: '#000',
       hoverColor: '#fff',
       borderColor: '#eeeeef',
-      ...palette
-    }),
-    [palette]
-  )
+      ...mapped
+    }
+  }, [palette])
 }
 
 const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
@@ -71,6 +79,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       guideLines: guideLinesProp,
       onGuideLineChange,
       handleLine,
+      plugins = [],
       deleteLabel
     }: SketchRulerProps,
     ref
@@ -132,11 +141,26 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     )
     const cursorClass = getCursorClass()
 
+    // === 插件系统 ===
+    const pluginManagerRef = useRef(new PluginManager())
+    useEffect(() => {
+      const pm = pluginManagerRef.current
+      pm.clear()
+      for (const plugin of plugins) {
+        pm.register(plugin)
+      }
+    }, [plugins])
+
     const { guideLines, addLine, removeLine, updateLine } = useGuideLines(
       guideLinesProp,
       lines,
       onGuideLineChange,
-      handleLine
+      handleLine,
+      {
+        onLineCreate: (line) => pluginManagerRef.current.onLineCreate({ line }),
+        onLineDelete: (line) => pluginManagerRef.current.onLineDelete({ line }),
+        onLineMove: (line, from, to) => pluginManagerRef.current.onLineMove({ line, from, to })
+      }
     )
 
     const commonProps = {
@@ -205,21 +229,39 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       return { x: rect.width / 2, y: rect.height / 2 }
     }, [])
 
-    const zoomIn = useCallback(() => {
+    const zoomIn = useCallback(async () => {
       const { x: cx, y: cy } = getZoomOrigin()
-      zoomBy(zoomStep, cx, cy)
-    }, [zoomBy, zoomStep, getZoomOrigin])
+      const allowed = await pluginManagerRef.current.beforeZoom({
+        from: ownScale,
+        to: ownScale + zoomStep,
+        center: { x: cx, y: cy },
+        cancel: () => {}
+      })
+      if (allowed) zoomBy(zoomStep, cx, cy)
+    }, [zoomBy, zoomStep, getZoomOrigin, ownScale])
 
-    const zoomOut = useCallback(() => {
+    const zoomOut = useCallback(async () => {
       const { x: cx, y: cy } = getZoomOrigin()
-      zoomBy(-zoomStep, cx, cy)
-    }, [zoomBy, zoomStep, getZoomOrigin])
+      const allowed = await pluginManagerRef.current.beforeZoom({
+        from: ownScale,
+        to: ownScale - zoomStep,
+        center: { x: cx, y: cy },
+        cancel: () => {}
+      })
+      if (allowed) zoomBy(-zoomStep, cx, cy)
+    }, [zoomBy, zoomStep, getZoomOrigin, ownScale])
 
-    const zoomToPreset = useCallback((preset: number) => {
+    const zoomToPreset = useCallback(async (preset: number) => {
       const target = ZOOM_PRESETS.find((p) => p >= preset) ?? ZOOM_PRESETS[ZOOM_PRESETS.length - 1]
       const { x: cx, y: cy } = getZoomOrigin()
-      zoomTo(target, cx, cy)
-    }, [zoomTo, getZoomOrigin])
+      const allowed = await pluginManagerRef.current.beforeZoom({
+        from: ownScale,
+        to: target,
+        center: { x: cx, y: cy },
+        cancel: () => {}
+      })
+      if (allowed) zoomTo(target, cx, cy)
+    }, [zoomTo, getZoomOrigin, ownScale])
 
     const setZoomMode = useCallback((mode: ZoomMode) => {
       inputManager?.setZoomMode(mode)
