@@ -26,9 +26,8 @@ describe('SketchRule integration', () => {
       expect(ref.current).toBeTruthy()
     })
 
-    const inst = ref.current?.panzoomInstance?.current
-    expect(inst).toBeTruthy()
-    inst.zoomIn({ animate: false })
+    expect(ref.current?.zoomIn).toBeTypeOf('function')
+    ref.current!.zoomIn()
     await new Promise((r) => setTimeout(r, 50))
     expect(updateScale).toHaveBeenCalled()
   })

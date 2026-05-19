@@ -1,5 +1,5 @@
-import type { PanzoomObject, PanzoomEventDetail, PanzoomOptions } from 'simple-panzoom'
 import type { RefObject } from 'react'
+import type { TransformEngine, TransformState } from '@sketch-ruler/core'
 export interface PaletteType {
   bgColor?: string
   longfgColor?: string
@@ -64,10 +64,10 @@ export interface SketchRulerProps {
   gridRatio?: number
   lockLine?: boolean
   selfHandle?: boolean
-  panzoomOption?: Partial<PanzoomOptions>
+  panzoomOption?: Record<string, any> // 保留兼容，底层已改为 TransformEngine
   children: React.ReactNode
   updateScale?: (props: number) => void
-  onZoomChange?: (props: PanzoomEventDetail) => void
+  onZoomChange?: (props: TransformState) => void
   onHandleCornerClick?: (props: boolean) => void
   handleLine?: (props: LineType) => void
   deleteLabel?: string
@@ -140,5 +140,5 @@ export interface SketchRulerMethods {
   zoomIn: () => void
   zoomOut: () => void
   initPanzoom: () => void
-  panzoomInstance: RefObject<PanzoomObject | null>
+  panzoomInstance: RefObject<TransformEngine | null>
 }

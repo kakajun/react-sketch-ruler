@@ -1,9 +1,11 @@
 import { eye64, closeEye64 } from './cornerImg64'
-import Panzoom from 'simple-panzoom'
-import type { PanzoomObject, PanzoomEventDetail } from 'simple-panzoom'
-import React, { useState, useEffect, useMemo, useImperativeHandle, useRef } from 'react'
+import React, { useState, useEffect, useMemo, useImperativeHandle, useRef, useCallback } from 'react'
+import { fitRect } from '@sketch-ruler/core'
+import type { TransformEngine, TransformState } from '@sketch-ruler/core'
 import './index.less'
 import RulerWrapper from './RulerWrapper'
+import { useTransformEngine } from '../hooks/useTransformEngine'
+import { useInputManager } from '../hooks/useInputManager'
 import type { SketchRulerProps, PaletteType, SketchRulerMethods } from '../index-types'
 
 const usePaletteConfig = (palette: PaletteType) => {
@@ -11,9 +13,9 @@ const usePaletteConfig = (palette: PaletteType) => {
     () => ({
       bgColor: '#f6f7f9',
       longfgColor: '#BABBBC',
-      fontColor: '#7D8694', // ruler font color
+      fontColor: '#7D8694',
       fontShadowColor: '#106ebe',
-      shadowColor: '#e9f7fe', // ruler shadow color
+      shadowColor: '#e9f7fe',
       lineColor: '#51d6a9',
       lineType: 'solid',
       lockLineColor: '#d4d7dc',
@@ -40,29 +42,17 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       paddingRatio = 0.2,
       autoCenter = true,
       showShadowText = true,
-      shadow = {
-        x: 0,
-        y: 0,
-        width: 0,
-        height: 0
-      },
-      lines = {
-        h: [],
-        v: []
-      },
+      shadow = { x: 0, y: 0, width: 0, height: 0 },
+      lines = { h: [], v: [] },
       isShowReferLine = true,
       canvasWidth = 1000,
       canvasHeight = 700,
-      snapsObj = {
-        h: [],
-        v: []
-      },
+      snapsObj = { h: [], v: [] },
       palette,
       snapThreshold = 5,
       gridRatio = 1,
       lockLine = false,
       selfHandle = false,
-      panzoomOption,
       children,
       onHandleCornerClick,
       updateScale,
@@ -73,20 +63,58 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     ref
   ) => {
     const paletteConfig = usePaletteConfig(palette || {})
-    const [startX, setStartX] = useState(0)
-    const [startY, setStartY] = useState(0)
-    const [cursorClass, setCursorClass] = useState('defaultCursor')
-    const zoomStartXRef = useRef(0)
-    const zoomStartYRef = useRef(0)
-    const [ownScale, setOwnScale] = useState(1)
     const [showReferLine, setShowReferLine] = useState(isShowReferLine)
-    const panzoomInstance = useRef<PanzoomObject | null>(null)
     const canvasEditRef = useRef<HTMLDivElement | null>(null)
-    const panElemRef = useRef<HTMLElement | null>(null)
     const containerRef = useRef<HTMLDivElement | null>(null)
     const isHoveringRef = useRef(false)
     const rectWidth = useMemo(() => width - thick, [width, thick])
     const rectHeight = useMemo(() => height - thick, [height, thick])
+
+    // 使用 TransformEngine 替代 simple-panzoom
+    const getInitialState = useCallback((): TransformState => {
+      if (autoCenter) {
+        const result = fitRect(
+          { x: 0, y: 0, width: canvasWidth, height: canvasHeight },
+          { x: 0, y: 0, width: rectWidth, height: rectHeight },
+          'contain',
+          paddingRatio
+        )
+        return { scale: result.scale, x: result.x, y: result.y }
+      }
+      return { x: 0, y: 0, scale }
+    }, [autoCenter, canvasWidth, canvasHeight, rectWidth, rectHeight, paddingRatio, scale])
+
+    const initialStateRef = useRef(getInitialState())
+
+    const {
+      engine,
+      state,
+      setTransform,
+      zoomBy,
+      zoomTo,
+      reset
+    } = useTransformEngine(initialStateRef.current, {
+      minZoom: 0.1,
+      maxZoom: 10,
+      enableAnimation: false
+    })
+
+    // 将引擎的屏幕坐标偏移转换为 ruler 需要的 world 坐标 start
+    const startX = useMemo(() => -state.x / state.scale, [state.x, state.scale])
+    const startY = useMemo(() => -state.y / state.scale, [state.y, state.scale])
+    const ownScale = state.scale
+
+    // 使用 InputManager 处理输入事件
+    const { getCursorClass } = useInputManager(
+      engine,
+      canvasEditRef,
+      {
+        zoomStep: 0.25,
+        viewportSize: { width: rectWidth, height: rectHeight },
+        selfHandle
+      }
+    )
+    const cursorClass = getCursorClass()
 
     const commonProps = {
       thick,
@@ -128,139 +156,37 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       }
     }, [rectHeight, rectWidth, paletteConfig])
 
-    const isEventInContainer = (e: Event) => {
-      if (e instanceof KeyboardEvent) {
-        return isHoveringRef.current
-      }
-      return containerRef.current?.contains(e.target as Node) ?? false
-    }
-
-    const handleWheel = (e: WheelEvent) => {
-      if (!isEventInContainer(e)) return
-      if (e.ctrlKey || e.metaKey) {
-        if (panzoomInstance.current) {
-          panzoomInstance.current.zoomWithWheel(e)
-        }
-      }
-    }
-
-    const handleSpaceKeyDown = (e: KeyboardEvent) => {
-      if (!isEventInContainer(e)) return
-      // 检查当前焦点元素
-      const activeElement = document.activeElement
-      const isEditableElement =
-        activeElement instanceof HTMLInputElement ||
-        activeElement instanceof HTMLTextAreaElement ||
-        activeElement?.classList.contains('monaco-editor') ||
-        activeElement?.getAttribute('contenteditable') === 'true'
-      // 如果焦点在可编辑元素中,则不处理空格事件
-      if (isEditableElement) {
-        return
-      }
-
-      if (e.key === ' ') {
-        if (panzoomInstance.current) {
-          setCursorClass('grabCursor')
-          panzoomInstance.current.bind()
-        }
-        e.preventDefault()
-      }
-    }
-
-    const handleSpaceKeyUp = (e: KeyboardEvent) => {
-      if (!isEventInContainer(e)) return
-      if (e.key === ' ') {
-        if (panzoomInstance.current) {
-          setCursorClass('defaultCursor')
-          panzoomInstance.current.destroy()
-        }
-      }
-    }
-
-    const getPanOptions = (scale: number) => ({
-      noBind: true,
-      startScale: scale,
-      // cursor: 'default',
-      startX: zoomStartXRef.current,
-      startY: zoomStartYRef.current,
-      smoothScroll: true,
-      canvas: true,
-      ...panzoomOption
-    })
-
-    const handlePanzoomChange = (e: any) => {
-      const detail = e.detail as PanzoomEventDetail
-      const { scale: newScale, dimsOut } = detail
-      if (dimsOut) {
-        setOwnScale(newScale)
-        if (updateScale) {
-          updateScale(newScale)
-        }
-        const left = (dimsOut.parent.left - dimsOut.elem.left) / newScale
-        const top = (dimsOut.parent.top - dimsOut.elem.top) / newScale
-        setStartX(left)
-        if (onZoomChange) {
-          onZoomChange(detail)
-        }
-        setStartY(top)
-      }
-    }
-
-    const initPanzoom = () => {
-      const elem = canvasEditRef.current
-      // 确保元素存在
-      if (!elem) {
-        return
-      }
-      if (panElemRef.current) {
-        panElemRef.current.removeEventListener('panzoomchange', handlePanzoomChange)
-      }
-      if (panzoomInstance.current) {
-        panzoomInstance.current.destroy()
-      }
-      let tempScale = scale
-      if (autoCenter) {
-        tempScale = calculateTransform()
-        setOwnScale(tempScale)
-        if (updateScale) {
-          updateScale(tempScale)
-        }
-      }
-      const panzoom = Panzoom((elem as HTMLElement)!, getPanOptions(tempScale))
-      panzoomInstance.current = panzoom
-      if (elem) {
-        panElemRef.current = elem as HTMLElement
-        panElemRef.current.addEventListener('panzoomchange', handlePanzoomChange)
-      }
-    }
-
-    /**
-     * @desc: 居中算法
-     */
-    const calculateTransform = () => {
-      const scaleX = (rectWidth * (1 - paddingRatio)) / canvasWidth
-      const scaleY = (rectHeight * (1 - paddingRatio)) / canvasHeight
-      const scale = Math.min(scaleX, scaleY)
-      zoomStartXRef.current = (rectWidth - canvasWidth) / 2 / scale
-      zoomStartYRef.current = (rectHeight - canvasHeight) / 2 / scale
-      return scale
-    }
-
-    const reset = () => panzoomInstance.current?.reset()
-    const zoomIn = () => panzoomInstance.current?.zoomIn()
-    const zoomOut = () => panzoomInstance.current?.zoomOut()
-    const setOtions = () => {
-      const centerScale = calculateTransform()
-      panzoomInstance.current?.setOptions(getPanOptions(centerScale))
-    }
-
     const handleCornerClick = () => {
       setShowReferLine(!showReferLine)
-      if (onHandleCornerClick) {
-        onHandleCornerClick(!showReferLine)
+      onHandleCornerClick?.(!showReferLine)
+    }
+
+    // 通知外部缩放变化
+    useEffect(() => {
+      updateScale?.(ownScale)
+      onZoomChange?.({
+        scale: ownScale,
+        x: state.x,
+        y: state.y
+      } as any)
+    }, [ownScale, state.x, state.y])
+
+    const zoomIn = () => zoomBy(0.25, rectWidth / 2, rectHeight / 2)
+    const zoomOut = () => zoomBy(-0.25, rectWidth / 2, rectHeight / 2)
+    const initPanzoom = () => {
+      // 重新计算居中
+      if (autoCenter) {
+        const s = getInitialState()
+        setTransform(s)
       }
     }
-    // 使用 useImperativeHandle 来暴露这些方法
+
+    // 兼容旧 API：panzoomInstance 指向 engine
+    const panzoomInstance = useRef<TransformEngine | null>(null)
+    useEffect(() => {
+      panzoomInstance.current = engine
+    }, [engine])
+
     useImperativeHandle(ref, () => ({
       reset,
       zoomIn,
@@ -272,32 +198,6 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     useEffect(() => {
       setShowReferLine(isShowReferLine)
     }, [isShowReferLine])
-
-    useEffect(() => {
-      initPanzoom()
-      if (!selfHandle) {
-        document.addEventListener('wheel', handleWheel, { passive: false })
-        document.addEventListener('keydown', handleSpaceKeyDown)
-        document.addEventListener('keyup', handleSpaceKeyUp)
-      }
-      // 清理函数，用于移除监听器
-      return () => {
-        document.removeEventListener('wheel', handleWheel)
-        document.removeEventListener('keydown', handleSpaceKeyDown)
-        document.removeEventListener('keyup', handleSpaceKeyUp)
-        if (panElemRef.current) {
-          panElemRef.current.removeEventListener('panzoomchange', handlePanzoomChange)
-        }
-        if (panzoomInstance.current) {
-          panzoomInstance.current.destroy()
-          panzoomInstance.current = null
-        }
-      }
-    }, [canvasWidth, canvasHeight, width, height, selfHandle])
-
-    useEffect(() => {
-      setOtions()
-    }, [panzoomOption])
 
     // 处理children
     const [defaultSlot, btnSlot] = React.Children.toArray(children).reduce(
@@ -314,6 +214,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       },
       [null, null]
     )
+
     return (
       <div
         className="sketch-ruler"
@@ -326,7 +227,12 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
           <div
             ref={canvasEditRef}
             className={'canvasedit ' + cursorClass}
-            style={{ width: canvasWidth + 'px', height: canvasHeight + 'px' }}
+            style={{
+              width: canvasWidth + 'px',
+              height: canvasHeight + 'px',
+              transform: `translate(${state.x}px, ${state.y}px) scale(${ownScale})`,
+              transformOrigin: '0 0'
+            }}
           >
             {defaultSlot}
           </div>
@@ -344,7 +250,6 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
             vertical={false}
           />
         )}
-        {/* 竖直方向 */}
         {showRuler && (
           <RulerWrapper
             {...commonProps}

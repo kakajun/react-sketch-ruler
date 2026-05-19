@@ -4,6 +4,9 @@ import dts from 'vite-plugin-dts'
 import { resolve } from 'path'
 import pkg from '../../package.json'
 
+const corePath = resolve(__dirname, '../../../vue3-sketch-ruler/packages/core/src/index.ts')
+const canvasPath = resolve(__dirname, '../../../vue3-sketch-ruler/packages/canvas/src/index.ts')
+
 const banner = `/*!${pkg.name} v${pkg.version}${new Date().getFullYear()}年${
   new Date().getMonth() + 1
 }月${new Date()}制作*/`
@@ -13,6 +16,12 @@ export default defineConfig({
   // 定义常量全局替换
   define: {
     'process.env.NODE_ENV': '"production"'
+  },
+  resolve: {
+    alias: {
+      '@sketch-ruler/core': corePath,
+      '@sketch-ruler/canvas': canvasPath
+    }
   },
   plugins: [
     react(),
