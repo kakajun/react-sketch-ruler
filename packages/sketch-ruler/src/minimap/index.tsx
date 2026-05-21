@@ -1,4 +1,5 @@
 import React, { useRef, useMemo, useEffect, useState, useCallback } from 'react'
+import { MinimapEngine } from '@sketch-ruler/core'
 
 export interface MinimapProps {
   contentWidth: number
@@ -33,61 +34,23 @@ const Minimap: React.FC<MinimapProps> = ({
   const [dragging, setDragging] = useState(false)
   const dragRectRef = useRef({ left: 0, top: 0, width: 0, height: 0 })
 
-  const miniScale = useMemo(() => {
-    const scaleX = width / contentWidth
-    const scaleY = height / contentHeight
-    return Math.min(scaleX, scaleY)
-  }, [width, contentWidth, contentHeight])
-
-  const contentOffset = useMemo(() => {
-    const s = miniScale
-    const cw = contentWidth * s
-    const ch = contentHeight * s
-    return {
-      x: (width - cw) / 2,
-      y: (height - ch) / 2
-    }
-  }, [miniScale, width, height, contentWidth, contentHeight])
-
-  const viewportRect = useMemo(() => {
-    const s = miniScale
-    const ox = contentOffset.x
-    const oy = contentOffset.y
-    const left = ox + (-viewportX / scale) * s
-    const top = oy + (-viewportY / scale) * s
-    const vw = (viewportWidth / scale) * s
-    const vh = (viewportHeight / scale) * s
-    return { left, top, width: vw, height: vh }
-  }, [miniScale, contentOffset, viewportX, viewportY, viewportWidth, viewportHeight, scale])
-
-  const clampTransform = useCallback(
-    (x: number, y: number): { x: number; y: number } => {
-      const contentW = contentWidth * scale
-      const contentH = contentHeight * scale
-
-      let cx = x
-      let cy = y
-
-      if (contentW <= viewportWidth) {
-        cx = (viewportWidth - contentW) / 2
-      } else {
-        cx = Math.min(0, Math.max(viewportWidth - contentW, x))
-      }
-
-      if (contentH <= viewportHeight) {
-        cy = (viewportHeight - contentH) / 2
-      } else {
-        cy = Math.min(0, Math.max(viewportHeight - contentH, y))
-      }
-
-      return { x: cx, y: cy }
-    },
-    [contentWidth, contentHeight, scale, viewportWidth, viewportHeight]
+  const engine = useMemo(
+    () =>
+      new MinimapEngine({
+        contentWidth,
+        contentHeight,
+        viewportX,
+        viewportY,
+        viewportWidth,
+        viewportHeight,
+        scale,
+        width,
+        height
+      }),
+    [contentWidth, contentHeight, viewportX, viewportY, viewportWidth, viewportHeight, scale, width, height]
   )
 
-  const canPan = useCallback(() => {
-    return contentWidth * scale > viewportWidth || contentHeight * scale > viewportHeight
-  }, [contentWidth, contentHeight, scale, viewportWidth, viewportHeight])
+  const state = useMemo(() => engine.getState(), [engine])
 
   const drawMinimap = useCallback(() => {
     const canvas = canvasRef.current
@@ -99,7 +62,7 @@ const Minimap: React.FC<MinimapProps> = ({
     ctx.fillStyle = '#fff'
     ctx.fillRect(0, 0, width, height)
 
-    const s = miniScale
+    const s = state.miniScale
     const cw = contentWidth * s
     const ch = contentHeight * s
     const ox = (width - cw) / 2
@@ -108,25 +71,30 @@ const Minimap: React.FC<MinimapProps> = ({
     ctx.strokeStyle = '#e0e0e0'
     ctx.lineWidth = 1
     ctx.strokeRect(ox, oy, cw, ch)
-  }, [miniScale, width, height, contentWidth, contentHeight])
+  }, [state.miniScale, width, height, contentWidth, contentHeight])
 
   useEffect(() => {
     drawMinimap()
   }, [drawMinimap])
 
-  const handleClickAt = useCallback(
-    (clientX: number, clientY: number) => {
-      const rect = canvasRef.current!.getBoundingClientRect()
-      const ox = contentOffset.x
-      const oy = contentOffset.y
-      const worldX = (clientX - rect.left - ox) / miniScale
-      const worldY = (clientY - rect.top - oy) / miniScale
-      const transformX = viewportWidth / 2 - worldX * scale
-      const transformY = viewportHeight / 2 - worldY * scale
-      const clamped = clampTransform(transformX, transformY)
-      onNavigate?.(clamped.x, clamped.y)
+  const handleCanvasPointerDown = useCallback(
+    (e: React.PointerEvent<HTMLCanvasElement>) => {
+      if (!engine.canPan()) {
+        startDrag(e, 'canvas', false)
+        return
+      }
+      startDrag(e, 'canvas', true)
     },
-    [contentOffset, miniScale, viewportWidth, viewportHeight, scale, clampTransform, onNavigate]
+    [engine]
+  )
+
+  const handleViewportPointerDown = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      e.stopPropagation()
+      if (!engine.canPan()) return
+      startDrag(e, 'viewport', true)
+    },
+    [engine]
   )
 
   const startDrag = useCallback(
@@ -134,20 +102,19 @@ const Minimap: React.FC<MinimapProps> = ({
       const target = e.currentTarget as HTMLElement
       target.setPointerCapture(e.pointerId)
 
-      const startViewportX = viewportX
-      const startViewportY = viewportY
-      const startMinimapLeft = viewportRect.left
-      const startMinimapTop = viewportRect.top
-      const ratio = scale / miniScale
+      const rect = canvasRef.current!.getBoundingClientRect()
+      const startState = engine.getState()
 
       let accDx = 0
       let accDy = 0
       let hasMoved = false
       let skipClick = false
 
-      let pendingTargetX = startViewportX
-      let pendingTargetY = startViewportY
+      let pendingTargetX = viewportX
+      let pendingTargetY = viewportY
       let emitRafId: number | null = null
+
+      const session = engine.startDrag(viewportX, viewportY, startState.viewportRect.left, startState.viewportRect.top)
 
       function scheduleEmit() {
         if (emitRafId !== null) return
@@ -158,7 +125,7 @@ const Minimap: React.FC<MinimapProps> = ({
       }
 
       if (canMove) {
-        dragRectRef.current = { ...viewportRect }
+        dragRectRef.current = { ...startState.viewportRect }
         setDragging(true)
         onDragStart?.()
       }
@@ -175,17 +142,10 @@ const Minimap: React.FC<MinimapProps> = ({
         }
 
         if (canMove) {
-          const rawX = startViewportX - accDx * ratio
-          const rawY = startViewportY - accDy * ratio
-          const clamped = clampTransform(rawX, rawY)
-
-          const actualDx = (startViewportX - clamped.x) / ratio
-          const actualDy = (startViewportY - clamped.y) / ratio
-          dragRectRef.current.left = startMinimapLeft + actualDx
-          dragRectRef.current.top = startMinimapTop + actualDy
-
-          pendingTargetX = clamped.x
-          pendingTargetY = clamped.y
+          const result = session.move(accDx, accDy)
+          dragRectRef.current = result.dragRect
+          pendingTargetX = result.targetX
+          pendingTargetY = result.targetY
           scheduleEmit()
         }
       }
@@ -202,13 +162,15 @@ const Minimap: React.FC<MinimapProps> = ({
         }
 
         if (canMove) {
-          onNavigate?.(pendingTargetX, pendingTargetY)
+          const endResult = session.end(accDx, accDy)
+          onNavigate?.(endResult.x, endResult.y)
           setTimeout(() => {
             setDragging(false)
             onDragEnd?.()
           }, 50)
         } else if (!skipClick && source === 'canvas') {
-          handleClickAt(ev.clientX, ev.clientY)
+          const nav = engine.clickAt(ev.clientX, ev.clientY, rect.left, rect.top)
+          onNavigate?.(nav.x, nav.y)
         }
       }
 
@@ -216,27 +178,7 @@ const Minimap: React.FC<MinimapProps> = ({
       target.addEventListener('pointerup', onUp)
       target.addEventListener('pointercancel', onUp)
     },
-    [viewportX, viewportY, viewportRect, scale, miniScale, clampTransform, onNavigate, onDragStart, onDragEnd, handleClickAt]
-  )
-
-  const handleCanvasPointerDown = useCallback(
-    (e: React.PointerEvent<HTMLCanvasElement>) => {
-      if (!canPan()) {
-        startDrag(e, 'canvas', false)
-        return
-      }
-      startDrag(e, 'canvas', true)
-    },
-    [canPan, startDrag]
-  )
-
-  const handleViewportPointerDown = useCallback(
-    (e: React.PointerEvent<HTMLDivElement>) => {
-      e.stopPropagation()
-      if (!canPan()) return
-      startDrag(e, 'viewport', true)
-    },
-    [canPan, startDrag]
+    [engine, viewportX, viewportY, onNavigate, onDragStart, onDragEnd]
   )
 
   const containerStyle = useMemo(
@@ -253,7 +195,7 @@ const Minimap: React.FC<MinimapProps> = ({
     [width, height]
   )
 
-  const currentRect = dragging ? dragRectRef.current : viewportRect
+  const currentRect = dragging ? dragRectRef.current : state.viewportRect
   const viewportStyle = useMemo(
     () => ({
       position: 'absolute' as const,

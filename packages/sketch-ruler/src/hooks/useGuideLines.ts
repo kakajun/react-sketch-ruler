@@ -1,29 +1,12 @@
 import { useState, useCallback, useMemo, useRef } from 'react'
 import type { GuideLine } from '@sketch-ruler/core'
+import { importLines, exportLines, generateLineId } from '@sketch-ruler/core'
 import type { LineType } from '../index-types'
 
-let idCounter = 0
-function generateId() {
-  return `line-${++idCounter}-${Date.now()}`
-}
-
-export function lineTypeToGuideLines(lines: LineType): GuideLine[] {
-  const result: GuideLine[] = []
-  lines.h.forEach((pos) =>
-    result.push({ id: generateId(), orientation: 'h', position: pos })
-  )
-  lines.v.forEach((pos) =>
-    result.push({ id: generateId(), orientation: 'v', position: pos })
-  )
-  return result
-}
-
-export function guideLinesToLineType(lines: GuideLine[]): LineType {
-  return {
-    h: lines.filter((l) => l.orientation === 'h').map((l) => l.position),
-    v: lines.filter((l) => l.orientation === 'v').map((l) => l.position)
-  }
-}
+// 创建本地别名供 hook 内部使用
+const lineTypeToGuideLines = importLines
+const guideLinesToLineType = exportLines
+export { lineTypeToGuideLines, guideLinesToLineType }
 
 export interface GuideLineCallbacks {
   onLineCreate?: (line: GuideLine) => void
@@ -70,7 +53,7 @@ export function useGuideLines(
 
   const addLine = useCallback(
     (line: Omit<GuideLine, 'id'>) => {
-      const newLine: GuideLine = { ...line, id: generateId() }
+      const newLine: GuideLine = { ...line, id: generateLineId() }
       const next = [...currentLines, newLine]
       if (!isControlled) setDerivedLines(next)
       notify(next)
@@ -82,7 +65,7 @@ export function useGuideLines(
 
   const removeLine = useCallback(
     (id: string) => {
-      const line = currentLines.find((l) => l.id === id)
+      const line = currentLines.find((l: GuideLine) => l.id === id)
       const next = currentLines.filter((l) => l.id !== id)
       if (!isControlled) setDerivedLines(next)
       notify(next)
@@ -95,7 +78,7 @@ export function useGuideLines(
     (id: string, position: number) => {
       const line = currentLines.find((l) => l.id === id)
       const from = line?.position
-      const next = currentLines.map((l) =>
+      const next = currentLines.map((l: GuideLine) =>
         l.id === id ? { ...l, position } : l
       )
       if (!isControlled) setDerivedLines(next)

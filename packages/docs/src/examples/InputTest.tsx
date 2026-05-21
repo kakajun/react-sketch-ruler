@@ -4,7 +4,8 @@ import 'react-sketch-ruler/index.css'
 import { Input } from 'antd'
 import './Basic.less'
 const { TextArea } = Input
-const DemoComponent = () => {
+
+const InputTest: React.FC = () => {
   const [rectWidth] = useState(1470)
   const [rectHeight] = useState(800)
   const [canvasWidth] = useState(1920)
@@ -13,10 +14,7 @@ const DemoComponent = () => {
   const [state] = useState({
     scale: 1,
     isBlack: false,
-    lines: {
-      h: [0, 250],
-      v: [0, 500]
-    },
+    lines: { h: [0, 250], v: [0, 500] },
     thick: 20
   })
 
@@ -31,34 +29,26 @@ const DemoComponent = () => {
   }
 
   return (
-    <>
-      <div className="demo">
-        <div
-          style={rectStyle}
-          className={`wrapper ${state.isBlack ? 'blackwrapper' : 'whitewrapper'}`}
+    <div className="demo">
+      <div style={rectStyle} className={`wrapper ${state.isBlack ? 'blackwrapper' : 'whitewrapper'}`}>
+        <SketchRule
+          scale={state.scale}
+          thick={state.thick}
+          width={rectWidth}
+          height={rectHeight}
+          canvasWidth={canvasWidth}
+          canvasHeight={canvasHeight}
+          ref={sketchruleRef}
+          lines={state.lines}
         >
-          <SketchRule
-            scale={state.scale}
-            thick={state.thick}
-            width={rectWidth}
-            height={rectHeight}
-            canvasWidth={canvasWidth}
-            canvasHeight={canvasHeight}
-            ref={sketchruleRef}
-            lines={state.lines}
-          >
-            <div slot="default" data-type="page" style={canvasStyle}>
-              <Input
-                placeholder="Basic usage"
-                style={{ marginBottom: 20, fontSize: '28px', height: 'auto' }}
-              />
-              <TextArea rows={4} style={{ fontSize: '28px' }} />
-            </div>
-          </SketchRule>
-        </div>
+          <div data-type="page" style={canvasStyle}>
+            <Input placeholder="Basic usage" style={{ marginBottom: 20, fontSize: '28px', height: 'auto' }} />
+            <TextArea rows={4} style={{ fontSize: '28px' }} />
+          </div>
+        </SketchRule>
       </div>
-    </>
+    </div>
   )
 }
 
-export default DemoComponent
+export default InputTest

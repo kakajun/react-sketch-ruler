@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { InputManager } from '@sketch-ruler/canvas'
 import type { TransformEngine } from '@sketch-ruler/core'
 import type { InputManagerOptions } from '@sketch-ruler/canvas'
@@ -8,33 +8,33 @@ export function useInputManager(
   containerRef: React.RefObject<HTMLElement | null>,
   options?: InputManagerOptions
 ) {
-  const inputManagerRef = useRef<InputManager | null>(null)
+  const [inputManager, setInputManager] = useState<InputManager | null>(null)
 
   useEffect(() => {
     if (!engine || !containerRef.current) return
 
     const im = new InputManager(engine, options)
-    inputManagerRef.current = im
+    setInputManager(im)
     im.bind(containerRef.current)
 
     return () => {
       im.destroy()
-      inputManagerRef.current = null
+      setInputManager(null)
     }
   }, [engine, containerRef.current])
 
   useEffect(() => {
     if (options?.zoomMode) {
-      inputManagerRef.current?.setZoomMode(options.zoomMode)
+      inputManager?.setZoomMode(options.zoomMode)
     }
-  }, [options?.zoomMode])
+  }, [options?.zoomMode, inputManager])
 
   const getCursorClass = useCallback(() => {
-    return inputManagerRef.current?.getCursorClass() ?? 'default'
-  }, [])
+    return inputManager?.getCursorClass() ?? 'default'
+  }, [inputManager])
 
   return {
-    inputManager: inputManagerRef.current,
+    inputManager,
     getCursorClass
   }
 }

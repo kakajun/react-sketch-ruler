@@ -64,6 +64,16 @@ const HomeLayout: React.FC = () => {
         }
       }
 
+      if (!rawCode) {
+        const lowerName = name.toLowerCase()
+        const key = Object.keys(examplesSource).find((k) =>
+          k.toLowerCase().endsWith(`/${lowerName}.tsx`)
+        )
+        if (key) {
+          rawCode = examplesSource[key] as string
+        }
+      }
+
       if (rawCode) {
         const code = hljs.highlight(rawCode, {
           language: 'tsx'

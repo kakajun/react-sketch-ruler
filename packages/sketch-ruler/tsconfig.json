@@ -1,6 +1,5 @@
 {
   "extends": "../../tsconfig.common.json",
-
   "compilerOptions": {
     "outDir": "lib",
     "jsx": "react-jsx",
@@ -10,11 +9,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "allowJs": false,
-    "paths": {
-      "@sketch-ruler/core": ["../../../vue3-sketch-ruler/packages/core/lib/index.d.ts"],
-      "@sketch-ruler/canvas": ["../../../vue3-sketch-ruler/packages/canvas/lib/index.d.ts"]
-    }
+    "allowJs": false
   },
   "include": ["**/*.tsx", "**/*.ts", "**/*.json"]
 }

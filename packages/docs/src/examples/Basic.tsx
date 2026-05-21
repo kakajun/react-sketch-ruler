@@ -1,108 +1,62 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useRef } from 'react'
 import SketchRule from 'react-sketch-ruler'
 import 'react-sketch-ruler/index.css'
-import { Button } from 'antd'
-import type { SketchRulerMethods } from 'react-sketch-ruler'
 import bgImg from '@/assets/bg.png'
 import './Basic.less'
-import { useTheme } from 'antd-style'
-const DemoComponent = () => {
-  const { appearance } = useTheme()
-  const [rectWidth] = useState(1470)
-  const [rectHeight] = useState(800)
-  const [canvasWidth] = useState(1920)
-  const [canvasHeight] = useState(1080)
-  const sketchruleRef = useRef(null)
-  const [state, setState] = useState({
-    scale: 1,
-    isBlack: false,
+
+const Basic: React.FC = () => {
+  const sketchRef = useRef<any>(null)
+  const post = {
+    thick: 20,
+    width: 1470,
+    height: 700,
+    canvasWidth: 1000,
+    canvasHeight: 500,
+    showRuler: true,
+    palette: { bgColor: 'transparent', guideLineStyle: 'dashed' },
+    isShowReferLine: true,
+    autoCenter: false,
+    initialOffset: { x: 100, y: 50 },
+    shadow: {
+      x: 0,
+      y: 0,
+      width: 300,
+      height: 300
+    },
     lines: {
       h: [0, 250],
       v: [0, 500]
-    },
-    thick: 20
-  })
-  useEffect(() => {
-    setState((prevState) => ({ ...prevState, isBlack: appearance !== 'light' }))
-  }, [appearance])
-  useEffect(() => {
-    window.addEventListener('resize', handleResize)
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [])
-
-  const handleResize = () => {
-    if (sketchruleRef.current) {
-      ;(sketchruleRef.current as SketchRulerMethods).initPanzoom()
-    }
-  }
-
-  const resetMethod = () => {
-    if (sketchruleRef.current) {
-      ;(sketchruleRef.current as SketchRulerMethods).reset()
-    }
-  }
-
-  const zoomOutMethod = () => {
-    if (sketchruleRef.current) {
-      ;(sketchruleRef.current as SketchRulerMethods).zoomOut()
-    }
-  }
-
-  const zoomInMethod = () => {
-    if (sketchruleRef.current) {
-      ;(sketchruleRef.current as SketchRulerMethods).zoomIn()
     }
   }
 
   const rectStyle = {
-    width: `${rectWidth}px`,
-    height: `${rectHeight}px`
+    width: `${post.width}px`,
+    height: `${post.height}px`
   }
 
   const canvasStyle = {
-    width: `${canvasWidth}px`,
-    height: `${canvasHeight}px`
+    width: `${post.canvasWidth}px`,
+    height: `${post.canvasHeight}px`
   }
 
-  return (
-    <>
-      <div className="demo">
-        <div
-          style={rectStyle}
-          className={`wrapper ${state.isBlack ? 'blackwrapper' : 'whitewrapper'}`}
-        >
-          <SketchRule
-            scale={state.scale}
-            thick={state.thick}
-            width={rectWidth}
-            height={rectHeight}
-            canvasWidth={canvasWidth}
-            canvasHeight={canvasHeight}
-            ref={sketchruleRef}
-            lines={state.lines}
-          >
-            <div style={canvasStyle}>
-              <img className="imgStyle" src={bgImg} alt="" />
-            </div>
+  const resetMethod = () => sketchRef.current?.reset()
+  const zoomInMethod = () => sketchRef.current?.zoomIn()
+  const zoomOutMethod = () => sketchRef.current?.zoomOut()
 
-            <div className="btns" slot="btn">
-              <Button size="small" className="btn" onClick={resetMethod}>
-                还原
-              </Button>
-              <Button size="small" className="btn" onClick={zoomInMethod}>
-                放大
-              </Button>
-              <Button size="small" className="btn" onClick={zoomOutMethod}>
-                缩小
-              </Button>
-            </div>
-          </SketchRule>
+  return (
+    <div className="wrapper whitewrapper" style={rectStyle}>
+      <SketchRule ref={sketchRef} {...post}>
+        <div data-type="page" style={canvasStyle}>
+          <img className="img-style" src={bgImg} alt="" />
         </div>
-      </div>
-    </>
+        <div slot="toolbar" className="btns">
+          <button onClick={(e) => { e.stopPropagation(); resetMethod() }}>还原</button>
+          <button onClick={(e) => { e.stopPropagation(); zoomInMethod() }}>放大</button>
+          <button onClick={(e) => { e.stopPropagation(); zoomOutMethod() }}>缩小</button>
+        </div>
+      </SketchRule>
+    </div>
   )
 }
 
-export default DemoComponent
+export default Basic

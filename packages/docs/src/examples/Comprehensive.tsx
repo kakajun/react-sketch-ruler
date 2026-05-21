@@ -1,280 +1,319 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import SketchRule from 'react-sketch-ruler'
-import 'react-sketch-ruler/index.css'
+import { Minimap, definePlugin } from 'react-sketch-ruler'
 import type { SketchRulerMethods } from 'react-sketch-ruler'
+import 'react-sketch-ruler/index.css'
 import bgImg from '@/assets/bg.png'
 import { Button, Input, Slider, Switch } from 'antd'
 import './Comprehensive.less'
 import { useTheme } from 'antd-style'
-const DemoComponent = () => {
-  // const [rectWidth] = useState(770)
-  // const [rectHeight] = useState(472)
-  const { appearance } = useTheme()
 
-  const [rectWidth] = useState(1470)
-  const [rectHeight] = useState(750)
-  const [canvasWidth] = useState(1920)
-  const [canvasHeight] = useState(1080)
-  const sketchruleRef = useRef<SketchRulerMethods>(null)
-  const [showRuler, setShowRuler] = useState(true)
-  const [panzoomOption, setPanzoomOption] = useState({
-    maxScale: 3,
-    minScale: 0.1,
-    disablePan: false,
-    disableZoom: false,
-    contain: 'none', // 'inside' | 'outside' | 'none'
-    handleStartEvent: (event: Event) => {
-      event.preventDefault()
-      console.log('handleStartEvent', event)
+const logPlugin = definePlugin(() => ({
+  name: 'log-plugin',
+  priority: 5,
+  beforeZoom(ctx: any) {
+    console.log('[beforeZoom] 即将缩放', ctx.from, '->', ctx.to)
+  },
+  afterZoom(ctx: any) {
+    console.log('[afterZoom] 缩放完成', ctx.from, '->', ctx.to)
+  },
+  beforePan(ctx: any) {
+    console.log('[beforePan] 即将平移', 'delta:', ctx.delta)
+  },
+  afterPan(ctx: any) {
+    console.log('[afterPan] 平移完成', 'offset:', ctx.offset)
+  }
+}))
+
+const lineEventPlugin = definePlugin(() => ({
+  name: 'line-event-plugin',
+  priority: 3,
+  onLineCreate(ctx: any) {
+    console.log('[onLineCreate] 创建参考线', ctx.line.orientation, ctx.line.position)
+  },
+  onLineMove(ctx: any) {
+    console.log('[onLineMove] 移动参考线', ctx.line.id, ctx.from, '->', ctx.to)
+  },
+  onLineDelete(ctx: any) {
+    console.log('[onLineDelete] 删除参考线', ctx.line.id)
+  }
+}))
+
+const zoomLimitPlugin = definePlugin(() => ({
+  name: 'zoom-limit-plugin',
+  priority: 10,
+  beforeZoom(ctx: any) {
+    if (ctx.to > 2.5) {
+      console.warn('[zoomLimit] 超过 2.5 上限，取消缩放')
+      ctx.cancel()
     }
-  })
-  const [lockLine, setLockLine] = useState(false)
-  const [snapsObj, setSnapsObj] = useState({ h: [0, 100, 200], v: [130] })
+  }
+}))
 
-  const [state, setState] = useState({
-    scale: 1,
-    isBlack: false,
+const stateWatcherPlugin = definePlugin(() => ({
+  name: 'state-watcher-plugin',
+  priority: 1,
+  afterZoom(ctx: any) {
+    const { scale, offset, lines } = ctx.api.getState()
+    console.log('[stateWatcher] afterZoom 状态快照:', { scale, offset, linesCount: lines.length })
+  },
+  afterPan(ctx: any) {
+    const { scale, offset } = ctx.api.getState()
+    console.log('[stateWatcher] afterPan 状态快照:', { scale, offset })
+  }
+}))
+
+const plugins = [logPlugin(), lineEventPlugin(), zoomLimitPlugin(), stateWatcherPlugin()]
+
+const Comprehensive: React.FC = () => {
+  const { appearance } = useTheme()
+  const sketchRef = useRef<SketchRulerMethods>(null)
+  const [lockLine, setLockLine] = useState(false)
+  const [zoomMode, setZoomMode] = useState<'pointer' | 'viewport-center' | 'content-center'>('pointer')
+  const [viewportOffset, setViewportOffset] = useState({ x: 0, y: 0 })
+
+  const [post, setPost] = useState({
+    thick: 20,
+    width: 1470,
+    height: 750,
+    canvasWidth: 1920,
+    canvasHeight: 1080,
+    showRuler: true,
+    showMinorTicks: false,
+    isShowReferLine: true,
+    zoomStep: 0.25,
+    minZoom: 0.1,
+    maxZoom: 3,
+    snapThreshold: 5,
     lines: {
       h: [0, 250],
       v: [0, 500]
     },
-    showShadowText: false,
-    thick: 20,
     shadow: {
       x: 0,
       y: 0,
       width: 300,
       height: 300
-    },
-    isShowRuler: true,
-    isShowReferLine: true
+    }
   })
+
+  const [state, setState] = useState({ scale: 1 })
+  const [isBlack, setIsBlack] = useState(false)
+
   useEffect(() => {
-    setState((prevState) => ({ ...prevState, isBlack: appearance !== 'light' }))
+    setIsBlack(appearance !== 'light')
   }, [appearance])
 
-  const resetMethod = () => {
-    if (sketchruleRef.current) {
-      ;(sketchruleRef.current as SketchRulerMethods).reset()
-    }
+  const cpuPalette = useMemo(() => {
+    return isBlack
+      ? {
+          bgColor: 'transparent',
+          tickColor: '#BABBBC',
+          labelColor: '#DEDEDE',
+          guideLineColor: '#51d6a9',
+          guideLineLockedColor: '#d4d7dc',
+          hoverBg: '#fff',
+          hoverColor: '#000',
+          borderColor: '#B5B5B5',
+          shadowColor: '#525252'
+        }
+      : {
+          bgColor: 'transparent',
+          guideLineColor: '#51d6a9'
+        }
+  }, [isBlack])
+
+  const rectStyle = useMemo(() => ({
+    width: `${post.width}px`,
+    height: `${post.height}px`
+  }), [post.width, post.height])
+
+  const canvasStyle = useMemo(() => ({
+    width: `${post.canvasWidth}px`,
+    height: `${post.canvasHeight}px`
+  }), [post.canvasWidth, post.canvasHeight])
+
+  const cpuScale = state.scale.toFixed(1)
+
+  const resetMethod = () => sketchRef.current?.reset()
+  const zoomOutMethod = () => sketchRef.current?.zoomOut()
+  const zoomInMethod = () => sketchRef.current?.zoomIn()
+
+  const handleZoomChange = (detail: { scale: number; x: number; y: number }) => {
+    setViewportOffset({ x: detail.x, y: detail.y })
   }
 
-  const handleLine = (lines: Record<'h' | 'v', number[]>) => {
-    setState((prevState) => ({ ...prevState, lines }))
+  const handleLinesChange = (lines: { h: number[]; v: number[] }) => {
+    setPost((prev) => ({ ...prev, lines }))
   }
 
-  const zoomOutMethod = () => {
-    if (sketchruleRef.current) {
-      ;(sketchruleRef.current as SketchRulerMethods).zoomOut()
-    }
-  }
-
-  const zoomInMethod = () => {
-    if (sketchruleRef.current) {
-      ;(sketchruleRef.current as SketchRulerMethods).zoomIn()
-    }
-  }
-
-  const handleShowRuler = () => {
-    setShowRuler(!showRuler)
-  }
-
-  const scaleChange = (value: number) => {
-    if (value) {
-      setState((prevState) => ({ ...prevState, scale: value }))
-      if (sketchruleRef.current) {
-        ;(sketchruleRef.current as SketchRulerMethods).panzoomInstance.current?.zoom(value)
-      }
-    }
-  }
-
-  const handleShowReferLine = () => {
-    setState((prevState) => ({ ...prevState, isShowReferLine: !prevState.isShowReferLine }))
-    console.log(state.isShowReferLine, 'state.isShowReferLine')
-  }
-
-  const snapsChange = (e: { target: { value: string } }) => {
-    const arr = e.target.value.split(',')
-    console.log(arr, 'arr')
-  }
-
-  const snapsChangeV = (e: { target: { value: string } }) => {
-    const arr = e.target.value.split(',')
-    setSnapsObj((prevState) => ({ ...prevState, v: arr.map((item) => Number(item)) }))
-  }
-
-  const changeScale = (checked: boolean) => {
-    setPanzoomOption((prevState) => ({ ...prevState, disableZoom: checked }))
-  }
-  const updateScale = (scale: number) => {
-    setState((prevState) => ({ ...prevState, scale }))
-  }
-
-  const changeMove = (checked: boolean) => {
-    setPanzoomOption((prevState) => ({ ...prevState, disablePan: checked }))
-  }
-
-  const changeInsideMove = (checked: boolean) => {
-    setPanzoomOption((prevState) => ({ ...prevState, contain: checked ? 'inside' : 'none' }))
-  }
-
-  const changeShadow = () => {
-    setState((prevState) => ({
-      ...prevState,
-      shadow: {
-        ...prevState.shadow,
-        x: Math.random() * canvasWidth,
-        y: Math.random() * canvasHeight
-      }
-    }))
-  }
   const handleCornerClick = (e: boolean) => {
     console.log('handleCornerClick', e)
   }
-  const cpuScale = state.scale.toFixed(2)
-  const rectStyle = {
-    width: `${rectWidth}px`,
-    height: `${rectHeight}px`
+
+  const changeShadow = () => {
+    setPost((prev) => ({
+      ...prev,
+      shadow: {
+        ...prev.shadow,
+        x: Math.random() * prev.canvasWidth,
+        y: Math.random() * prev.canvasHeight
+      }
+    }))
   }
-  const cpuPalette = state.isBlack
-    ? {
-        bgColor: 'transparent',
-        hoverBg: '#fff',
-        hoverColor: '#000',
-        longfgColor: '#BABBBC', // ruler longer mark color
-        fontColor: '#DEDEDE', // ruler font color
-        shadowColor: '#525252', // ruler shadow color
-        lineColor: '#51d6a9',
-        borderColor: '#B5B5B5',
-        lineType: 'dashed'
-      }
-    : {
-        bgColor: 'transparent',
-        lineColor: '#51d6a9',
-        lineType: 'dashed'
-      }
-  const canvasStyle = {
-    width: `${canvasWidth}px`,
-    height: `${canvasHeight}px`
+
+  const toggleZoomMode = () => {
+    const modes: Array<'pointer' | 'viewport-center' | 'content-center'> = ['pointer', 'viewport-center', 'content-center']
+    const idx = modes.indexOf(zoomMode)
+    const next = modes[(idx + 1) % modes.length]
+    setZoomMode(next)
+    sketchRef.current?.setZoomMode(next)
+  }
+
+  const scaleChange = (value: number) => {
+    setState({ scale: value })
+    sketchRef.current?.setTransform({ scale: value })
+  }
+
+  const handleNavigate = (x: number, y: number) => {
+    sketchRef.current?.setTransform({ x, y })
+  }
+
+  const handleDragStart = () => {
+    const engine = sketchRef.current?.engine
+    if (engine) {
+      (engine as any).enableAnimation = false
+    }
+  }
+
+  const handleDragEnd = () => {
+    const engine = sketchRef.current?.engine
+    if (engine) {
+      (engine as any).enableAnimation = true
+    }
   }
 
   return (
-    <>
-      <div className="demo">
-        <div className="top font16">
-          <div className="mr10"> Ctrl+鼠标滚轮缩放画布 </div>
-          <div className="mr10"> 空白键+鼠标左键键移动画布 </div>
-          <div className="mr10"> 缩放比:{cpuScale} </div>
-          <div className="mr10"> 参考线:{JSON.stringify(state.lines)} </div>
-        </div>
-        <div className="top">
-          <Button
-            size="small"
-            className="btn"
-            onClick={showRuler ? () => setShowRuler(false) : handleShowRuler}
-          >
-            隐藏规尺
-          </Button>
-          <Button size="small" className="btn" onClick={handleShowReferLine}>
-            辅助线开关
-          </Button>
-          <Button size="small" className="btn" onClick={() => setLockLine(true)}>
-            锁定参考线
-          </Button>
-          <Button size="small" className="btn" onClick={changeShadow}>
-            模拟阴影切换
-          </Button>
-          <Button size="small" className="btn" onClick={resetMethod}>
-            还原
-          </Button>
-          <Button size="small" className="btn" onClick={zoomOutMethod}>
-            缩小
-          </Button>
-          <span className="btn">禁止缩放</span>
-          <Switch onChange={changeScale} />
+    <div className="demo">
+      <div className="top font16">
+        <div className="mr10">Ctrl+鼠标滚轮缩放画布</div>
+        <div className="mr10">空白键+鼠标左键键移动画布</div>
+        <div className="scale mr10">缩放比:{cpuScale}</div>
+        <div className="scale mr10">参考线:{JSON.stringify(post.lines)}</div>
+      </div>
+      <div className="top font16">
+        <button className="mr10 font16" onClick={() => setPost((p) => ({ ...p, showRuler: !p.showRuler }))}>
+          {(post.showRuler ? '隐藏' : '显示') + '规尺'}
+        </button>
+        <button className="mr10 font16" onClick={() => setPost((p) => ({ ...p, isShowReferLine: !p.isShowReferLine }))}>
+          {(post.isShowReferLine ? '隐藏' : '显示') + '参考线'}
+        </button>
+        <button className="mr10 font16" onClick={() => setPost((p) => ({ ...p, showMinorTicks: !p.showMinorTicks }))}>
+          {(post.showMinorTicks ? '隐藏' : '显示') + '次刻度'}
+        </button>
+        <button className="mr10 font16" onClick={() => setLockLine((l) => !l)}>
+          {lockLine ? '解锁' : '锁定'}参考线
+        </button>
+        <button className="mr10 font16" onClick={toggleZoomMode}>
+          {zoomMode === 'pointer' ? '鼠标' : zoomMode === 'viewport-center' ? '视口' : '内容'}
+        </button>
+        <button className="mr10 font16" onClick={changeShadow}>模拟阴影切换</button>
+        <button className="mr10 font16" onClick={resetMethod}>还原</button>
+        <button className="mr10 font16" onClick={zoomOutMethod}>缩小</button>
+        <span className="mr10 font16">步长:{post.zoomStep}</span>
+        <input
+          className="mr10 font16"
+          type="range"
+          min={0.1}
+          max={1}
+          step={0.05}
+          value={post.zoomStep}
+          onChange={(e) => setPost((p) => ({ ...p, zoomStep: Number(e.target.value) }))}
+          style={{ width: 80 }}
+        />
+        <span className="mr10 font16">范围:{post.minZoom}~{post.maxZoom}</span>
+        <span className="mr10 font16">吸附:{post.snapThreshold}px</span>
+        <input
+          className="mr10 font16"
+          type="range"
+          min={0}
+          max={20}
+          step={1}
+          value={post.snapThreshold}
+          onChange={(e) => setPost((p) => ({ ...p, snapThreshold: Number(e.target.value) }))}
+          style={{ width: 80 }}
+        />
+        <input
+          className="mr10 font16"
+          type="range"
+          min={0.3}
+          max={3}
+          step={0.1}
+          value={state.scale}
+          onChange={(e) => scaleChange(Number(e.target.value))}
+        />
+      </div>
 
-          <span className="btn">禁止移动</span>
-          <Switch onChange={changeMove} />
-          <span className="btn">框内移动</span>
-          <Switch onChange={changeInsideMove} />
-          <Slider
-            style={{ marginRight: '10px', width: '90px' }}
-            value={state.scale}
-            disabled={panzoomOption.disableZoom}
-            onChange={scaleChange}
-            min={0.1}
-            max={3}
-            step={0.1}
-          />
-
-          <div style={{ marginRight: '10px' }}> 吸附横线: </div>
-          <Input
-            style={{ marginRight: '10px', width: '90px' }}
-            defaultValue={snapsObj.h.join(',')}
-            onBlur={snapsChange}
-          />
-
-          <div style={{ marginRight: '10px' }}> 吸附纵线: </div>
-          <Input
-            style={{ marginRight: '10px', width: '80px' }}
-            defaultValue={snapsObj.v.join(',')}
-            onBlur={snapsChangeV}
-          />
-
-          <a
-            href="https://github.com/kakajun/react-sketch-ruler"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <i className="fas fa-external-link-alt"></i> git源码
-          </a>
-        </div>
-
-        <div
-          style={rectStyle}
-          className={`wrapper ${state.isBlack ? 'blackwrapper' : 'whitewrapper'}`}
+      <div
+        className={`wrapper ${isBlack ? 'blackwrapper' : 'whitewrapper'}`}
+        style={rectStyle}
+      >
+        <SketchRule
+          ref={sketchRef}
+          scale={state.scale}
+          lockLine={lockLine}
+          width={post.width}
+          height={post.height}
+          canvasWidth={post.canvasWidth}
+          canvasHeight={post.canvasHeight}
+          thick={post.thick}
+          palette={cpuPalette}
+          showRuler={post.showRuler}
+          showMinorTicks={post.showMinorTicks}
+          isShowReferLine={post.isShowReferLine}
+          lines={post.lines}
+          shadow={post.shadow}
+          enableAnimation={true}
+          animationMode="ease-out"
+          zoomMode={zoomMode}
+          zoomStep={post.zoomStep}
+          minZoom={post.minZoom}
+          maxZoom={post.maxZoom}
+          snapThreshold={post.snapThreshold}
+          plugins={plugins}
+          onZoomChange={handleZoomChange}
+          onUpdateLines={handleLinesChange}
+          onHandleCornerClick={handleCornerClick}
         >
-          <SketchRule
-            scale={state.scale}
-            lockLine={lockLine}
-            thick={state.thick}
-            width={rectWidth}
-            showRuler={showRuler}
-            height={rectHeight}
-            palette={cpuPalette}
-            snapsObj={snapsObj}
-            shadow={state.shadow}
-            showShadowText={state.showShadowText}
-            canvasWidth={canvasWidth}
-            canvasHeight={canvasHeight}
-            panzoomOption={panzoomOption}
-            ref={sketchruleRef}
-            isShowReferLine={state.isShowReferLine}
-            onHandleCornerClick={handleCornerClick}
-            updateScale={updateScale}
-            handleLine={handleLine}
-            lines={state.lines}
-          >
-            <div slot="default" data-type="page" style={canvasStyle}>
-              <img className="imgStyle" src={bgImg} alt="" />
-            </div>
+          <div data-type="page" style={canvasStyle}>
+            <img className="img-style" src={bgImg} alt="" />
+          </div>
+          <div slot="toolbar" className="btns">
+            <button onClick={(e) => { e.stopPropagation(); resetMethod() }}>还原</button>
+            <button onClick={(e) => { e.stopPropagation(); zoomInMethod() }}>放大</button>
+            <button onClick={(e) => { e.stopPropagation(); zoomOutMethod() }}>缩小</button>
+          </div>
+        </SketchRule>
 
-            <div className="btns" slot="btn">
-              <Button size="small" className="btn" onClick={resetMethod}>
-                还原
-              </Button>
-              <Button size="small" className="btn" onClick={zoomInMethod}>
-                放大
-              </Button>
-              <Button size="small" className="btn" onClick={zoomOutMethod}>
-                缩小
-              </Button>
-            </div>
-          </SketchRule>
+        <div className="demo-minimap">
+          <Minimap
+            contentWidth={post.canvasWidth}
+            contentHeight={post.canvasHeight}
+            viewportX={viewportOffset.x}
+            viewportY={viewportOffset.y}
+            viewportWidth={post.width}
+            viewportHeight={post.height}
+            scale={state.scale}
+            width={200}
+            height={150}
+            onNavigate={handleNavigate}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+          />
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
-export default DemoComponent
+export default Comprehensive

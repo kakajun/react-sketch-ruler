@@ -1,104 +1,145 @@
-import { useState, useEffect, useCallback, useMemo, memo } from 'react'
-import useLine from './useLine'
-import { debounce } from '../canvas-ruler/utils'
+import React, { useState, useCallback, useMemo, memo } from 'react'
+import type { GuideLine } from '@sketch-ruler/core'
 import type { LineProps } from '../index-types'
-const LineComponent = ({
+
+const RulerLineComponent = ({
+  line,
   scale,
-  rate,
+  offset,
   palette,
-  index,
-  start,
   vertical,
-  value,
   canvasWidth,
   canvasHeight,
-  lines,
-  isShowReferLine,
-  snapThreshold,
-  snapsObj,
-  lockLine,
-  handleLine,
-  deleteLabel,
-  guideLine
+  lockLine = false,
+  deleteLabel = '放开删除',
+  onUpdate,
+  onDelete
 }: LineProps) => {
+  const [active, setActive] = useState(false)
   const [showLabel, setShowLabel] = useState(false)
-  const [isInscale, setIsInscale] = useState(false)
-  const { startValue, setStartValue, actionStyle, handleMouseMove, handleMouseDown, labelContent } =
-    useLine(
-      {
-        palette,
-        scale,
-        snapsObj,
-        lines,
-        canvasWidth,
-        canvasHeight,
-        snapThreshold,
-        lockLine,
-        index,
-        value,
-        rate,
-        handleLine,
-        deleteLabel,
-        guideLine
-      },
-      vertical
-    )
+  const [draggingPos, setDraggingPos] = useState<number | null>(null)
 
-  const showLine = useMemo(() => startValue >= start, [start, startValue, vertical])
-  type PointerEvents = 'auto' | 'none'
-  const combinedStyle = useMemo(() => {
-    const { lineType, lockLineColor, lineColor } = palette
-    const borderColor = lockLine ? lockLineColor : (lineColor ?? 'black')
-    const pointerEvents: PointerEvents = lockLine || isInscale ? 'none' : 'auto'
-    const cursor = isShowReferLine && !lockLine ? (vertical ? 'ns-resize' : 'ew-resize') : 'default'
-    const borderProperty = vertical ? 'borderTop' : 'borderLeft'
-    const offsetPx = (startValue - start) * scale
+  const pos = line.position * scale + offset
+  const limit = vertical ? canvasWidth : canvasHeight
 
+  const style = useMemo(() => {
+    const cursor = line.locked || lockLine ? 'default' : vertical ? 'ew-resize' : 'ns-resize'
+    const pointerEvents: 'auto' | 'none' = line.locked || lockLine ? 'none' : 'auto'
+    if (vertical) {
+      return {
+        left: `${pos}px`,
+        top: 0,
+        height: '100vh',
+        width: '1px',
+        borderLeft: `1px dashed ${palette.guideLineColor}`,
+        cursor,
+        pointerEvents
+      }
+    }
     return {
-      [borderProperty]: `1px ${lineType} ${borderColor}`,
-      pointerEvents: pointerEvents,
+      top: `${pos}px`,
+      left: 0,
+      width: '100vw',
+      height: '1px',
+      borderBottom: `1px dashed ${palette.guideLineColor}`,
       cursor,
-      [vertical ? 'top' : 'left']: `${offsetPx}px`
+      pointerEvents
     }
-  }, [palette, lockLine, isInscale, isShowReferLine, vertical, startValue, start, scale])
+  }, [pos, vertical, palette.guideLineColor, line.locked, lockLine])
 
-  const deactivateAfterDelay = useCallback(
-    debounce(() => {
-      setIsInscale(false)
-    }, 1000),
-    []
-  )
-
-  useEffect(() => {
-    setIsInscale(true)
-    deactivateAfterDelay()
-  }, [scale])
-
-  useEffect(() => {
-    setStartValue(value)
-  }, [value])
-  const handleMouseenter = (e: React.MouseEvent) => {
-    e.stopPropagation() // 阻止冒泡
-    if (!lockLine) {
-      setShowLabel(true)
+  const labelText = useMemo(() => {
+    const displayPos = draggingPos !== null ? draggingPos : line.position
+    if (displayPos < 0 || displayPos > limit) {
+      return deleteLabel
     }
-  }
+    return `${vertical ? 'X' : 'Y'}: ${Math.round(displayPos)}`
+  }, [draggingPos, line.position, limit, deleteLabel, vertical])
+
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (line.locked || lockLine) return
+    e.preventDefault()
+    e.stopPropagation()
+    setActive(true)
+    setShowLabel(true)
+
+    const startMouse = vertical ? e.clientX : e.clientY
+    const startPos = line.position
+    let shouldDelete = false
+
+    const onMove = (moveEvent: MouseEvent) => {
+      const currentMouse = vertical ? moveEvent.clientX : moveEvent.clientY
+      const delta = (currentMouse - startMouse) / scale
+      let newPos = startPos + delta
+
+      // 吸附到最近刻度（简化：吸附到整数像素）
+      const snapThreshold = 10 / scale
+      const nearest = Math.round(newPos / snapThreshold) * snapThreshold
+      if (Math.abs(nearest - newPos) < snapThreshold * 0.5) {
+        newPos = nearest
+      }
+
+      setDraggingPos(newPos)
+      shouldDelete = newPos < 0 || newPos > limit
+      onUpdate?.(line.id, Math.round(newPos))
+    }
+
+    const onUp = () => {
+      if (shouldDelete) {
+        onDelete?.(line.id)
+      }
+      document.removeEventListener('mousemove', onMove)
+      document.removeEventListener('mouseup', onUp)
+      setShowLabel(false)
+      setActive(false)
+      setDraggingPos(null)
+    }
+
+    document.addEventListener('mousemove', onMove)
+    document.addEventListener('mouseup', onUp)
+  }, [line, lockLine, vertical, scale, limit, onUpdate, onDelete])
+
+  const handleMouseEnter = useCallback(() => {
+    if (line.locked || lockLine) return
+    setActive(true)
+    setShowLabel(true)
+  }, [line.locked, lockLine])
+
+  const handleMouseLeave = useCallback(() => {
+    if (!active) {
+      setShowLabel(false)
+    }
+    setActive(false)
+  }, [active])
 
   return (
     <div
-      style={combinedStyle}
       className="line"
-      onMouseEnter={handleMouseenter}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={() => setShowLabel(false)}
+      style={style}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       onMouseDown={handleMouseDown}
-      hidden={!showLine}
     >
-      <div className="action" style={actionStyle}>
-        {showLabel && <span className="value">{labelContent}</span>}
-      </div>
+      {showLabel && (
+        <span
+          className="line-label"
+          style={{
+            position: 'absolute',
+            background: palette.hoverBg,
+            color: palette.hoverColor,
+            fontSize: '10px',
+            padding: '2px 4px',
+            borderRadius: '2px',
+            whiteSpace: 'nowrap',
+            pointerEvents: 'none',
+            transform: 'scale(0.83)',
+            [vertical ? 'top' : 'left']: '4px'
+          }}
+        >
+          {labelText}
+        </span>
+      )}
     </div>
   )
 }
 
-export default memo(LineComponent)
+export default memo(RulerLineComponent)

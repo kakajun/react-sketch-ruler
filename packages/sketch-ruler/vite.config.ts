@@ -4,24 +4,13 @@ import dts from 'vite-plugin-dts'
 import { resolve } from 'path'
 import pkg from '../../package.json'
 
-const corePath = resolve(__dirname, '../../../vue3-sketch-ruler/packages/core/src/index.ts')
-const canvasPath = resolve(__dirname, '../../../vue3-sketch-ruler/packages/canvas/src/index.ts')
-
 const banner = `/*!${pkg.name} v${pkg.version}${new Date().getFullYear()}年${
   new Date().getMonth() + 1
 }月${new Date()}制作*/`
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  // 定义常量全局替换
   define: {
     'process.env.NODE_ENV': '"production"'
-  },
-  resolve: {
-    alias: {
-      '@sketch-ruler/core': corePath,
-      '@sketch-ruler/canvas': canvasPath
-    }
   },
   plugins: [
     react(),
@@ -31,10 +20,8 @@ export default defineConfig({
       entryRoot: resolve(__dirname, 'src'),
       include: [resolve(__dirname, 'src')],
       exclude: [resolve(__dirname, 'vite.config.ts')]
-      // skipDiagnostics: false
     })
   ],
-
   build: {
     outDir: 'lib',
     minify: true,
@@ -45,14 +32,14 @@ export default defineConfig({
       fileName: 'index'
     },
     rollupOptions: {
-      // 确保外部化处理那些你不想打包进库的依赖
-      external: ['react', 'react-dom'],
+      external: ['react', 'react-dom', '@sketch-ruler/core', '@sketch-ruler/canvas'],
       output: {
         banner,
-        // 在 UMD 构建模式下为这些外部化的依赖提供一个全局变量
         globals: {
           react: 'React',
-          'react-dom': 'ReactDOM'
+          'react-dom': 'ReactDOM',
+          '@sketch-ruler/core': 'SketchRulerCore',
+          '@sketch-ruler/canvas': 'SketchRulerCanvas'
         }
       }
     }

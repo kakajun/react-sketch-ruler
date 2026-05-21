@@ -1,51 +1,38 @@
 import type { RefObject } from 'react'
 import type { TransformEngine, TransformState, GuideLine, SketchRulerPlugin } from '@sketch-ruler/core'
+
 export type { GuideLine, SketchRulerPlugin } from '@sketch-ruler/core'
+
 export interface PaletteType {
   bgColor?: string
-  longfgColor?: string
-  fontColor?: string
-  fontShadowColor?: string
-  shadowColor?: string
-  lineColor?: string
-  lineType?: string
-  lockLineColor?: string
-  borderColor?: string
+  tickColor?: string
+  labelColor?: string
+  guideLineColor?: string
+  guideLineLockedColor?: string
   hoverBg?: string
   hoverColor?: string
+  borderColor?: string
+  shadowColor?: string
+  fontShadowColor?: string
   cornerActiveColor?: string
-  /** Vue 对齐字段：刻度颜色 */
-  tickColor?: string
-  /** Vue 对齐字段：标签颜色 */
-  labelColor?: string
-  /** Vue 对齐字段：参考线颜色 */
-  guideLineColor?: string
-  /** Vue 对齐字段：锁定参考线颜色 */
-  guideLineLockedColor?: string
-  /** Vue 对齐字段：参考线样式 solid | dashed | dotted */
   guideLineStyle?: string
-  /** Vue 对齐字段：参考线宽度 */
   guideLineWidth?: number
-  /** Vue 对齐字段：是否显示标签 */
   labelEnabled?: boolean
-  /** Vue 对齐字段：标签位置 start | center | end */
   labelPosition?: string
-  /** Vue 对齐字段：标签格式化函数 */
   labelFormat?: (value: number) => string
 }
 
 export interface FinalPaletteType {
   bgColor: string
-  longfgColor: string
-  fontColor: string
-  fontShadowColor: string
-  shadowColor: string
-  lineColor: string
-  lineType: string
-  lockLineColor: string
-  hoverColor: string
+  tickColor: string
+  labelColor: string
+  guideLineColor: string
+  guideLineLockedColor: string
   hoverBg: string
+  hoverColor: string
   borderColor: string
+  shadowColor: string
+  fontShadowColor: string
 }
 
 export interface ShadowType {
@@ -64,133 +51,92 @@ export type ZoomMode = 'pointer' | 'viewport-center' | 'content-center'
 
 export interface SketchRulerProps {
   showRuler?: boolean
-  eyeIcon?: string
-  closeEyeIcon?: string
   scale?: number
-  rate?: number
   thick?: number
-  palette?: PaletteType
   width?: number
   height?: number
-  paddingRatio?: number
-  autoCenter?: boolean
-  shadow?: ShadowType
-  showShadowText?: boolean
-  lines?: LineType
-  isShowReferLine?: boolean
   canvasWidth?: number
   canvasHeight?: number
-  snapsObj?: LineType
+  palette?: PaletteType
+  lines?: LineType
+  isShowReferLine?: boolean
   snapThreshold?: number
-  gridRatio?: number
   lockLine?: boolean
   selfHandle?: boolean
-  panzoomOption?: Record<string, any> // 保留兼容，底层已改为 TransformEngine
-  children: React.ReactNode
-  updateScale?: (props: number) => void
-  onZoomChange?: (props: TransformState) => void
-  onHandleCornerClick?: (props: boolean) => void
-  handleLine?: (props: LineType) => void
-  /** 参考线对象模型（新），优先级高于 `lines` */
-  guideLines?: GuideLine[]
-  /** 参考线变更回调（新，返回 GuideLine[]） */
-  onGuideLineChange?: (lines: GuideLine[]) => void
-  /** 插件列表 */
-  plugins?: SketchRulerPlugin[]
-  deleteLabel?: string
-  /** 是否显示次刻度线 */
-  showMinorTicks?: boolean
-  /** 缩放原点模式 */
-  zoomMode?: ZoomMode
-  /** 缩放步长 */
   zoomStep?: number
-  /** 最小缩放 */
   minZoom?: number
-  /** 最大缩放 */
   maxZoom?: number
-  /** 是否启用动画 */
-  enableAnimation?: boolean
-  /** 动画模式 */
   animationMode?: 'direct' | 'ease-out' | 'damped' | 'exponential'
-  /** 初始偏移（autoCenter=false 时生效） */
+  zoomMode?: ZoomMode
+  enableAnimation?: boolean
+  plugins?: SketchRulerPlugin[]
+  autoCenter?: boolean
+  shadow?: ShadowType
   initialOffset?: { x: number; y: number }
+  showMinorTicks?: boolean
+  eyeIcon?: string
+  closeEyeIcon?: string
+  deleteLabel?: string
+  children?: React.ReactNode
+  onUpdateScale?: (scale: number) => void
+  onZoomChange?: (detail: { scale: number; x: number; y: number }) => void
+  onUpdateLines?: (lines: LineType) => void
+  onUpdateLockLine?: (lock: boolean) => void
+  onHandleCornerClick?: (show: boolean) => void
 }
 
 export interface RulerWrapperProps {
   vertical: boolean
-  showShadowText: boolean
-  scale: number
   width: number
   height: number
-  canvasWidth: number
-  canvasHeight: number
-  startOther: number
   thick: number
+  scale: number
+  offset: { x: number; y: number }
+  lines: GuideLine[]
   palette: FinalPaletteType
-  start: number
-  rate: number
-  lines: LineType
-  snapThreshold: number
-  snapsObj: LineType
-  selectStart: number
-  gridRatio: number
-  selectLength: number
-  lockLine: boolean
-  isShowReferLine: boolean
-  handleLine?: (props: LineType) => void
-  deleteLabel?: string
-  propStyle: React.CSSProperties
+  showReferLine: boolean
+  shadowStart?: number
+  shadowLength?: number
+  canvasSize?: number
   showMinorTicks?: boolean
-  guideLines?: GuideLine[]
-  addLine?: (line: Omit<GuideLine, 'id'>) => void
-  removeLine?: (id: string) => void
-  updateLine?: (id: string, position: number) => void
+  canvasWidth?: number
+  canvasHeight?: number
+  deleteLabel?: string
+  lockLine?: boolean
+  onAddLine?: (line: Omit<GuideLine, 'id'>) => void
+  onUpdateLine?: (id: string, position: number) => void
+  onDeleteLine?: (id: string) => void
 }
 
 export interface LineProps {
-  index: number
-  start: number
+  line: GuideLine
+  scale: number
+  offset: number
+  palette: FinalPaletteType
   vertical: boolean
   canvasWidth: number
   canvasHeight: number
-  snapThreshold: number
-  snapsObj: LineType
-  lines: LineType
-  palette: FinalPaletteType
-  isShowReferLine: boolean
-  rate: number
-  scale: number
-  value: number
-  lockLine: boolean
-  handleLine?: (props: LineType) => void
+  lockLine?: boolean
   deleteLabel?: string
-  guideLine?: GuideLine
+  onUpdate?: (id: string, position: number) => void
+  onDelete?: (id: string) => void
 }
 
 export interface CanvasProps {
-  start: number
-  vertical: boolean
-  showShadowText: boolean
-  canvasWidth: number
-  canvasHeight: number
+  marks: any[]
   palette: FinalPaletteType
-  rate: number
-  scale: number
+  vertical: boolean
+  thick: number
   width: number
   height: number
-  selectStart: number
-  gridRatio: number
-  selectLength: number
-  onDragStart: (e: React.MouseEvent<HTMLCanvasElement>) => Promise<void>
-  showMinorTicks?: boolean
+  ratio?: number
 }
 
 export interface SketchRulerMethods {
+  engine: TransformEngine
   reset: () => void
   zoomIn: () => void
   zoomOut: () => void
-  initPanzoom: () => void
-  panzoomInstance: RefObject<TransformEngine | null>
   setTransform: (t: Partial<TransformState>) => void
   setZoomMode: (mode: ZoomMode) => void
   zoomToPreset: (preset: number) => void

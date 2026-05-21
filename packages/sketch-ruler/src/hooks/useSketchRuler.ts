@@ -1,9 +1,10 @@
 import { useState, useCallback, useMemo } from 'react'
-import { fitRect } from '@sketch-ruler/core'
-import type { TransformState, GuideLine } from '@sketch-ruler/core'
-import { useTransformEngine } from './useTransformEngine'
+import type { GuideLine } from '@sketch-ruler/core'
+import { useCanvasTransform } from './useCanvasTransform'
 import { useGuideLines, lineTypeToGuideLines } from './useGuideLines'
-import type { LineType, ZoomMode } from '../index-types'
+import type { LineType, ZoomMode, PaletteType } from '../index-types'
+
+export { lineTypeToGuideLines }
 
 export interface UseSketchRulerOptions {
   width?: number
@@ -12,14 +13,17 @@ export interface UseSketchRulerOptions {
   canvasHeight?: number
   thick?: number
   scale?: number
-  autoCenter?: boolean
-  paddingRatio?: number
+  palette?: Partial<PaletteType>
+  lines?: LineType
+  snapThreshold?: number
+  lockLine?: boolean
   minZoom?: number
   maxZoom?: number
   zoomStep?: number
-  enableAnimation?: boolean
-  lines?: LineType
+  autoCenter?: boolean
+  showRuler?: boolean
   initialOffset?: { x: number; y: number }
+  enableAnimation?: boolean
 }
 
 export function useSketchRuler(options: UseSketchRulerOptions = {}) {
@@ -30,44 +34,41 @@ export function useSketchRuler(options: UseSketchRulerOptions = {}) {
     canvasHeight = 700,
     thick = 16,
     scale: initialScale = 1,
-    autoCenter = true,
-    paddingRatio = 0.2,
+    palette,
+    lines: initialLines = { h: [], v: [] },
+    snapThreshold = 5,
+    lockLine = false,
     minZoom = 0.1,
     maxZoom = 10,
     zoomStep = 0.25,
-    enableAnimation = false,
-    lines: initialLines = { h: [], v: [] },
-    initialOffset
+    autoCenter = true,
+    showRuler = true,
+    initialOffset,
+    enableAnimation = false
   } = options
 
-  const rectWidth = width - thick
-  const rectHeight = height - thick
-
-  const getInitialState = useCallback((): TransformState => {
-    if (autoCenter) {
-      const result = fitRect(
-        { x: 0, y: 0, width: canvasWidth, height: canvasHeight },
-        { x: 0, y: 0, width: rectWidth, height: rectHeight },
-        'contain',
-        paddingRatio
-      )
-      return { scale: result.scale, x: result.x, y: result.y }
-    }
-    return { x: initialOffset?.x ?? 0, y: initialOffset?.y ?? 0, scale: initialScale }
-  }, [autoCenter, canvasWidth, canvasHeight, rectWidth, rectHeight, paddingRatio, initialScale, initialOffset])
+  const rectWidth = width
+  const rectHeight = height
 
   const {
     engine,
-    state,
+    scale,
+    offset,
     setTransform,
     panBy,
     zoomBy,
     zoomTo,
     reset
-  } = useTransformEngine(getInitialState(), {
+  } = useCanvasTransform({
+    initialScale: initialScale,
+    initialOffset: initialOffset ? { x: initialOffset.x, y: initialOffset.y } : { x: 0, y: 0 },
     minZoom,
     maxZoom,
-    enableAnimation
+    enableAnimation,
+    autoCenter,
+    canvasSize: { width: canvasWidth, height: canvasHeight },
+    viewportSize: { width: rectWidth, height: rectHeight },
+    paddingRatio: 0.2
   })
 
   const [zoomMode, setZoomModeState] = useState<ZoomMode>('pointer')
@@ -77,8 +78,29 @@ export function useSketchRuler(options: UseSketchRulerOptions = {}) {
     initialLines
   )
 
-  const startX = useMemo(() => -state.x / state.scale, [state.x, state.scale])
-  const startY = useMemo(() => -state.y / state.scale, [state.y, state.scale])
+  const horizontalLines = useMemo(() =>
+    guideLines.filter((l) => l.orientation === 'h' && l.visible !== false),
+    [guideLines]
+  )
+  const verticalLines = useMemo(() =>
+    guideLines.filter((l) => l.orientation === 'v' && l.visible !== false),
+    [guideLines]
+  )
+
+  const paletteCpu = useMemo(() => {
+    return {
+      bgColor: '#f6f7f9',
+      tickColor: '#BABBBC',
+      labelColor: '#7D8694',
+      guideLineColor: '#51d6a9',
+      guideLineLockedColor: '#d4d7dc',
+      hoverBg: '#000',
+      hoverColor: '#fff',
+      borderColor: '#eeeeef',
+      shadowColor: '#e9f7fe',
+      ...palette
+    }
+  }, [palette])
 
   const zoomIn = useCallback(() => {
     const cx = rectWidth / 2
@@ -98,14 +120,15 @@ export function useSketchRuler(options: UseSketchRulerOptions = {}) {
 
   return {
     engine,
-    scale: state.scale,
-    offset: { x: state.x, y: state.y },
+    scale,
+    offset,
     rectWidth,
     rectHeight,
-    startX,
-    startY,
     zoomMode,
     guideLines,
+    horizontalLines,
+    verticalLines,
+    paletteCpu,
     setTransform,
     panBy,
     zoomBy,

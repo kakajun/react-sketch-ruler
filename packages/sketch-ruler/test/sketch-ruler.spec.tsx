@@ -4,8 +4,8 @@ import { describe, test, expect, vi } from 'vitest'
 import SketchRule from '../src/index'
 
 describe('SketchRule integration', () => {
-  test('emits updateScale on zoomIn', async () => {
-    const updateScale = vi.fn()
+  test('emits onUpdateScale on zoomIn', async () => {
+    const onUpdateScale = vi.fn()
     const ref = React.createRef<any>()
 
     render(
@@ -15,8 +15,8 @@ describe('SketchRule integration', () => {
         height={600}
         canvasWidth={600}
         canvasHeight={400}
-        panzoomOption={{ canvas: true, noBind: true }}
-        updateScale={updateScale}
+        selfHandle={true}
+        onUpdateScale={onUpdateScale}
       >
         <div data-testid="page1" style={{ width: '600px', height: '400px' }} />
       </SketchRule>
@@ -29,7 +29,7 @@ describe('SketchRule integration', () => {
     expect(ref.current?.zoomIn).toBeTypeOf('function')
     ref.current!.zoomIn()
     await new Promise((r) => setTimeout(r, 50))
-    expect(updateScale).toHaveBeenCalled()
+    expect(onUpdateScale).toHaveBeenCalled()
   })
 
   test('corner click emits onHandleCornerClick and toggles refer line', async () => {
@@ -92,9 +92,9 @@ describe('SketchRule integration', () => {
     expect(document.querySelector('.sketch-ruler')).toBeTruthy()
   })
 
-  test('multiple instances have independent panzoom elements', async () => {
-    const updateScale1 = vi.fn()
-    const updateScale2 = vi.fn()
+  test('multiple instances have independent engines', async () => {
+    const onUpdateScale1 = vi.fn()
+    const onUpdateScale2 = vi.fn()
     const ref1 = React.createRef<any>()
     const ref2 = React.createRef<any>()
 
@@ -106,8 +106,8 @@ describe('SketchRule integration', () => {
           height={300}
           canvasWidth={300}
           canvasHeight={200}
-          panzoomOption={{ canvas: true, noBind: true }}
-          updateScale={updateScale1}
+          selfHandle={true}
+          onUpdateScale={onUpdateScale1}
         >
           <div data-testid="page1" style={{ width: '300px', height: '200px' }} />
         </SketchRule>
@@ -117,8 +117,8 @@ describe('SketchRule integration', () => {
           height={300}
           canvasWidth={300}
           canvasHeight={200}
-          panzoomOption={{ canvas: true, noBind: true }}
-          updateScale={updateScale2}
+          selfHandle={true}
+          onUpdateScale={onUpdateScale2}
         >
           <div data-testid="page2" style={{ width: '300px', height: '200px' }} />
         </SketchRule>
@@ -130,20 +130,20 @@ describe('SketchRule integration', () => {
       expect(ref2.current).toBeTruthy()
     })
 
-    const inst1 = ref1.current?.panzoomInstance?.current
-    const inst2 = ref2.current?.panzoomInstance?.current
+    const engine1 = ref1.current?.engine
+    const engine2 = ref2.current?.engine
 
-    // 每个实例都应该有自己的 panzoom 实例
-    expect(inst1).toBeTruthy()
-    expect(inst2).toBeTruthy()
-    expect(inst1).not.toBe(inst2)
+    // 每个实例都应该有自己的 engine
+    expect(engine1).toBeTruthy()
+    expect(engine2).toBeTruthy()
+    expect(engine1).not.toBe(engine2)
 
     // 每个实例操作的 canvasedit 元素应该不同
     expect(screen.getByTestId('page1')).toBeTruthy()
     expect(screen.getByTestId('page2')).toBeTruthy()
 
-    // 验证两个实例的 panzoom 实例是独立的
-    expect(inst1).not.toBe(inst2)
+    // 验证两个实例的 engine 是独立的
+    expect(engine1).not.toBe(engine2)
     // 验证两个实例操作的 DOM 元素不同
     expect(screen.getByTestId('page1')).toBeTruthy()
     expect(screen.getByTestId('page2')).toBeTruthy()

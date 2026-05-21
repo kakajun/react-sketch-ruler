@@ -1,11 +1,9 @@
-// 定义变量
 @top-bottom-width: 4px;
 @left-right-width: 100vw;
 @offset: -3px;
 @height: 100vh;
 @width: 4px;
 
-// 混入定义
 .extendable-border(@top-bottom-width: @top-bottom-width, @left-right-width: @left-right-width, @offset: @offset) {
   position: absolute;
   left: 0;
@@ -57,74 +55,126 @@
   height: 100%;
   overflow: hidden;
   font-size: 12px;
-  span {
-    line-height: 1;
+
+  .canvasedit {
+    transform-origin: 0 0;
   }
 
-  .defaultCursor {
-    cursor: default !important;
-  }
-
-  .grabCursor {
-    cursor: grab !important;
+  .canvasedit-parent {
+    position: absolute;
+    overflow: hidden;
   }
 
   .corner {
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 2;
     pointer-events: auto;
     cursor: pointer;
     box-sizing: content-box;
     transition: all 0.2s ease-in-out;
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
   }
 
-  .canvasedit-parent {
+  .default,
+  .defaultCursor {
+    cursor: default !important;
+  }
+
+  .grab,
+  .grabCursor {
+    cursor: grab !important;
+  }
+
+  .grabbing,
+  .grabbingCursor {
+    cursor: grabbing !important;
+  }
+}
+
+.h-container,
+.v-container {
+  position: absolute;
+}
+
+.h-container {
+  top: 0;
+}
+
+.v-container {
+  left: 0;
+}
+
+.lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.line {
+  position: absolute;
+  pointer-events: auto;
+}
+
+.h-container .line {
+  &::before,
+  &::after {
+    content: '';
     position: absolute;
-  }
-
-  .h-container,
-  .v-container {
-    position: absolute;
-    .indicator {
-      z-index: 4;
-      position: absolute;
-    }
-
-    .line {
-      position: absolute;
-    }
-
-    .action {
-      position: absolute;
-    }
-
-    .value {
-      transform: scale(0.83);
-      padding: 5px;
-      border-radius: 5px;
-      font-size: 12px;
-      white-space: nowrap;
-    }
-  }
-
-  .h-container {
-    top: 0;
-    .line {
-      .vertical-border();
-    }
-    .indicator {
-      .extendable-border();
-    }
-  }
-
-  .v-container {
     left: 0;
-    .line {
-      .extendable-border();
-    }
-    .indicator {
-      .vertical-border();
-    }
+    width: 100%;
+    height: 4px;
   }
+  &::before {
+    top: -4px;
+  }
+  &::after {
+    bottom: -4px;
+  }
+}
+
+.v-container .line {
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    height: 100%;
+    width: 4px;
+  }
+  &::before {
+    left: -4px;
+  }
+  &::after {
+    right: -4px;
+  }
+}
+
+.preview-line {
+  position: absolute;
+  pointer-events: none;
+  z-index: 5;
+
+  .preview-label {
+    position: absolute;
+    font-size: 10px;
+    padding: 2px 4px;
+    border-radius: 2px;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+}
+
+.line-label {
+  position: absolute;
+  font-size: 10px;
+  padding: 2px 4px;
+  border-radius: 2px;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: scale(0.83);
 }

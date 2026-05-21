@@ -10,7 +10,6 @@ type ShadowType = {
 
 interface MovebleComProps {
   updateShadow: (props: ShadowType) => void
-  updateSnapsObj: (props: { h: number[]; v: number[] }) => void
   zoom?: number
 }
 
@@ -25,7 +24,7 @@ type TargetItem = {
   zIndex?: number // 可选字段
 }
 
-const MovebleCom = ({ updateShadow, updateSnapsObj, zoom = 1 }: MovebleComProps) => {
+const MovebleCom = ({ updateShadow, zoom = 1 }: MovebleComProps) => {
   const [targetId, setTargetId] = useState<string | null>('target0')
   const [targetEl, setTargetEl] = useState<HTMLElement | null>(null)
   const [targetList, setTargetList] = useState<TargetItem[]>([
@@ -165,12 +164,6 @@ const MovebleCom = ({ updateShadow, updateSnapsObj, zoom = 1 }: MovebleComProps)
       ;(moveableRef.current as any).updateRect()
     }
   }
-
-  useEffect(() => {
-    const h = targetList.map((item: TargetItem) => item.top)
-    const v = targetList.map((item: TargetItem) => item.left)
-    updateSnapsObj({ h, v })
-  }, [targetList])
 
   return (
     <div className="container">

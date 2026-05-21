@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react'
-import SketchRule, { SketchRulerMethods } from 'react-sketch-ruler'
-import bgImg from '../assets/8k.jpg'
+import SketchRule from 'react-sketch-ruler'
+import 'react-sketch-ruler/index.css'
+import bgImg from '@/assets/8k.jpg'
 import './EightKSketchRuler.less'
 import { useTheme } from 'antd-style'
 
-const EightKSketchRuler = () => {
+const EightKSketchRuler: React.FC = () => {
   const { appearance } = useTheme()
   const wrapperRef = useRef<HTMLDivElement>(null)
-  const sketchRuleRef = useRef<SketchRulerMethods>(null)
+  const sketchRuleRef = useRef<any>(null)
 
   const [rectWidth, setRectWidth] = useState(0)
   const [rectHeight, setRectHeight] = useState(0)
@@ -19,12 +20,6 @@ const EightKSketchRuler = () => {
   const lines = {
     h: [0, 2400],
     v: [0, 800]
-  }
-  const panzoomOption = {
-    maxScale: 3,
-    minScale: 0.01,
-    disablePan: false,
-    disableZoom: false
   }
 
   const updateDimensions = () => {
@@ -40,9 +35,7 @@ const EightKSketchRuler = () => {
   useEffect(() => {
     updateDimensions()
     window.addEventListener('resize', updateDimensions)
-    return () => {
-      window.removeEventListener('resize', updateDimensions)
-    }
+    return () => window.removeEventListener('resize', updateDimensions)
   }, [])
 
   useEffect(() => {
@@ -69,17 +62,15 @@ const EightKSketchRuler = () => {
         bgColor: 'transparent',
         hoverBg: '#fff',
         hoverColor: '#000',
-        longfgColor: '#BABBBC', // ruler longer mark color
-        fontColor: '#DEDEDE', // ruler font color
-        shadowColor: '#525252', // ruler shadow color
-        lineColor: '#51d6a9',
-        borderColor: '#B5B5B5',
-        lineType: 'dashed'
+        tickColor: '#BABBBC',
+        labelColor: '#DEDEDE',
+        shadowColor: '#525252',
+        guideLineColor: '#51d6a9',
+        borderColor: '#B5B5B5'
       }
     : {
         bgColor: 'transparent',
-        lineColor: '#51d6a9',
-        lineType: 'dashed'
+        guideLineColor: '#51d6a9'
       }
 
   return (
@@ -98,17 +89,16 @@ const EightKSketchRuler = () => {
             height={rectHeight}
             canvasWidth={canvasWidth}
             canvasHeight={canvasHeight}
-            panzoomOption={panzoomOption}
             lines={lines}
             autoCenter={true}
             showRuler={true}
-            updateScale={setScale}
+            onUpdateScale={setScale}
             palette={cpuPalette}
           >
-            <div slot="default" style={{ width: '100%', height: '100%' }}>
+            <div style={{ width: '100%', height: '100%' }}>
               <img style={{ width: '100%', height: '100%' }} src={bgImg} alt="8K Screen" />
             </div>
-            <div slot="btn" className="btns">
+            <div slot="toolbar" className="btns">
               <button onClick={handleReset}>还原</button>
               <button onClick={handleZoomIn}>放大</button>
               <button onClick={handleZoomOut}>缩小</button>

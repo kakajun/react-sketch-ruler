@@ -1,40 +1,40 @@
 import { eye64, closeEye64 } from './cornerImg64'
 import React, { useState, useEffect, useMemo, useImperativeHandle, useRef, useCallback } from 'react'
-import { fitRect, PluginManager } from '@sketch-ruler/core'
-import type { TransformEngine, TransformState, SketchRulerPlugin } from '@sketch-ruler/core'
+import { fitRect, PluginManager, importLines, exportLines, generateLineId } from '@sketch-ruler/core'
+import type { TransformEngine, TransformState, SketchRulerPlugin, GuideLine } from '@sketch-ruler/core'
 import './index.less'
 import RulerWrapper from './RulerWrapper'
-import { useTransformEngine } from '../hooks/useTransformEngine'
+import { useCanvasTransform } from '../hooks/useCanvasTransform'
 import { useInputManager } from '../hooks/useInputManager'
-import { useGuideLines } from '../hooks/useGuideLines'
 import type { SketchRulerProps, PaletteType, SketchRulerMethods, ZoomMode } from '../index-types'
 
 const ZOOM_PRESETS = [0.1, 0.25, 0.33, 0.5, 0.66, 1, 1.5, 2, 3, 4, 6, 8, 16]
 
-const usePaletteConfig = (palette: PaletteType) => {
+const usePaletteConfig = (palette: PaletteType | undefined) => {
   return useMemo(() => {
-    // Vue 字段映射到 React 内部字段
     const mapped: PaletteType = {
       ...palette,
-      longfgColor: palette.longfgColor ?? palette.tickColor,
-      fontColor: palette.fontColor ?? palette.labelColor,
-      lineColor: palette.lineColor ?? palette.guideLineColor,
-      lockLineColor: palette.lockLineColor ?? palette.guideLineLockedColor,
-      lineType: palette.lineType ?? palette.guideLineStyle
+      tickColor: palette?.tickColor ?? '#BABBBC',
+      labelColor: palette?.labelColor ?? '#7D8694',
+      guideLineColor: palette?.guideLineColor ?? '#51d6a9',
+      guideLineLockedColor: palette?.guideLineLockedColor ?? '#d4d7dc',
+      hoverBg: palette?.hoverBg ?? '#000',
+      hoverColor: palette?.hoverColor ?? '#fff',
+      borderColor: palette?.borderColor ?? '#eeeeef',
+      shadowColor: palette?.shadowColor ?? '#e9f7fe',
+      fontShadowColor: palette?.fontShadowColor ?? '#106ebe'
     }
     return {
-      bgColor: '#f6f7f9',
-      longfgColor: '#BABBBC',
-      fontColor: '#7D8694',
-      fontShadowColor: '#106ebe',
-      shadowColor: '#e9f7fe',
-      lineColor: '#51d6a9',
-      lineType: 'solid',
-      lockLineColor: '#d4d7dc',
-      hoverBg: '#000',
-      hoverColor: '#fff',
-      borderColor: '#eeeeef',
-      ...mapped
+      bgColor: palette?.bgColor ?? '#f6f7f9',
+      tickColor: mapped.tickColor!,
+      labelColor: mapped.labelColor!,
+      guideLineColor: mapped.guideLineColor!,
+      guideLineLockedColor: mapped.guideLineLockedColor!,
+      hoverBg: mapped.hoverBg!,
+      hoverColor: mapped.hoverColor!,
+      borderColor: mapped.borderColor!,
+      shadowColor: mapped.shadowColor!,
+      fontShadowColor: mapped.fontShadowColor!
     }
   }, [palette])
 }
@@ -43,103 +43,105 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
   (
     {
       showRuler = true,
-      scale = 1,
-      rate = 1,
+      scale: propScale = 1,
       thick = 16,
       width = 1400,
       height = 800,
-      eyeIcon,
-      closeEyeIcon,
-      paddingRatio = 0.2,
-      autoCenter = true,
-      showShadowText = true,
-      showMinorTicks = false,
-      shadow = { x: 0, y: 0, width: 0, height: 0 },
+      canvasWidth = 700,
+      canvasHeight = 700,
+      palette,
       lines = { h: [], v: [] },
       isShowReferLine = true,
-      canvasWidth = 1000,
-      canvasHeight = 700,
-      snapsObj = { h: [], v: [] },
-      palette,
       snapThreshold = 5,
-      gridRatio = 1,
       lockLine = false,
       selfHandle = false,
-      zoomMode = 'pointer' as ZoomMode,
       zoomStep = 0.25,
       minZoom = 0.1,
       maxZoom = 10,
+      animationMode = 'ease-out',
+      zoomMode = 'pointer',
       enableAnimation = false,
-      animationMode = 'ease-out' as const,
-      initialOffset,
-      children,
-      onHandleCornerClick,
-      updateScale,
-      onZoomChange,
-      guideLines: guideLinesProp,
-      onGuideLineChange,
-      handleLine,
       plugins = [],
-      deleteLabel
+      autoCenter = true,
+      shadow = { x: 0, y: 0, width: 0, height: 0 },
+      initialOffset = { x: 0, y: 0 },
+      showMinorTicks = false,
+      eyeIcon,
+      closeEyeIcon,
+      deleteLabel = '放开删除',
+      children,
+      onUpdateScale,
+      onZoomChange,
+      onUpdateLines,
+      onHandleCornerClick
     }: SketchRulerProps,
     ref
   ) => {
-    const paletteConfig = usePaletteConfig(palette || {})
+    const paletteConfig = usePaletteConfig(palette)
     const [showReferLine, setShowReferLine] = useState(isShowReferLine)
     const canvasEditRef = useRef<HTMLDivElement | null>(null)
     const containerRef = useRef<HTMLDivElement | null>(null)
-    const isHoveringRef = useRef(false)
-    const rectWidth = useMemo(() => width - thick, [width, thick])
-    const rectHeight = useMemo(() => height - thick, [height, thick])
+    const cursorClassRef = useRef('default')
+    const [cursorClass, setCursorClass] = useState('default')
 
-    // 使用 TransformEngine 替代 simple-panzoom
-    const getInitialState = useCallback((): TransformState => {
-      if (autoCenter) {
-        const result = fitRect(
-          { x: 0, y: 0, width: canvasWidth, height: canvasHeight },
-          { x: 0, y: 0, width: rectWidth, height: rectHeight },
-          'contain',
-          paddingRatio
-        )
-        return { scale: result.scale, x: result.x, y: result.y }
-      }
-      return { x: initialOffset?.x ?? 0, y: initialOffset?.y ?? 0, scale }
-    }, [autoCenter, canvasWidth, canvasHeight, rectWidth, rectHeight, paddingRatio, scale, initialOffset])
-
-    const initialStateRef = useRef(getInitialState())
+    const rectWidth = width
+    const rectHeight = height
 
     const {
       engine,
-      state,
+      scale,
+      offset,
       setTransform,
       zoomBy,
       zoomTo,
       reset
-    } = useTransformEngine(initialStateRef.current, {
+    } = useCanvasTransform({
+      initialScale: propScale,
+      initialOffset,
       minZoom,
       maxZoom,
       enableAnimation,
-      animationMode
+      animationMode,
+      autoCenter,
+      canvasSize: { width: canvasWidth, height: canvasHeight },
+      viewportSize: { width: rectWidth, height: rectHeight },
+      paddingRatio: 0.2
     })
 
-    // 将引擎的屏幕坐标偏移转换为 ruler 需要的 world 坐标 start
-    const startX = useMemo(() => -state.x / state.scale, [state.x, state.scale])
-    const startY = useMemo(() => -state.y / state.scale, [state.y, state.scale])
-    const ownScale = state.scale
+    // 外部 prop 变化 → 同步到引擎
+    useEffect(() => {
+      if (Math.abs(propScale - scale) > 1e-10) {
+        setTransform({ scale: propScale })
+      }
+    }, [propScale])
 
     // 使用 InputManager 处理输入事件
-    const { inputManager, getCursorClass } = useInputManager(
+    const { inputManager } = useInputManager(
       engine,
       canvasEditRef,
       {
         zoomStep,
         zoomMode,
+        selfHandle,
         viewportSize: { width: rectWidth, height: rectHeight },
-        contentSize: { width: canvasWidth, height: canvasHeight },
-        selfHandle
+        contentSize: { width: canvasWidth, height: canvasHeight }
       }
     )
-    const cursorClass = getCursorClass()
+
+    useEffect(() => {
+      inputManager?.setZoomMode(zoomMode)
+    }, [zoomMode, inputManager])
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        const cls = inputManager?.getCursorClass() ?? 'default'
+        if (cls !== cursorClassRef.current) {
+          cursorClassRef.current = cls
+          setCursorClass(cls)
+        }
+      }, 100)
+      return () => clearInterval(interval)
+    }, [inputManager])
 
     // === 插件系统 ===
     const pluginManagerRef = useRef(new PluginManager())
@@ -151,40 +153,187 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       }
     }, [plugins])
 
-    const { guideLines, addLine, removeLine, updateLine } = useGuideLines(
-      guideLinesProp,
-      lines,
-      onGuideLineChange,
-      handleLine,
-      {
-        onLineCreate: (line) => pluginManagerRef.current.onLineCreate({ line }),
-        onLineDelete: (line) => pluginManagerRef.current.onLineDelete({ line }),
-        onLineMove: (line, from, to) => pluginManagerRef.current.onLineMove({ line, from, to })
-      }
+    useEffect(() => {
+      pluginManagerRef.current.setApi({
+        getState: () => ({
+          scale,
+          offset: { ...offset },
+          lines: guideLines
+        }),
+        zoomBy,
+        zoomTo,
+        panBy: (dx: number, dy: number) => engine?.panBy(dx, dy),
+        setTransform
+      })
+    }, [scale, offset, engine, zoomBy, zoomTo, setTransform])
+
+    // === 参考线状态管理 ===
+    const [guideLines, setGuideLines] = useState<GuideLine[]>(() => importLines(lines))
+
+    const horizontalLines = useMemo(() =>
+      guideLines.filter((l) => l.orientation === 'h' && l.visible !== false),
+      [guideLines]
+    )
+    const verticalLines = useMemo(() =>
+      guideLines.filter((l) => l.orientation === 'v' && l.visible !== false),
+      [guideLines]
     )
 
-    const commonProps = {
-      thick,
-      lines,
-      snapThreshold,
-      snapsObj,
-      isShowReferLine: showReferLine,
-      canvasWidth,
-      canvasHeight,
-      rate,
-      palette: paletteConfig,
-      gridRatio,
-      showShadowText,
-      showMinorTicks,
-      lockLine,
-      scale: ownScale,
-      handleLine,
-      deleteLabel,
-      guideLines,
-      addLine,
-      removeLine,
-      updateLine
+    function syncGuideLines(newLines: { h: number[]; v: number[] }): void {
+      const existing = guideLines
+      const updated: GuideLine[] = []
+
+      const existingH = existing.filter((l) => l.orientation === 'h')
+      newLines.h.forEach((pos, idx) => {
+        if (idx < existingH.length) {
+          updated.push({ ...existingH[idx], position: pos })
+        } else {
+          updated.push({ id: generateLineId(), orientation: 'h', position: pos, visible: true, locked: false })
+        }
+      })
+
+      const existingV = existing.filter((l) => l.orientation === 'v')
+      newLines.v.forEach((pos, idx) => {
+        if (idx < existingV.length) {
+          updated.push({ ...existingV[idx], position: pos })
+        } else {
+          updated.push({ id: generateLineId(), orientation: 'v', position: pos, visible: true, locked: false })
+        }
+      })
+
+      setGuideLines(updated)
     }
+
+    useEffect(() => {
+      syncGuideLines(lines)
+    }, [lines])
+
+    // 画布/容器尺寸变化时重新居中
+    useEffect(() => {
+      if (!autoCenter) return
+      if (width > 0 && height > 0 && canvasWidth > 0 && canvasHeight > 0) {
+        const fit = fitRect(
+          { x: 0, y: 0, width: canvasWidth, height: canvasHeight },
+          { x: 0, y: 0, width, height },
+          'contain',
+          0.2
+        )
+        setTransform({ scale: fit.scale, x: fit.x, y: fit.y })
+      }
+    }, [canvasWidth, canvasHeight, width, height, autoCenter])
+
+    useEffect(() => {
+      setShowReferLine(isShowReferLine)
+    }, [isShowReferLine])
+
+    function getExportedLines(): { h: number[]; v: number[] } {
+      return exportLines(guideLines)
+    }
+
+    const handleAddLine = (line: Omit<GuideLine, 'id'>): void => {
+      const newLine: GuideLine = { ...line, id: generateLineId() }
+      setGuideLines((prev) => [...prev, newLine])
+      pluginManagerRef.current.onLineCreate({ line: newLine })
+      onUpdateLines?.(getExportedLines())
+    }
+
+    const handleUpdateLine = (id: string, position: number): void => {
+      const line = guideLines.find((l) => l.id === id)
+      if (!line) return
+      const from = line.position
+      setGuideLines((prev) => prev.map((l) => (l.id === id ? { ...l, position } : l)))
+      pluginManagerRef.current.onLineMove({ line: { ...line, position }, from, to: position })
+      onUpdateLines?.(getExportedLines())
+    }
+
+    const handleDeleteLine = (id: string): void => {
+      const line = guideLines.find((l) => l.id === id)
+      setGuideLines((prev) => prev.filter((l) => l.id !== id))
+      if (line) {
+        pluginManagerRef.current.onLineDelete({ line })
+      }
+      onUpdateLines?.(getExportedLines())
+    }
+
+    // === 通知外部缩放变化 ===
+    useEffect(() => {
+      onUpdateScale?.(scale)
+      onZoomChange?.({ scale, x: offset.x, y: offset.y })
+    }, [scale, offset.x, offset.y])
+
+    const getZoomOrigin = useCallback((): { x: number; y: number } => {
+      const parent = canvasEditRef.current?.parentElement
+      const rect = parent ? parent.getBoundingClientRect() : new DOMRect(0, 0, 0, 0)
+      return { x: rect.width / 2, y: rect.height / 2 }
+    }, [])
+
+    const zoomIn = useCallback(async () => {
+      const { x: cx, y: cy } = getZoomOrigin()
+      const from = scale
+      const to = from + zoomStep
+      const allowed = await pluginManagerRef.current.beforeZoom({
+        from,
+        to,
+        center: { x: cx, y: cy },
+        cancel: () => {}
+      })
+      if (allowed) {
+        zoomBy(zoomStep, cx, cy)
+        pluginManagerRef.current.afterZoom({ from, to, center: { x: cx, y: cy } })
+      }
+    }, [zoomBy, zoomStep, getZoomOrigin, scale])
+
+    const zoomOut = useCallback(async () => {
+      const { x: cx, y: cy } = getZoomOrigin()
+      const from = scale
+      const to = from - zoomStep
+      const allowed = await pluginManagerRef.current.beforeZoom({
+        from,
+        to,
+        center: { x: cx, y: cy },
+        cancel: () => {}
+      })
+      if (allowed) {
+        zoomBy(-zoomStep, cx, cy)
+        pluginManagerRef.current.afterZoom({ from, to, center: { x: cx, y: cy } })
+      }
+    }, [zoomBy, zoomStep, getZoomOrigin, scale])
+
+    const handleCornerClick = () => {
+      const next = !showReferLine
+      setShowReferLine(next)
+      onHandleCornerClick?.(next)
+    }
+
+    const setZoomMode = useCallback((mode: ZoomMode) => {
+      inputManager?.setZoomMode(mode)
+    }, [inputManager])
+
+    const zoomToPreset = useCallback(async (preset: number) => {
+      const target = ZOOM_PRESETS.find((p) => p >= preset) ?? ZOOM_PRESETS[ZOOM_PRESETS.length - 1]
+      const { x: cx, y: cy } = getZoomOrigin()
+      const from = scale
+      const allowed = await pluginManagerRef.current.beforeZoom({
+        from,
+        to: target,
+        center: { x: cx, y: cy },
+        cancel: () => {}
+      })
+      if (allowed) {
+        zoomTo(target, cx, cy)
+        pluginManagerRef.current.afterZoom({ from, to: target, center: { x: cx, y: cy } })
+      }
+    }, [zoomTo, getZoomOrigin, scale])
+
+    useImperativeHandle(ref, () => ({
+      engine,
+      reset,
+      zoomIn,
+      zoomOut,
+      setTransform,
+      setZoomMode,
+      zoomToPreset
+    }))
 
     const cornerStyle = useMemo(() => {
       return {
@@ -196,130 +345,64 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
         borderRight: `1px solid ${paletteConfig.borderColor}`,
         borderBottom: `1px solid ${paletteConfig.borderColor}`
       }
-    }, [showReferLine, eyeIcon, closeEyeIcon, paletteConfig])
+    }, [showReferLine, eyeIcon, closeEyeIcon, paletteConfig, thick])
 
     const rectStyle = useMemo(() => {
       return {
         background: paletteConfig.bgColor,
-        left: thick + 'px',
-        top: thick + 'px',
         width: rectWidth + 'px',
-        height: rectHeight + 'px'
+        height: rectHeight + 'px',
+        left: 0,
+        top: 0
       }
     }, [rectHeight, rectWidth, paletteConfig])
 
-    const handleCornerClick = () => {
-      setShowReferLine(!showReferLine)
-      onHandleCornerClick?.(!showReferLine)
-    }
-
-    // 通知外部缩放变化
-    useEffect(() => {
-      updateScale?.(ownScale)
-      onZoomChange?.({
-        scale: ownScale,
-        x: state.x,
-        y: state.y
-      } as any)
-    }, [ownScale, state.x, state.y])
-
-    const getZoomOrigin = useCallback((): { x: number; y: number } => {
-      const parent = canvasEditRef.current?.parentElement
-      const rect = parent ? parent.getBoundingClientRect() : new DOMRect(0, 0, 0, 0)
-      return { x: rect.width / 2, y: rect.height / 2 }
-    }, [])
-
-    const zoomIn = useCallback(async () => {
-      const { x: cx, y: cy } = getZoomOrigin()
-      const allowed = await pluginManagerRef.current.beforeZoom({
-        from: ownScale,
-        to: ownScale + zoomStep,
-        center: { x: cx, y: cy },
-        cancel: () => {}
-      })
-      if (allowed) zoomBy(zoomStep, cx, cy)
-    }, [zoomBy, zoomStep, getZoomOrigin, ownScale])
-
-    const zoomOut = useCallback(async () => {
-      const { x: cx, y: cy } = getZoomOrigin()
-      const allowed = await pluginManagerRef.current.beforeZoom({
-        from: ownScale,
-        to: ownScale - zoomStep,
-        center: { x: cx, y: cy },
-        cancel: () => {}
-      })
-      if (allowed) zoomBy(-zoomStep, cx, cy)
-    }, [zoomBy, zoomStep, getZoomOrigin, ownScale])
-
-    const zoomToPreset = useCallback(async (preset: number) => {
-      const target = ZOOM_PRESETS.find((p) => p >= preset) ?? ZOOM_PRESETS[ZOOM_PRESETS.length - 1]
-      const { x: cx, y: cy } = getZoomOrigin()
-      const allowed = await pluginManagerRef.current.beforeZoom({
-        from: ownScale,
-        to: target,
-        center: { x: cx, y: cy },
-        cancel: () => {}
-      })
-      if (allowed) zoomTo(target, cx, cy)
-    }, [zoomTo, getZoomOrigin, ownScale])
-
-    const setZoomMode = useCallback((mode: ZoomMode) => {
-      inputManager?.setZoomMode(mode)
-    }, [inputManager])
-
-    const initPanzoom = () => {
-      // 重新计算居中
-      if (autoCenter) {
-        const s = getInitialState()
-        setTransform(s)
-      }
-    }
-
-    // 兼容旧 API：panzoomInstance 指向 engine
-    const panzoomInstance = useRef<TransformEngine | null>(null)
-    useEffect(() => {
-      panzoomInstance.current = engine
-    }, [engine])
-
-    useImperativeHandle(ref, () => ({
-      reset,
-      zoomIn,
-      zoomOut,
-      initPanzoom,
-      panzoomInstance,
-      setTransform,
-      setZoomMode,
-      zoomToPreset
-    }))
-
-    useEffect(() => {
-      setShowReferLine(isShowReferLine)
-    }, [isShowReferLine])
-
-    // 处理children
-    const [defaultSlot, btnSlot] = React.Children.toArray(children).reduce(
+    // 处理children：分离 default 和 toolbar
+    const [defaultSlot, toolbarSlot] = React.Children.toArray(children).reduce(
       (acc: [React.ReactNode | null, React.ReactNode | null], child: React.ReactNode) => {
         if (React.isValidElement(child)) {
           const el = child as React.ReactElement<any>
-          if (el.props.slot === 'default' || !el.props.slot) {
-            acc[0] = el
-          } else if (el.props.slot === 'btn') {
+          if (el.props.slot === 'toolbar') {
             acc[1] = el
+          } else {
+            acc[0] = child
           }
+        } else {
+          acc[0] = child
         }
         return acc
       },
       [null, null]
     )
 
+    const toolbarState = useMemo(() => ({
+      scale,
+      offset,
+      zoomMode,
+      showReferLine
+    }), [scale, offset, zoomMode, showReferLine])
+
+    const toolbarTools = useMemo(() => ({
+      zoomIn,
+      zoomOut,
+      reset,
+      setZoomMode,
+      zoomToPreset,
+      toggleReferLine: handleCornerClick
+    }), [zoomIn, zoomOut, reset, setZoomMode, zoomToPreset, handleCornerClick])
+
     return (
       <div
         className="sketch-ruler"
         ref={containerRef}
-        onMouseEnter={() => { isHoveringRef.current = true }}
-        onMouseLeave={() => { isHoveringRef.current = false }}
       >
-        {btnSlot}
+        {toolbarSlot && (
+          <div className="sketch-ruler-toolbar">
+            {typeof toolbarSlot === 'function'
+              ? (toolbarSlot as any)({ tools: toolbarTools, state: toolbarState })
+              : toolbarSlot}
+          </div>
+        )}
         <div className={'canvasedit-parent ' + cursorClass} style={rectStyle}>
           <div
             ref={canvasEditRef}
@@ -327,7 +410,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
             style={{
               width: canvasWidth + 'px',
               height: canvasHeight + 'px',
-              transform: `translate(${state.x}px, ${state.y}px) scale(${ownScale})`,
+              transform: `matrix(${scale}, 0, 0, ${scale}, ${offset.x}, ${offset.y})`,
               transformOrigin: '0 0'
             }}
           >
@@ -336,28 +419,50 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
         </div>
         {showRuler && (
           <RulerWrapper
-            {...commonProps}
-            width={width!}
-            propStyle={{ marginLeft: thick + 'px', width: rectWidth + 'px' }}
-            height={thick!}
-            start={startX!}
-            startOther={startY!}
-            selectStart={shadow.x!}
-            selectLength={shadow.width}
             vertical={false}
+            width={rectWidth}
+            height={thick}
+            thick={thick}
+            scale={scale}
+            offset={offset}
+            lines={horizontalLines}
+            palette={paletteConfig}
+            showReferLine={showReferLine}
+            shadowStart={shadow.x}
+            shadowLength={shadow.width}
+            canvasSize={canvasWidth}
+            showMinorTicks={showMinorTicks}
+            canvasWidth={canvasWidth}
+            canvasHeight={canvasHeight}
+            deleteLabel={deleteLabel}
+            lockLine={lockLine}
+            onAddLine={handleAddLine}
+            onUpdateLine={handleUpdateLine}
+            onDeleteLine={handleDeleteLine}
           />
         )}
         {showRuler && (
           <RulerWrapper
-            {...commonProps}
-            propStyle={{ marginTop: thick + 'px', top: 0, height: rectHeight + 'px' }}
-            width={thick!}
-            height={height!}
-            start={startY!}
-            startOther={startX!}
-            selectStart={shadow.y!}
-            selectLength={shadow.height}
             vertical={true}
+            width={thick}
+            height={rectHeight}
+            thick={thick}
+            scale={scale}
+            offset={offset}
+            lines={verticalLines}
+            palette={paletteConfig}
+            showReferLine={showReferLine}
+            shadowStart={shadow.y}
+            shadowLength={shadow.height}
+            canvasSize={canvasHeight}
+            showMinorTicks={showMinorTicks}
+            canvasWidth={canvasWidth}
+            canvasHeight={canvasHeight}
+            deleteLabel={deleteLabel}
+            lockLine={lockLine}
+            onAddLine={handleAddLine}
+            onUpdateLine={handleUpdateLine}
+            onDeleteLine={handleDeleteLine}
           />
         )}
         {showRuler && <a className="corner" style={cornerStyle} onClick={handleCornerClick} />}
