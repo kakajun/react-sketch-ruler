@@ -41,6 +41,4 @@ export type { SnapOptions, SnapResult, SnapTarget } from './hooks/useSnapDetecti
 // 插件
 export { definePlugin } from './plugins'
 
-export { Minimap }
-
-export default SketchRule
+export { SketchRule, Minimap }

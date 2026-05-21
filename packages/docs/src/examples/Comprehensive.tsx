@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
-import SketchRule from 'react-sketch-ruler'
+import { SketchRule } from 'react-sketch-ruler'
 import { Minimap, definePlugin } from 'react-sketch-ruler'
 import type { SketchRulerMethods } from 'react-sketch-ruler'
 import 'react-sketch-ruler/index.css'

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import SketchRule from 'react-sketch-ruler'
+import { SketchRule } from 'react-sketch-ruler'
 import 'react-sketch-ruler/index.css'
 import MovebleCom from './MovebleCom'
 import './Comprehensive.less'

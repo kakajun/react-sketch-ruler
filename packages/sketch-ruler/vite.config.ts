@@ -34,6 +34,7 @@ export default defineConfig({
     rollupOptions: {
       external: ['react', 'react-dom', '@sketch-ruler/core', '@sketch-ruler/canvas'],
       output: {
+        exports: 'named',
         banner,
         globals: {
           react: 'React',

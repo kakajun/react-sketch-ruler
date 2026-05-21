@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo } from 'react'
-import SketchRule from 'react-sketch-ruler'
+import { SketchRule } from 'react-sketch-ruler'
 import 'react-sketch-ruler/index.css'
 import Drager, { DragData } from 'react-es-drager'
 import './Basic.less'

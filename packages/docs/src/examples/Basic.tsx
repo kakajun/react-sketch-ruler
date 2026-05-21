@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import SketchRule from 'react-sketch-ruler'
+import { SketchRule } from 'react-sketch-ruler'
 import 'react-sketch-ruler/index.css'
 import bgImg from '@/assets/bg.png'
 import './Basic.less'

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import SketchRule from 'react-sketch-ruler'
+import { SketchRule } from 'react-sketch-ruler'
 import 'react-sketch-ruler/index.css'
 import { CanvasManager, BUILTIN_TEMPLATES, exportLines, importLines } from '@sketch-ruler/core'
 import type { CanvasState, CanvasManagerState } from '@sketch-ruler/core'

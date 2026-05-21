@@ -51,7 +51,7 @@ yarn add react-sketch-ruler  -S
 将打包后的dist包拷贝，用import导入，支持下面两种引用方式
 
 ```
-import SketchRule from 'react-sketch-ruler'
+import { SketchRule } from 'react-sketch-ruler'
 import 'react-sketch-ruler/index.css'
 
 ```

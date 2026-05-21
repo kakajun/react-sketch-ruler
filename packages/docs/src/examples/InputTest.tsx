@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import SketchRule from 'react-sketch-ruler'
+import { SketchRule } from 'react-sketch-ruler'
 import 'react-sketch-ruler/index.css'
 import { Input } from 'antd'
 import './Basic.less'
