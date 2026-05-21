@@ -21,15 +21,16 @@ export function useSnapDetection(
   const engine = useMemo(() => {
     return new SnapEngine({
       threshold,
+      scale,
       strength,
-      guides: guideLines
+      lines: guideLines
     })
-  }, [threshold, strength, guideLines])
+  }, [threshold, scale, strength, guideLines])
 
-  const detect = (screenX: number, screenY: number): SnapResult | null => {
-    const worldX = (screenX - offset.x) / scale
-    const worldY = (screenY - offset.y) / scale
-    return engine.snap(worldX, worldY)
+  const detect = (screenPos: number, direction: 'h' | 'v'): SnapResult | null => {
+    const offsetVal = direction === 'h' ? offset.y : offset.x
+    const worldPos = (screenPos - offsetVal) / scale
+    return engine.snap(worldPos, direction)
   }
 
   return { detect, engine }

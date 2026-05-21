@@ -37,8 +37,8 @@ Language: Chinese comments and documentation are used throughout the codebase.
 | Styling | Less |
 | Pan / zoom engine | `simple-panzoom` (peer dependency) |
 | Package manager | pnpm |
-| Linting | ESLint 9 (flat config) |
-| Formatting | Prettier |
+| Linting | oxlint |
+| Formatting | oxfmt |
 | CI / CD | GitHub Actions |
 
 ---
@@ -51,9 +51,8 @@ Language: Chinese comments and documentation are used throughout the codebase.
 ├── pnpm-workspace.yaml          # pnpm workspace definition
 ├── tsconfig.json                # IDE-only root tsconfig with project references
 ├── tsconfig.common.json         # Shared TS compiler options
-├── tsconfig.eslint.json         # TS config used by ESLint
-├── eslint.config.mjs            # ESLint 9 flat config
-├── .prettierrc.json             # Prettier config
+├── .oxlintrc.json               # oxlint config
+├── .oxfmtrc.json                # oxfmt config
 ├── scripts/
 │   └── release.js               # Interactive release script
 ├── .github/
@@ -104,8 +103,10 @@ All commands should be run from the repository root.
 | `pnpm dev` | Build the library, then start the docs dev server on port `5274` |
 | `pnpm build` | Build the `sketch-ruler` library only |
 | `pnpm build:demo` | Build the library **and** the docs site for deployment |
-| `pnpm format` | Format code with Prettier |
-| `pnpm lint` | Lint (and auto-fix) with ESLint |
+| `pnpm fmt` | Format code with oxfmt |
+| `pnpm fmt:check` | Check formatting with oxfmt |
+| `pnpm lint` | Lint (and auto-fix) with oxlint |
+| `pnpm lint:check` | Check lint with oxlint |
 | `pnpm changelog` | Generate changelog for `sketch-ruler` using conventional changelog |
 | `pnpm release` | Build + run the interactive release script |
 
@@ -125,26 +126,16 @@ All commands should be run from the repository root.
 
 ## Code Style Guidelines
 
-### Prettier (`.prettierrc.json`)
+### oxfmt (`.oxfmtrc.json`)
 - 2-space indentation
 - No semicolons
 - Single quotes
-- Print width: `100`
 - No trailing commas
 - `arrowParens: always`
 
-### ESLint (`eslint.config.mjs`)
-- Flat config using ESLint 9
-- Extends: `eslint:recommended`, `@typescript-eslint/recommended`, `prettier`
-- Parser: `@typescript-eslint/parser`
-- Relaxed rules (intentionally off):
-  - `@typescript-eslint/no-explicit-any`
-  - `@typescript-eslint/ban-types`
-  - `@typescript-eslint/no-empty-function`
-  - `@typescript-eslint/no-empty-interface`
-  - `@typescript-eslint/no-empty-object-type`
-- `@typescript-eslint/no-unused-vars` is **error** (args starting with `_` are ignored)
-- `react-refresh/only-export-components` is enabled
+### oxlint (`.oxlintrc.json`)
+- Plugins: `typescript`, `unicorn`
+- Relaxed rules (intentionally off or inherited defaults)
 
 ### TypeScript
 - Strict mode enabled (`strict: true`)

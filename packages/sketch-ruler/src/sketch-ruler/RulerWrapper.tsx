@@ -33,12 +33,15 @@ const RulerComponent = ({
 
   const containerClass = vertical ? 'v-container' : 'h-container'
 
-  const rulerStyle = useMemo(() => ({
-    width: width + 'px',
-    height: height + 'px',
-    cursor: vertical ? 'ew-resize' : 'ns-resize',
-    [vertical ? 'borderRight' : 'borderBottom']: `1px solid ${palette.borderColor}`
-  }), [width, height, vertical, palette.borderColor])
+  const rulerStyle = useMemo(
+    () => ({
+      width: width + 'px',
+      height: height + 'px',
+      cursor: vertical ? 'ew-resize' : 'ns-resize',
+      [vertical ? 'borderRight' : 'borderBottom']: `1px solid ${palette.borderColor}`
+    }),
+    [width, height, vertical, palette.borderColor]
+  )
 
   // === 刻度计算 ===
   const canvasOffset = vertical ? offset.x : offset.y
@@ -57,7 +60,7 @@ const RulerComponent = ({
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-    let ctx = canvas.getContext('2d')
+    const ctx = canvas.getContext('2d')
     if (!ctx) return
 
     if (!rendererRef.current) {
@@ -69,20 +72,22 @@ const RulerComponent = ({
 
     rendererRef.current.render(
       ctx,
-      [{
-        type: 'ruler',
-        marks,
-        vertical,
-        thick,
-        width,
-        height,
-        ratio,
-        palette,
-        shadowStart,
-        shadowLength,
-        showShadowText: true,
-        canvasSize
-      }],
+      [
+        {
+          type: 'ruler',
+          marks,
+          vertical,
+          thick,
+          width,
+          height,
+          ratio,
+          palette,
+          shadowStart,
+          shadowLength,
+          showShadowText: true,
+          canvasSize
+        }
+      ],
       { x: 0, y: 0, width, height }
     )
   }, [marks, vertical, thick, width, height, palette, shadowStart, shadowLength, canvasSize, ratio])
@@ -101,100 +106,109 @@ const RulerComponent = ({
     return { top: `${pos}px`, left: 0, width: '100%', height: '1px' }
   }, [previewScreenPos, vertical])
 
-  const updatePreview = useCallback((e: MouseEvent) => {
-    const rect = canvasRef.current?.getBoundingClientRect()
-    if (!rect) return
+  const updatePreview = useCallback(
+    (e: MouseEvent) => {
+      const rect = canvasRef.current?.getBoundingClientRect()
+      if (!rect) return
 
-    const screenPos = vertical ? e.clientX - rect.left : e.clientY - rect.top
-    const offsetVal = vertical ? offset.x : offset.y
-    let worldPos = (screenPos - offsetVal) / scale
+      const screenPos = vertical ? e.clientX - rect.left : e.clientY - rect.top
+      const offsetVal = vertical ? offset.x : offset.y
+      let worldPos = (screenPos - offsetVal) / scale
 
-    // 吸附检测
-    const snapThreshold = 10 / scale
-    let bestTick: number | null = null
-    let bestDist = Infinity
+      // 吸附检测
+      const snapThreshold = 10 / scale
+      let bestTick: number | null = null
+      let bestDist = Infinity
 
-    for (const mark of marks) {
-      if (!mark.isMajor) continue
-      const dist = Math.abs(worldPos - mark.value)
-      if (dist < snapThreshold && dist < bestDist) {
-        bestDist = dist
-        bestTick = mark.value
-      }
-    }
-
-    if (bestTick !== null) {
-      worldPos = bestTick
-      setIsSnapping(true)
-    } else {
-      setIsSnapping(false)
-    }
-
-    setPreviewScreenPos(worldPos * scale + offsetVal)
-    setPreviewWorldPos(worldPos)
-  }, [vertical, offset, scale, marks])
-
-  const handlePointerDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (lockLine) return
-    e.stopPropagation()
-    setIsCreatingLine(true)
-    setIsSnapping(false)
-    updatePreviewWithRef(e.nativeEvent)
-
-    const onMove = (moveEvent: MouseEvent) => {
-      updatePreviewWithRef(moveEvent)
-    }
-
-    const onUp = () => {
-      document.removeEventListener('mousemove', onMove)
-      document.removeEventListener('mouseup', onUp)
-
-      const worldPos = previewWorldPosRef.current
-      const limit = vertical ? canvasWidth : canvasHeight
-      if (worldPos >= 0 && worldPos <= limit) {
-        onAddLine?.({
-          orientation: vertical ? 'v' : 'h',
-          position: Math.round(worldPos),
-          visible: true,
-          locked: false
-        })
+      for (const mark of marks) {
+        if (!mark.isMajor) continue
+        const dist = Math.abs(worldPos - mark.value)
+        if (dist < snapThreshold && dist < bestDist) {
+          bestDist = dist
+          bestTick = mark.value
+        }
       }
 
-      setIsCreatingLine(false)
-      setIsSnapping(false)
-    }
+      if (bestTick !== null) {
+        worldPos = bestTick
+        setIsSnapping(true)
+      } else {
+        setIsSnapping(false)
+      }
 
-    document.addEventListener('mousemove', onMove)
-    document.addEventListener('mouseup', onUp)
-  }, [lockLine, vertical, canvasWidth, canvasHeight, onAddLine, updatePreviewWithRef])
+      setPreviewScreenPos(worldPos * scale + offsetVal)
+      setPreviewWorldPos(worldPos)
+    },
+    [vertical, offset, scale, marks]
+  )
 
   const previewWorldPosRef = useRef(previewWorldPos)
   useEffect(() => {
     previewWorldPosRef.current = previewWorldPos
   }, [previewWorldPos])
 
-  const updatePreviewWithRef = useCallback((e: MouseEvent) => {
-    updatePreview(e)
-    // 立即同步 ref，避免 useEffect 延迟
-    const rect = canvasRef.current?.getBoundingClientRect()
-    if (!rect) return
-    const screenPos = vertical ? e.clientX - rect.left : e.clientY - rect.top
-    const offsetVal = vertical ? offset.x : offset.y
-    let worldPos = (screenPos - offsetVal) / scale
-    const snapThreshold = 10 / scale
-    let bestTick: number | null = null
-    let bestDist = Infinity
-    for (const mark of marks) {
-      if (!mark.isMajor) continue
-      const dist = Math.abs(worldPos - mark.value)
-      if (dist < snapThreshold && dist < bestDist) {
-        bestDist = dist
-        bestTick = mark.value
+  const updatePreviewWithRef = useCallback(
+    (e: MouseEvent) => {
+      updatePreview(e)
+      // 立即同步 ref，避免 useEffect 延迟
+      const rect = canvasRef.current?.getBoundingClientRect()
+      if (!rect) return
+      const screenPos = vertical ? e.clientX - rect.left : e.clientY - rect.top
+      const offsetVal = vertical ? offset.x : offset.y
+      let worldPos = (screenPos - offsetVal) / scale
+      const snapThreshold = 10 / scale
+      let bestTick: number | null = null
+      let bestDist = Infinity
+      for (const mark of marks) {
+        if (!mark.isMajor) continue
+        const dist = Math.abs(worldPos - mark.value)
+        if (dist < snapThreshold && dist < bestDist) {
+          bestDist = dist
+          bestTick = mark.value
+        }
       }
-    }
-    if (bestTick !== null) worldPos = bestTick
-    previewWorldPosRef.current = worldPos
-  }, [updatePreview, vertical, offset, scale, marks])
+      if (bestTick !== null) worldPos = bestTick
+      previewWorldPosRef.current = worldPos
+    },
+    [updatePreview, vertical, offset, scale, marks]
+  )
+
+  const handlePointerDown = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      if (lockLine) return
+      e.stopPropagation()
+      setIsCreatingLine(true)
+      setIsSnapping(false)
+      updatePreviewWithRef(e.nativeEvent)
+
+      const onMove = (moveEvent: MouseEvent) => {
+        updatePreviewWithRef(moveEvent)
+      }
+
+      const onUp = () => {
+        document.removeEventListener('mousemove', onMove)
+        document.removeEventListener('mouseup', onUp)
+
+        const worldPos = previewWorldPosRef.current
+        const limit = vertical ? canvasWidth : canvasHeight
+        if (worldPos >= 0 && worldPos <= limit) {
+          onAddLine?.({
+            orientation: vertical ? 'v' : 'h',
+            position: Math.round(worldPos),
+            visible: true,
+            locked: false
+          })
+        }
+
+        setIsCreatingLine(false)
+        setIsSnapping(false)
+      }
+
+      document.addEventListener('mousemove', onMove)
+      document.addEventListener('mouseup', onUp)
+    },
+    [lockLine, vertical, canvasWidth, canvasHeight, onAddLine, updatePreviewWithRef]
+  )
 
   // === 参考线渲染 ===
   const lineStyle = (line: GuideLine) => {

@@ -71,7 +71,11 @@ const MoveblePage: React.FC = () => {
     <div className="demo">
       <div className="top">
         <div style={{ marginRight: '10px' }}> 缩放比例:{cpuScale} </div>
-        <a href="https://github.com/kakajun/react-sketch-ruler" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://github.com/kakajun/react-sketch-ruler"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           git源码
         </a>
       </div>
@@ -92,15 +96,18 @@ const MoveblePage: React.FC = () => {
           lines={state.lines}
         >
           <div data-type="page" style={canvasStyle}>
-            <MovebleCom
-              updateShadow={updateShadow}
-              zoom={state.scale}
-            />
+            <MovebleCom updateShadow={updateShadow} zoom={state.scale} />
           </div>
           <div slot="toolbar" className="btns">
-            <Button size="small" onClick={resetMethod}>还原</Button>
-            <Button size="small" onClick={zoomInMethod}>放大</Button>
-            <Button size="small" onClick={zoomOutMethod}>缩小</Button>
+            <Button size="small" onClick={resetMethod}>
+              还原
+            </Button>
+            <Button size="small" onClick={zoomInMethod}>
+              放大
+            </Button>
+            <Button size="small" onClick={zoomOutMethod}>
+              缩小
+            </Button>
           </div>
         </SketchRule>
       </div>

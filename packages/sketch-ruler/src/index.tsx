@@ -1,6 +1,13 @@
 import SketchRule from './sketch-ruler/index'
 import Minimap from './minimap/index'
-export type { SketchRulerProps, SketchRulerMethods, ZoomMode, PaletteType, LineType, GuideLine } from './index-types'
+export type {
+  SketchRulerProps,
+  SketchRulerMethods,
+  ZoomMode,
+  PaletteType,
+  LineType,
+  GuideLine
+} from './index-types'
 export type { MinimapProps } from './minimap/index'
 
 // 核心类型重新导出
@@ -32,7 +39,7 @@ export { useSnapDetection } from './hooks/useSnapDetection'
 export type { SnapOptions, SnapResult, SnapTarget } from './hooks/useSnapDetection'
 
 // 插件
-export { definePlugin, PluginManager } from './plugins'
+export { definePlugin } from './plugins'
 
 export { Minimap }
 

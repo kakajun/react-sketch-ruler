@@ -66,7 +66,10 @@ const EightK: React.FC = () => {
       inputManagerRef.current = new InputManager(engineRef.current, {
         zoomStep: 0.25,
         zoomMode: 'pointer',
-        viewportSize: { width: rectWidth || window.innerWidth, height: rectHeight || window.innerHeight },
+        viewportSize: {
+          width: rectWidth || window.innerWidth,
+          height: rectHeight || window.innerHeight
+        },
         contentSize: { width: canvasWidth, height: canvasHeight },
         onCursorChange: (cls) => setCursorClass(cls)
       })

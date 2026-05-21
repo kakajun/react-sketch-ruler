@@ -30,7 +30,10 @@ const InputTest: React.FC = () => {
 
   return (
     <div className="demo">
-      <div style={rectStyle} className={`wrapper ${state.isBlack ? 'blackwrapper' : 'whitewrapper'}`}>
+      <div
+        style={rectStyle}
+        className={`wrapper ${state.isBlack ? 'blackwrapper' : 'whitewrapper'}`}
+      >
         <SketchRule
           scale={state.scale}
           thick={state.thick}
@@ -42,7 +45,10 @@ const InputTest: React.FC = () => {
           lines={state.lines}
         >
           <div data-type="page" style={canvasStyle}>
-            <Input placeholder="Basic usage" style={{ marginBottom: 20, fontSize: '28px', height: 'auto' }} />
+            <Input
+              placeholder="Basic usage"
+              style={{ marginBottom: 20, fontSize: '28px', height: 'auto' }}
+            />
             <TextArea rows={4} style={{ fontSize: '28px' }} />
           </div>
         </SketchRule>

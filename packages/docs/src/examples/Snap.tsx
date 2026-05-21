@@ -70,7 +70,8 @@ const SnapExample: React.FC = () => {
   )
   const extraLines = () => {
     // 只查询当前实例内部的参考线
-    const container = sketchruleRef.current?.panzoomInstance?.current?.element?.closest('.sketch-ruler')
+    const container =
+      sketchruleRef.current?.panzoomInstance?.current?.element?.closest('.sketch-ruler')
     if (container) {
       return Array.from(container.querySelectorAll('.lines .line'))
     }

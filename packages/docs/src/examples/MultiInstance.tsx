@@ -57,10 +57,13 @@ const MultiInstance: React.FC = () => {
     return exportLines(activeCanvas.lines)
   }, [activeCanvas])
 
-  const rectStyle = useMemo(() => ({
-    width: `${rectWidth}px`,
-    height: `${rectHeight}px`
-  }), [])
+  const rectStyle = useMemo(
+    () => ({
+      width: `${rectWidth}px`,
+      height: `${rectHeight}px`
+    }),
+    []
+  )
 
   const getCanvasStyle = (canvas: CanvasState) => ({
     width: `${canvas.width}px`,
@@ -133,7 +136,9 @@ const MultiInstance: React.FC = () => {
   return (
     <div className="demo">
       <div className="top font16">
-        <div className="mr10">多画布管理器演示：通过 CanvasManager 管理多个画布，各自独立保存缩放、偏移与参考线</div>
+        <div className="mr10">
+          多画布管理器演示：通过 CanvasManager 管理多个画布，各自独立保存缩放、偏移与参考线
+        </div>
       </div>
 
       <div className="main-layout">
@@ -170,13 +175,18 @@ const MultiInstance: React.FC = () => {
                   <span className="canvas-label">{canvas.name}</span>
                 </div>
                 <div className="canvas-info">
-                  <span className="canvas-size">{canvas.width} × {canvas.height}</span>
+                  <span className="canvas-size">
+                    {canvas.width} × {canvas.height}
+                  </span>
                   <span className="canvas-scale">{(canvas.scale * 100).toFixed(0)}%</span>
                 </div>
                 {canvases.length > 1 && (
                   <button
                     className="canvas-delete"
-                    onClick={(e) => { e.stopPropagation(); removeCanvas(canvas.id) }}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      removeCanvas(canvas.id)
+                    }}
                   >
                     ×
                   </button>
@@ -190,8 +200,8 @@ const MultiInstance: React.FC = () => {
           <div className="editor-header">
             <span className="editor-title">{activeCanvas?.name || '未选择'}</span>
             <span className="editor-meta">
-              {activeCanvas?.width} × {activeCanvas?.height} |
-              参考线: {activeLines.h.length}h / {activeLines.v.length}v
+              {activeCanvas?.width} × {activeCanvas?.height} | 参考线: {activeLines.h.length}h /{' '}
+              {activeLines.v.length}v
             </span>
           </div>
 
@@ -214,14 +224,40 @@ const MultiInstance: React.FC = () => {
                 <div data-type="page" style={getCanvasStyle(activeCanvas)}>
                   <div style={getContentStyle(activeCanvas)}>
                     <span className="content-label">{activeCanvas.name}</span>
-                    <span className="content-size">{activeCanvas.width} × {activeCanvas.height}</span>
+                    <span className="content-size">
+                      {activeCanvas.width} × {activeCanvas.height}
+                    </span>
                   </div>
                 </div>
                 <div slot="toolbar" className="btns">
-                  <button onClick={(e) => { e.stopPropagation(); }}>还原</button>
-                  <button onClick={(e) => { e.stopPropagation(); }}>放大</button>
-                  <button onClick={(e) => { e.stopPropagation(); }}>缩小</button>
-                  <button onClick={(e) => { e.stopPropagation(); }}>100%</button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                    }}
+                  >
+                    还原
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                    }}
+                  >
+                    放大
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                    }}
+                  >
+                    缩小
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                    }}
+                  >
+                    100%
+                  </button>
                 </div>
               </SketchRule>
             )}

@@ -69,7 +69,9 @@ const Comprehensive: React.FC = () => {
   const { appearance } = useTheme()
   const sketchRef = useRef<SketchRulerMethods>(null)
   const [lockLine, setLockLine] = useState(false)
-  const [zoomMode, setZoomMode] = useState<'pointer' | 'viewport-center' | 'content-center'>('pointer')
+  const [zoomMode, setZoomMode] = useState<'pointer' | 'viewport-center' | 'content-center'>(
+    'pointer'
+  )
   const [viewportOffset, setViewportOffset] = useState({ x: 0, y: 0 })
 
   const [post, setPost] = useState({
@@ -123,15 +125,21 @@ const Comprehensive: React.FC = () => {
         }
   }, [isBlack])
 
-  const rectStyle = useMemo(() => ({
-    width: `${post.width}px`,
-    height: `${post.height}px`
-  }), [post.width, post.height])
+  const rectStyle = useMemo(
+    () => ({
+      width: `${post.width}px`,
+      height: `${post.height}px`
+    }),
+    [post.width, post.height]
+  )
 
-  const canvasStyle = useMemo(() => ({
-    width: `${post.canvasWidth}px`,
-    height: `${post.canvasHeight}px`
-  }), [post.canvasWidth, post.canvasHeight])
+  const canvasStyle = useMemo(
+    () => ({
+      width: `${post.canvasWidth}px`,
+      height: `${post.canvasHeight}px`
+    }),
+    [post.canvasWidth, post.canvasHeight]
+  )
 
   const cpuScale = state.scale.toFixed(1)
 
@@ -163,7 +171,11 @@ const Comprehensive: React.FC = () => {
   }
 
   const toggleZoomMode = () => {
-    const modes: Array<'pointer' | 'viewport-center' | 'content-center'> = ['pointer', 'viewport-center', 'content-center']
+    const modes: Array<'pointer' | 'viewport-center' | 'content-center'> = [
+      'pointer',
+      'viewport-center',
+      'content-center'
+    ]
     const idx = modes.indexOf(zoomMode)
     const next = modes[(idx + 1) % modes.length]
     setZoomMode(next)
@@ -182,14 +194,14 @@ const Comprehensive: React.FC = () => {
   const handleDragStart = () => {
     const engine = sketchRef.current?.engine
     if (engine) {
-      (engine as any).enableAnimation = false
+      ;(engine as any).enableAnimation = false
     }
   }
 
   const handleDragEnd = () => {
     const engine = sketchRef.current?.engine
     if (engine) {
-      (engine as any).enableAnimation = true
+      ;(engine as any).enableAnimation = true
     }
   }
 
@@ -202,13 +214,22 @@ const Comprehensive: React.FC = () => {
         <div className="scale mr10">参考线:{JSON.stringify(post.lines)}</div>
       </div>
       <div className="top font16">
-        <button className="mr10 font16" onClick={() => setPost((p) => ({ ...p, showRuler: !p.showRuler }))}>
+        <button
+          className="mr10 font16"
+          onClick={() => setPost((p) => ({ ...p, showRuler: !p.showRuler }))}
+        >
           {(post.showRuler ? '隐藏' : '显示') + '规尺'}
         </button>
-        <button className="mr10 font16" onClick={() => setPost((p) => ({ ...p, isShowReferLine: !p.isShowReferLine }))}>
+        <button
+          className="mr10 font16"
+          onClick={() => setPost((p) => ({ ...p, isShowReferLine: !p.isShowReferLine }))}
+        >
           {(post.isShowReferLine ? '隐藏' : '显示') + '参考线'}
         </button>
-        <button className="mr10 font16" onClick={() => setPost((p) => ({ ...p, showMinorTicks: !p.showMinorTicks }))}>
+        <button
+          className="mr10 font16"
+          onClick={() => setPost((p) => ({ ...p, showMinorTicks: !p.showMinorTicks }))}
+        >
           {(post.showMinorTicks ? '隐藏' : '显示') + '次刻度'}
         </button>
         <button className="mr10 font16" onClick={() => setLockLine((l) => !l)}>
@@ -217,9 +238,15 @@ const Comprehensive: React.FC = () => {
         <button className="mr10 font16" onClick={toggleZoomMode}>
           {zoomMode === 'pointer' ? '鼠标' : zoomMode === 'viewport-center' ? '视口' : '内容'}
         </button>
-        <button className="mr10 font16" onClick={changeShadow}>模拟阴影切换</button>
-        <button className="mr10 font16" onClick={resetMethod}>还原</button>
-        <button className="mr10 font16" onClick={zoomOutMethod}>缩小</button>
+        <button className="mr10 font16" onClick={changeShadow}>
+          模拟阴影切换
+        </button>
+        <button className="mr10 font16" onClick={resetMethod}>
+          还原
+        </button>
+        <button className="mr10 font16" onClick={zoomOutMethod}>
+          缩小
+        </button>
         <span className="mr10 font16">步长:{post.zoomStep}</span>
         <input
           className="mr10 font16"
@@ -231,7 +258,9 @@ const Comprehensive: React.FC = () => {
           onChange={(e) => setPost((p) => ({ ...p, zoomStep: Number(e.target.value) }))}
           style={{ width: 80 }}
         />
-        <span className="mr10 font16">范围:{post.minZoom}~{post.maxZoom}</span>
+        <span className="mr10 font16">
+          范围:{post.minZoom}~{post.maxZoom}
+        </span>
         <span className="mr10 font16">吸附:{post.snapThreshold}px</span>
         <input
           className="mr10 font16"
@@ -254,10 +283,7 @@ const Comprehensive: React.FC = () => {
         />
       </div>
 
-      <div
-        className={`wrapper ${isBlack ? 'blackwrapper' : 'whitewrapper'}`}
-        style={rectStyle}
-      >
+      <div className={`wrapper ${isBlack ? 'blackwrapper' : 'whitewrapper'}`} style={rectStyle}>
         <SketchRule
           ref={sketchRef}
           scale={state.scale}
@@ -289,9 +315,30 @@ const Comprehensive: React.FC = () => {
             <img className="img-style" src={bgImg} alt="" />
           </div>
           <div slot="toolbar" className="btns">
-            <button onClick={(e) => { e.stopPropagation(); resetMethod() }}>还原</button>
-            <button onClick={(e) => { e.stopPropagation(); zoomInMethod() }}>放大</button>
-            <button onClick={(e) => { e.stopPropagation(); zoomOutMethod() }}>缩小</button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                resetMethod()
+              }}
+            >
+              还原
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                zoomInMethod()
+              }}
+            >
+              放大
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                zoomOutMethod()
+              }}
+            >
+              缩小
+            </button>
           </div>
         </SketchRule>
 

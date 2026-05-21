@@ -28,17 +28,23 @@ const EsDragle: React.FC = () => {
     lines: { h: [300], v: [400] }
   })
 
-  const rectStyle = useMemo(() => ({
-    width: `${state.width}px`,
-    height: `${state.height}px`
-  }), [state])
+  const rectStyle = useMemo(
+    () => ({
+      width: `${state.width}px`,
+      height: `${state.height}px`
+    }),
+    [state]
+  )
 
-  const canvasStyle = useMemo(() => ({
-    width: `${state.canvasWidth}px`,
-    height: `${state.canvasHeight}px`,
-    position: 'relative' as const,
-    background: '#eff2f5'
-  }), [state])
+  const canvasStyle = useMemo(
+    () => ({
+      width: `${state.canvasWidth}px`,
+      height: `${state.canvasHeight}px`,
+      position: 'relative' as const,
+      background: '#eff2f5'
+    }),
+    [state]
+  )
 
   const extraLines = () => {
     const container = document.querySelector('.sketch-ruler')
@@ -106,9 +112,30 @@ const EsDragle: React.FC = () => {
             ))}
           </div>
           <div slot="toolbar" className="btns">
-            <button onClick={(e) => { e.stopPropagation(); sketchruleRef.current?.reset() }}>还原</button>
-            <button onClick={(e) => { e.stopPropagation(); sketchruleRef.current?.zoomIn() }}>放大</button>
-            <button onClick={(e) => { e.stopPropagation(); sketchruleRef.current?.zoomOut() }}>缩小</button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                sketchruleRef.current?.reset()
+              }}
+            >
+              还原
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                sketchruleRef.current?.zoomIn()
+              }}
+            >
+              放大
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                sketchruleRef.current?.zoomOut()
+              }}
+            >
+              缩小
+            </button>
           </div>
         </SketchRule>
       </div>

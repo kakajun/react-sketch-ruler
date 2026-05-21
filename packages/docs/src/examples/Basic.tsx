@@ -50,9 +50,30 @@ const Basic: React.FC = () => {
           <img className="img-style" src={bgImg} alt="" />
         </div>
         <div slot="toolbar" className="btns">
-          <button onClick={(e) => { e.stopPropagation(); resetMethod() }}>还原</button>
-          <button onClick={(e) => { e.stopPropagation(); zoomInMethod() }}>放大</button>
-          <button onClick={(e) => { e.stopPropagation(); zoomOutMethod() }}>缩小</button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              resetMethod()
+            }}
+          >
+            还原
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              zoomInMethod()
+            }}
+          >
+            放大
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              zoomOutMethod()
+            }}
+          >
+            缩小
+          </button>
         </div>
       </SketchRule>
     </div>

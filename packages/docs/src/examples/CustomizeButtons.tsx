@@ -144,17 +144,33 @@ const CustomizeButtons: React.FC = () => {
       <div className="top font16">
         <div className="mr10">鼠标中键移动画布</div>
         <div className="scale mr10">{cpuScale}</div>
-        <button className="mr10 font16" onClick={() => setPost((p) => ({ ...p, showRuler: !p.showRuler }))}>
+        <button
+          className="mr10 font16"
+          onClick={() => setPost((p) => ({ ...p, showRuler: !p.showRuler }))}
+        >
           {(post.showRuler ? '隐藏' : '显示') + '标尺'}
         </button>
-        <button className="mr10 font16" onClick={() => setPost((p) => ({ ...p, isShowReferLine: !p.isShowReferLine }))}>
+        <button
+          className="mr10 font16"
+          onClick={() => setPost((p) => ({ ...p, isShowReferLine: !p.isShowReferLine }))}
+        >
           {(post.isShowReferLine ? '隐藏' : '显示') + '参考线'}
         </button>
-        <button className="mr10 font16" onClick={() => setLockLine(true)}>锁定参考线</button>
-        <button className="mr10 font16" onClick={changeShadow}>模拟阴影切换</button>
-        <button className="mr10 font16" onClick={changeTheme}>主题切换</button>
-        <button className="mr10 font16" onClick={resetMethod}>还原</button>
-        <button className="mr10 font16" onClick={zoomOutMethod}>缩小</button>
+        <button className="mr10 font16" onClick={() => setLockLine(true)}>
+          锁定参考线
+        </button>
+        <button className="mr10 font16" onClick={changeShadow}>
+          模拟阴影切换
+        </button>
+        <button className="mr10 font16" onClick={changeTheme}>
+          主题切换
+        </button>
+        <button className="mr10 font16" onClick={resetMethod}>
+          还原
+        </button>
+        <button className="mr10 font16" onClick={zoomOutMethod}>
+          缩小
+        </button>
         <input
           className="mr10 font16"
           type="range"
@@ -188,9 +204,30 @@ const CustomizeButtons: React.FC = () => {
             <img className="img-style" src={bgImg} alt="" />
           </div>
           <div slot="toolbar" className="btns">
-            <button onClick={(e) => { e.stopPropagation(); resetMethod() }}>还原</button>
-            <button onClick={(e) => { e.stopPropagation(); sketchRef.current?.zoomIn() }}>放大</button>
-            <button onClick={(e) => { e.stopPropagation(); zoomOutMethod() }}>缩小</button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                resetMethod()
+              }}
+            >
+              还原
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                sketchRef.current?.zoomIn()
+              }}
+            >
+              放大
+            </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation()
+                zoomOutMethod()
+              }}
+            >
+              缩小
+            </button>
           </div>
         </SketchRule>
       </div>

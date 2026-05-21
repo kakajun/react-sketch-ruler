@@ -1,7 +1,25 @@
 import { eye64, closeEye64 } from './cornerImg64'
-import React, { useState, useEffect, useMemo, useImperativeHandle, useRef, useCallback } from 'react'
-import { fitRect, PluginManager, importLines, exportLines, generateLineId } from '@sketch-ruler/core'
-import type { TransformEngine, TransformState, SketchRulerPlugin, GuideLine } from '@sketch-ruler/core'
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useImperativeHandle,
+  useRef,
+  useCallback
+} from 'react'
+import {
+  fitRect,
+  PluginManager,
+  importLines,
+  exportLines,
+  generateLineId
+} from '@sketch-ruler/core'
+import type {
+  TransformEngine,
+  TransformState,
+  SketchRulerPlugin,
+  GuideLine
+} from '@sketch-ruler/core'
 import './index.less'
 import RulerWrapper from './RulerWrapper'
 import { useCanvasTransform } from '../hooks/useCanvasTransform'
@@ -87,15 +105,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     const rectWidth = width
     const rectHeight = height
 
-    const {
-      engine,
-      scale,
-      offset,
-      setTransform,
-      zoomBy,
-      zoomTo,
-      reset
-    } = useCanvasTransform({
+    const { engine, scale, offset, setTransform, zoomBy, zoomTo, reset } = useCanvasTransform({
       initialScale: propScale,
       initialOffset,
       minZoom,
@@ -116,17 +126,13 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     }, [propScale])
 
     // 使用 InputManager 处理输入事件
-    const { inputManager } = useInputManager(
-      engine,
-      canvasEditRef,
-      {
-        zoomStep,
-        zoomMode,
-        selfHandle,
-        viewportSize: { width: rectWidth, height: rectHeight },
-        contentSize: { width: canvasWidth, height: canvasHeight }
-      }
-    )
+    const { inputManager } = useInputManager(engine, canvasEditRef, {
+      zoomStep,
+      zoomMode,
+      selfHandle,
+      viewportSize: { width: rectWidth, height: rectHeight },
+      contentSize: { width: canvasWidth, height: canvasHeight }
+    })
 
     useEffect(() => {
       inputManager?.setZoomMode(zoomMode)
@@ -170,12 +176,12 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     // === 参考线状态管理 ===
     const [guideLines, setGuideLines] = useState<GuideLine[]>(() => importLines(lines))
 
-    const horizontalLines = useMemo(() =>
-      guideLines.filter((l) => l.orientation === 'h' && l.visible !== false),
+    const horizontalLines = useMemo(
+      () => guideLines.filter((l) => l.orientation === 'h' && l.visible !== false),
       [guideLines]
     )
-    const verticalLines = useMemo(() =>
-      guideLines.filter((l) => l.orientation === 'v' && l.visible !== false),
+    const verticalLines = useMemo(
+      () => guideLines.filter((l) => l.orientation === 'v' && l.visible !== false),
       [guideLines]
     )
 
@@ -188,7 +194,13 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
         if (idx < existingH.length) {
           updated.push({ ...existingH[idx], position: pos })
         } else {
-          updated.push({ id: generateLineId(), orientation: 'h', position: pos, visible: true, locked: false })
+          updated.push({
+            id: generateLineId(),
+            orientation: 'h',
+            position: pos,
+            visible: true,
+            locked: false
+          })
         }
       })
 
@@ -197,7 +209,13 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
         if (idx < existingV.length) {
           updated.push({ ...existingV[idx], position: pos })
         } else {
-          updated.push({ id: generateLineId(), orientation: 'v', position: pos, visible: true, locked: false })
+          updated.push({
+            id: generateLineId(),
+            orientation: 'v',
+            position: pos,
+            visible: true,
+            locked: false
+          })
         }
       })
 
@@ -305,25 +323,32 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       onHandleCornerClick?.(next)
     }
 
-    const setZoomMode = useCallback((mode: ZoomMode) => {
-      inputManager?.setZoomMode(mode)
-    }, [inputManager])
+    const setZoomMode = useCallback(
+      (mode: ZoomMode) => {
+        inputManager?.setZoomMode(mode)
+      },
+      [inputManager]
+    )
 
-    const zoomToPreset = useCallback(async (preset: number) => {
-      const target = ZOOM_PRESETS.find((p) => p >= preset) ?? ZOOM_PRESETS[ZOOM_PRESETS.length - 1]
-      const { x: cx, y: cy } = getZoomOrigin()
-      const from = scale
-      const allowed = await pluginManagerRef.current.beforeZoom({
-        from,
-        to: target,
-        center: { x: cx, y: cy },
-        cancel: () => {}
-      })
-      if (allowed) {
-        zoomTo(target, cx, cy)
-        pluginManagerRef.current.afterZoom({ from, to: target, center: { x: cx, y: cy } })
-      }
-    }, [zoomTo, getZoomOrigin, scale])
+    const zoomToPreset = useCallback(
+      async (preset: number) => {
+        const target =
+          ZOOM_PRESETS.find((p) => p >= preset) ?? ZOOM_PRESETS[ZOOM_PRESETS.length - 1]
+        const { x: cx, y: cy } = getZoomOrigin()
+        const from = scale
+        const allowed = await pluginManagerRef.current.beforeZoom({
+          from,
+          to: target,
+          center: { x: cx, y: cy },
+          cancel: () => {}
+        })
+        if (allowed) {
+          zoomTo(target, cx, cy)
+          pluginManagerRef.current.afterZoom({ from, to: target, center: { x: cx, y: cy } })
+        }
+      },
+      [zoomTo, getZoomOrigin, scale]
+    )
 
     useImperativeHandle(ref, () => ({
       engine,
@@ -375,27 +400,30 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       [null, null]
     )
 
-    const toolbarState = useMemo(() => ({
-      scale,
-      offset,
-      zoomMode,
-      showReferLine
-    }), [scale, offset, zoomMode, showReferLine])
+    const toolbarState = useMemo(
+      () => ({
+        scale,
+        offset,
+        zoomMode,
+        showReferLine
+      }),
+      [scale, offset, zoomMode, showReferLine]
+    )
 
-    const toolbarTools = useMemo(() => ({
-      zoomIn,
-      zoomOut,
-      reset,
-      setZoomMode,
-      zoomToPreset,
-      toggleReferLine: handleCornerClick
-    }), [zoomIn, zoomOut, reset, setZoomMode, zoomToPreset, handleCornerClick])
+    const toolbarTools = useMemo(
+      () => ({
+        zoomIn,
+        zoomOut,
+        reset,
+        setZoomMode,
+        zoomToPreset,
+        toggleReferLine: handleCornerClick
+      }),
+      [zoomIn, zoomOut, reset, setZoomMode, zoomToPreset, handleCornerClick]
+    )
 
     return (
-      <div
-        className="sketch-ruler"
-        ref={containerRef}
-      >
+      <div className="sketch-ruler" ref={containerRef}>
         {toolbarSlot && (
           <div className="sketch-ruler-toolbar">
             {typeof toolbarSlot === 'function'

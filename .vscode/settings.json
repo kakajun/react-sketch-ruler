@@ -5,7 +5,6 @@
   //===========================================
   "explorer.openEditors.visible": 1,
   "editor.tabSize": 2,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "diffEditor.ignoreTrimWhitespace": false,
   "editor.trimAutoWhitespace": true,
   //===========================================
@@ -69,72 +68,19 @@
     "**/dist/**": true,
     "**/yarn.lock": true
   },
-  "stylelint.enable": true,
-  "stylelint.packageManager": "yarn",
   "workbench.settings.enableNaturalLanguageSearch": false,
   "path-intellisense.mappings": {
     "@/": "${workspaceRoot}/src"
   },
-  "prettier.requireConfig": true,
   "typescript.updateImportsOnFileMove.enabled": "always",
   "workbench.sideBar.location": "left",
-  "[javascriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[tsx]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[less]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[scss]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "never",
-      "source.fixAll.stylelint": "explicit"
-    }
-  },
-  "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[markdown]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
-  },
-  "[vue]": {
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "never",
-      "source.fixAll.stylelint": "explicit"
-    },
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
   // koroFileHeader 插件配置
   "fileheader.configObj": {
-    "autoAdd": false, // 自动添加头部注释开启才能自动添加
-    "autoAlready": false, // 默认开启, 只给支持的语言添加注释
-    "createHeader": false, // 新建文件不自动添加注释
-    "prohibitAutoAdd": ["py"] // 禁止.json .md文件，自动添加头部注释
-  },
-  "[scss][vue]": {
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "never",
-      "source.fixAll.stylelint": "explicit"
-    }
+    "autoAdd": false,
+    "autoAlready": false,
+    "createHeader": false,
+    "prohibitAutoAdd": ["py"]
   },
   "liveServer.settings.port": 5501,
   "i18n-ally.localesPaths": [

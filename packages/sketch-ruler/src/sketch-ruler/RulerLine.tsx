@@ -55,48 +55,51 @@ const RulerLineComponent = ({
     return `${vertical ? 'X' : 'Y'}: ${Math.round(displayPos)}`
   }, [draggingPos, line.position, limit, deleteLabel, vertical])
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if (line.locked || lockLine) return
-    e.preventDefault()
-    e.stopPropagation()
-    setActive(true)
-    setShowLabel(true)
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      if (line.locked || lockLine) return
+      e.preventDefault()
+      e.stopPropagation()
+      setActive(true)
+      setShowLabel(true)
 
-    const startMouse = vertical ? e.clientX : e.clientY
-    const startPos = line.position
-    let shouldDelete = false
+      const startMouse = vertical ? e.clientX : e.clientY
+      const startPos = line.position
+      let shouldDelete = false
 
-    const onMove = (moveEvent: MouseEvent) => {
-      const currentMouse = vertical ? moveEvent.clientX : moveEvent.clientY
-      const delta = (currentMouse - startMouse) / scale
-      let newPos = startPos + delta
+      const onMove = (moveEvent: MouseEvent) => {
+        const currentMouse = vertical ? moveEvent.clientX : moveEvent.clientY
+        const delta = (currentMouse - startMouse) / scale
+        let newPos = startPos + delta
 
-      // 吸附到最近刻度（简化：吸附到整数像素）
-      const snapThreshold = 10 / scale
-      const nearest = Math.round(newPos / snapThreshold) * snapThreshold
-      if (Math.abs(nearest - newPos) < snapThreshold * 0.5) {
-        newPos = nearest
+        // 吸附到最近刻度（简化：吸附到整数像素）
+        const snapThreshold = 10 / scale
+        const nearest = Math.round(newPos / snapThreshold) * snapThreshold
+        if (Math.abs(nearest - newPos) < snapThreshold * 0.5) {
+          newPos = nearest
+        }
+
+        setDraggingPos(newPos)
+        shouldDelete = newPos < 0 || newPos > limit
+        onUpdate?.(line.id, Math.round(newPos))
       }
 
-      setDraggingPos(newPos)
-      shouldDelete = newPos < 0 || newPos > limit
-      onUpdate?.(line.id, Math.round(newPos))
-    }
-
-    const onUp = () => {
-      if (shouldDelete) {
-        onDelete?.(line.id)
+      const onUp = () => {
+        if (shouldDelete) {
+          onDelete?.(line.id)
+        }
+        document.removeEventListener('mousemove', onMove)
+        document.removeEventListener('mouseup', onUp)
+        setShowLabel(false)
+        setActive(false)
+        setDraggingPos(null)
       }
-      document.removeEventListener('mousemove', onMove)
-      document.removeEventListener('mouseup', onUp)
-      setShowLabel(false)
-      setActive(false)
-      setDraggingPos(null)
-    }
 
-    document.addEventListener('mousemove', onMove)
-    document.addEventListener('mouseup', onUp)
-  }, [line, lockLine, vertical, scale, limit, onUpdate, onDelete])
+      document.addEventListener('mousemove', onMove)
+      document.addEventListener('mouseup', onUp)
+    },
+    [line, lockLine, vertical, scale, limit, onUpdate, onDelete]
+  )
 
   const handleMouseEnter = useCallback(() => {
     if (line.locked || lockLine) return

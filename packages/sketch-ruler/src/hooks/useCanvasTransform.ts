@@ -95,29 +95,47 @@ export function useCanvasTransform(options: CanvasTransformOptions = {}): UseCan
     }
   }, [minZoom, maxZoom, enableAnimation, animationMode])
 
-  const setTransform = useCallback((t: Partial<TransformState>) => {
-    engine?.setTransform(t)
-  }, [engine])
+  const setTransform = useCallback(
+    (t: Partial<TransformState>) => {
+      engine?.setTransform(t)
+    },
+    [engine]
+  )
 
-  const panBy = useCallback((dx: number, dy: number) => {
-    engine?.panBy(dx, dy)
-  }, [engine])
+  const panBy = useCallback(
+    (dx: number, dy: number) => {
+      engine?.panBy(dx, dy)
+    },
+    [engine]
+  )
 
-  const zoomBy = useCallback((dScale: number, originX: number, originY: number) => {
-    engine?.zoomBy(dScale, originX, originY)
-  }, [engine])
+  const zoomBy = useCallback(
+    (dScale: number, originX: number, originY: number) => {
+      engine?.zoomBy(dScale, originX, originY)
+    },
+    [engine]
+  )
 
-  const zoomTo = useCallback((targetScale: number, originX: number, originY: number) => {
-    engine?.zoomTo(targetScale, originX, originY)
-  }, [engine])
+  const zoomTo = useCallback(
+    (targetScale: number, originX: number, originY: number) => {
+      engine?.zoomTo(targetScale, originX, originY)
+    },
+    [engine]
+  )
 
-  const toWorldPoint = useCallback((screenX: number, screenY: number) => {
-    return engine?.toWorldPoint(screenX, screenY) ?? { x: screenX, y: screenY }
-  }, [engine])
+  const toWorldPoint = useCallback(
+    (screenX: number, screenY: number) => {
+      return engine?.toWorldPoint(screenX, screenY) ?? { x: screenX, y: screenY }
+    },
+    [engine]
+  )
 
-  const toScreenPoint = useCallback((worldX: number, worldY: number) => {
-    return engine?.toScreenPoint(worldX, worldY) ?? { x: worldX, y: worldY }
-  }, [engine])
+  const toScreenPoint = useCallback(
+    (worldX: number, worldY: number) => {
+      return engine?.toScreenPoint(worldX, worldY) ?? { x: worldX, y: worldY }
+    },
+    [engine]
+  )
 
   const reset = useCallback(() => {
     engine?.setTransform({ scale: startScale, x: startOffset.x, y: startOffset.y })

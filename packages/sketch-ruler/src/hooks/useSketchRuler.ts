@@ -50,16 +50,7 @@ export function useSketchRuler(options: UseSketchRulerOptions = {}) {
   const rectWidth = width
   const rectHeight = height
 
-  const {
-    engine,
-    scale,
-    offset,
-    setTransform,
-    panBy,
-    zoomBy,
-    zoomTo,
-    reset
-  } = useCanvasTransform({
+  const { engine, scale, offset, setTransform, panBy, zoomBy, zoomTo, reset } = useCanvasTransform({
     initialScale: initialScale,
     initialOffset: initialOffset ? { x: initialOffset.x, y: initialOffset.y } : { x: 0, y: 0 },
     minZoom,
@@ -73,17 +64,14 @@ export function useSketchRuler(options: UseSketchRulerOptions = {}) {
 
   const [zoomMode, setZoomModeState] = useState<ZoomMode>('pointer')
 
-  const { guideLines, addLine, removeLine, updateLine } = useGuideLines(
-    undefined,
-    initialLines
-  )
+  const { guideLines, addLine, removeLine, updateLine } = useGuideLines(undefined, initialLines)
 
-  const horizontalLines = useMemo(() =>
-    guideLines.filter((l) => l.orientation === 'h' && l.visible !== false),
+  const horizontalLines = useMemo(
+    () => guideLines.filter((l) => l.orientation === 'h' && l.visible !== false),
     [guideLines]
   )
-  const verticalLines = useMemo(() =>
-    guideLines.filter((l) => l.orientation === 'v' && l.visible !== false),
+  const verticalLines = useMemo(
+    () => guideLines.filter((l) => l.orientation === 'v' && l.visible !== false),
     [guideLines]
   )
 

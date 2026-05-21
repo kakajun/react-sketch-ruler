@@ -78,9 +78,7 @@ export function useGuideLines(
     (id: string, position: number) => {
       const line = currentLines.find((l) => l.id === id)
       const from = line?.position
-      const next = currentLines.map((l: GuideLine) =>
-        l.id === id ? { ...l, position } : l
-      )
+      const next = currentLines.map((l: GuideLine) => (l.id === id ? { ...l, position } : l))
       if (!isControlled) setDerivedLines(next)
       notify(next)
       if (line && from !== undefined) {

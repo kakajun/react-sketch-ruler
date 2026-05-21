@@ -47,7 +47,17 @@ const Minimap: React.FC<MinimapProps> = ({
         width,
         height
       }),
-    [contentWidth, contentHeight, viewportX, viewportY, viewportWidth, viewportHeight, scale, width, height]
+    [
+      contentWidth,
+      contentHeight,
+      viewportX,
+      viewportY,
+      viewportWidth,
+      viewportHeight,
+      scale,
+      width,
+      height
+    ]
   )
 
   const state = useMemo(() => engine.getState(), [engine])
@@ -114,7 +124,12 @@ const Minimap: React.FC<MinimapProps> = ({
       let pendingTargetY = viewportY
       let emitRafId: number | null = null
 
-      const session = engine.startDrag(viewportX, viewportY, startState.viewportRect.left, startState.viewportRect.top)
+      const session = engine.startDrag(
+        viewportX,
+        viewportY,
+        startState.viewportRect.left,
+        startState.viewportRect.top
+      )
 
       function scheduleEmit() {
         if (emitRafId !== null) return
@@ -222,10 +237,7 @@ const Minimap: React.FC<MinimapProps> = ({
         height={height}
         onPointerDown={handleCanvasPointerDown}
       />
-      <div
-        style={viewportStyle}
-        onPointerDown={handleViewportPointerDown}
-      />
+      <div style={viewportStyle} onPointerDown={handleViewportPointerDown} />
     </div>
   )
 }

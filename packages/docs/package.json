@@ -10,11 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "i18next": "^23.15.1",
-    "i18next-browser-languagedetector": "^8.0.0",
-    "react-i18next": "^15.0.2",
-    "react-es-drager": "^1.0.4",
-    "@sketch-ruler/core": "^3.0.0-beta.0",
-    "@sketch-ruler/canvas": "^3.0.0-beta.0"
+    "@sketch-ruler/canvas": "^3.0.0",
+    "@sketch-ruler/core": "^3.0.0",
+    "i18next": "^26.2.0",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "react-es-drager": "^1.0.5",
+    "react-i18next": "^17.0.8"
   }
 }
