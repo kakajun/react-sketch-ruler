@@ -127,16 +127,14 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       paddingRatio: 0.2
     })
 
-    // 外部 prop 变化 → 同步到引擎（跳过首次渲染，避免覆盖 autoCenter 初始化）
-    const prevPropScaleRef = useRef(propScale)
+    // 外部 prop 变化 → 同步到引擎（避免覆盖 autoCenter 初始化）
+    const scaleRef = useRef(scale)
+    scaleRef.current = scale
     useEffect(() => {
-      if (Math.abs(propScale - prevPropScaleRef.current) > 1e-10) {
-        prevPropScaleRef.current = propScale
-        if (Math.abs(propScale - scale) > 1e-10) {
-          setTransform({ scale: propScale })
-        }
+      if (Math.abs(propScale - scaleRef.current) > 1e-10) {
+        setTransform({ scale: propScale })
       }
-    }, [propScale, scale, setTransform])
+    }, [propScale, setTransform])
 
     // 使用 InputManager 处理输入事件
     const { inputManager } = useInputManager(engine, canvasEditRef, {

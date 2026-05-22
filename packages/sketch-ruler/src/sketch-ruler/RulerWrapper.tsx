@@ -44,7 +44,7 @@ const RulerComponent = ({
   )
 
   // === 刻度计算 ===
-  const canvasOffset = vertical ? offset.x : offset.y
+  const canvasOffset = vertical ? offset.y : offset.x
   const marks = useMemo(() => {
     return computeScaleMarks({
       scale,

@@ -1,196 +1,397 @@
 # react-sketch-ruler
 
-> In using react, the zoom operation used for page presentation
+> 是一个基于 React + TypeScript 的标尺组件库，由 [vue3-sketch-ruler](https://github.com/kakajun/vue3-sketch-ruler) 翻译而来，共用 `@sketch-ruler/core` 与 `@sketch-ruler/canvas` 底层插件。适用于低代码平台、大屏可视化、做图工具等场景，提供类似 Photoshop 的缩放与标尺辅助线体验。
 
-[![](https://camo.githubusercontent.com/28479a7a834310a667f36760a27283f7389e864a/68747470733a2f2f696d672e736869656c64732e696f2f6e706d2f6c2f76322d646174657069636b65722e737667)](https://camo.githubusercontent.com/28479a7a834310a667f36760a27283f7389e864a/68747470733a2f2f696d672e736869656c64732e696f2f6e706d2f6c2f76322d646174657069636b65722e737667) [![build status](https://github.com/kakajun/react-sketch-ruler/actions/workflows/gh-pages.yml/badge.svg?branch=main)](https://github.com/kakajun/react-sketch-ruler/actions/workflows/gh-pages.yml)
+[![](https://img.shields.io/npm/v/react-sketch-ruler.svg)](https://www.npmjs.com/package/react-sketch-ruler) [![build status](https://github.com/kakajun/react-sketch-ruler/actions/workflows/gh-pages.yml/badge.svg?branch=main)](https://github.com/kakajun/react-sketch-ruler/actions/workflows/gh-pages.yml)
 
-[![Cloud Studio Template](https://cs-res.codehub.cn/common/assets/icon-badge.svg)](https://cloudstudio.net/a/21009125697445888?channel=share&sharetype=Markdown)
-
-<a href="https://codepen.io/kakajun/pen/WNVeYap" target="_blank">
-  <img src="./packages/docs/src/assets/codepen.svg" alt="CodePen Demo" width="150" height="30" />
-</a>
 <div align=center>
 <img src="https://github.com/kakajun/react-sketch-ruler/blob/main/packages/docs/src/assets/logo.png" width="392" height="300">
 </div>
 
 ## 🚀 Features
 
-- 💡 以鼠标为中心缩放页面, 可以使用pazoom的特性
-- 📦 减化配置
-- 💎 提供还原, 放大, 缩小的功能
-- 📦 平台与业务代码通过插槽的方式进行分离, 也就是你只需要专注你的业务代码, 其他交给平台
+- ⚛️ React 18+ / 19+ 友好，完全基于 TypeScript
+- 🎯 内置 TransformEngine 变换引擎，零外部 panzoom 依赖
+- 🖱️ 多种缩放模式：鼠标中心、视口中心、内容中心
+- 📐 可配置参考线（拖拽创建、吸附、锁定）
+- 🗺️ 内置 Minimap 缩略图导航（支持拖拽视口、点击跳转）
+- 🔌 插件系统（生命周期钩子 + 自定义渲染器）
+- 🎨 动画支持：`ease-out` / `damped` / `exponential` / `direct`
+- 📦 平台与业务代码分离，通过 `children` 与 `slot="toolbar"` 插槽专注业务即可
 
-## 🔑 说明
+## 🦄 Demo
 
----
+案例浏览: [https://kakajun.github.io/react-sketch-ruler](https://kakajun.github.io/react-sketch-ruler)
 
-插件应用范围: 适合作为低代码平台操作页面缩放工具,比如做图工具如, 大屏可视化, 做图工具图怪兽等,类似ps的缩放效果.
-
-## 🌈 应用案例(目前只有vue版):
-
-[GoView 高效拖拽式低代码数据可视化开发平台](https://vue.mtruning.club/#/project/items)
-
-[GoView 2X 应用源码地址](https://gitee.com/majun2232/go-view)
-
-## 🦄 demo
-
-案例浏览: [https://kakajun.github.io/react-sketch-ruler](https://kakajun.github.io/react-sketch-ruler) ![image](https://github.com/kakajun/react-sketch-ruler/blob/main/packages/docs/src/assets/1.png)
+[CodePen 示例](https://codepen.io/kakajun/pen/WNVeYap)
 
 ## 安装
 
-> 支持全局导入和模块导入
-
-```js
+```bash
 npm install --save react-sketch-ruler
 
-yarn add react-sketch-ruler  -S
+# 或
+yarn add react-sketch-ruler
+
+# 或
+pnpm add react-sketch-ruler
 ```
 
 ## 引入方式
 
-将打包后的dist包拷贝，用import导入，支持下面两种引用方式
+### ESM
 
+```tsx
+import { SketchRule, Minimap } from 'react-sketch-ruler'
+import type { SketchRulerProps, SketchRulerMethods } from 'react-sketch-ruler'
+import 'react-sketch-ruler/index.css'
 ```
-import SketchRule from 'react-sketch-ruler'
+
+### CDN
+
+```html
+<script src="https://unpkg.com/react-sketch-ruler/lib/index.umd.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/react-sketch-ruler/lib/index.css" />
+
+<script>
+  const { SketchRule, Minimap } = window.ReactSketchRuler
+</script>
+```
+
+## 使用
+
+### 基础用法
+
+```tsx
+import React, { useRef } from 'react'
+import { SketchRule } from 'react-sketch-ruler'
 import 'react-sketch-ruler/index.css'
 
+const BasicDemo: React.FC = () => {
+  const sketchRef = useRef<SketchRulerMethods>(null)
+
+  const width = 1470
+  const height = 700
+  const canvasWidth = 1000
+  const canvasHeight = 500
+
+  const [scale, setScale] = React.useState(1)
+  const [lines, setLines] = React.useState({ h: [0, 250], v: [0, 500] })
+
+  return (
+    <div style={{ width, height }}>
+      <SketchRule
+        ref={sketchRef}
+        scale={scale}
+        width={width}
+        height={height}
+        canvasWidth={canvasWidth}
+        canvasHeight={canvasHeight}
+        thick={20}
+        lines={lines}
+        isShowReferLine={true}
+        enableAnimation={true}
+        animationMode="ease-out"
+        onZoomChange={(detail) => {
+          console.log('zoomchange', detail)
+          setScale(detail.scale)
+        }}
+        onUpdateLines={setLines}
+      >
+        <div data-type="page" style={{ width: canvasWidth, height: canvasHeight }}>
+          {/* 业务画布内容 */}
+          <img src="bg.png" style={{ width: '100%', height: '100%' }} alt="" />
+        </div>
+
+        <div slot="toolbar" className="btns">
+          <button onClick={() => sketchRef.current?.reset()}>还原</button>
+          <button onClick={() => sketchRef.current?.zoomIn()}>放大</button>
+          <button onClick={() => sketchRef.current?.zoomOut()}>缩小</button>
+          <button onClick={() => sketchRef.current?.zoomToPreset(1)}>100%</button>
+          <span>{(scale * 100).toFixed(0)}%</span>
+        </div>
+      </SketchRule>
+    </div>
+  )
+}
 ```
 
-CDN 引入
+### 配合 Minimap
 
-```js
-<script src="https://unpkg.com/react-sketch-ruler/lib/index.umd.js"></script>
-<link type="text/css" rel="stylesheet" href="https://unpkg.com/react-sketch-ruler/lib/index.css" />
+```tsx
+import React, { useRef, useState } from 'react'
+import { SketchRule, Minimap } from 'react-sketch-ruler'
+import type { SketchRulerMethods } from 'react-sketch-ruler'
 
-const SketchRule = window.SketchRuler
+const Demo: React.FC = () => {
+  const sketchRef = useRef<SketchRulerMethods>(null)
+  const [scale, setScale] = useState(1)
+  const [offset, setOffset] = useState({ x: 0, y: 0 })
+
+  const handleZoomChange = (detail: { scale: number; x: number; y: number }) => {
+    setScale(detail.scale)
+    setOffset({ x: detail.x, y: detail.y })
+  }
+
+  const handleNavigate = (x: number, y: number) => {
+    sketchRef.current?.setTransform({ x, y })
+  }
+
+  return (
+    <>
+      <SketchRule ref={sketchRef} scale={scale} onZoomChange={handleZoomChange} ...>
+        <div data-type="page">...</div>
+      </SketchRule>
+
+      <Minimap
+        contentWidth={1000}
+        contentHeight={700}
+        viewportX={offset.x}
+        viewportY={offset.y}
+        viewportWidth={1470}
+        viewportHeight={700}
+        scale={scale}
+        width={200}
+        height={150}
+        onNavigate={handleNavigate}
+      />
+    </>
+  )
+}
 ```
 
-详情参见 [CDN demo](https://github.com/kakajun/react-sketch-ruler/blob/master/packages/docs/src/mydemoCdn.html)
+### 插件系统
 
-## 支持的功能
+```tsx
+import { definePlugin } from 'react-sketch-ruler'
+import type { SketchRulerPlugin } from 'react-sketch-ruler'
 
-- [x] 标尺渲染
-- [x] 缩放内容，重绘标尺
-- [x] 按Ctrl+鼠标滚轮缩放, 根据鼠标位置发生变化
-- [x] 按空格拖动画布
-- [x] 切换标尺状态，显示或隐藏
-- [x] 参考线管理（增加删除）
-- [x] 支持参考线任意地方拖拽
-- [x] 左上角的眼睛，点击能控制红线显影
-- [x] 初始化自动居中
-- [x] 提供右下角按钮缩放,还原所需API
-- [x] 刻度吸附效果
-- [x] 选中阴影阴影响应
-- [x] 阴影刻度数字响应
-- [x] 多实例支持
+const plugins: SketchRulerPlugin[] = [
+  definePlugin(() => ({
+    name: 'demo-logger',
+    onLineCreate: (ctx) => console.log('line created', ctx.line.id),
+    onLineDelete: (ctx) => console.log('line deleted', ctx.line.id)
+  }))()
+]
 
-## 未来支持功能
+// 使用
+<SketchRule plugins={plugins} ... />
+```
 
-- [] 加入单元测试功能
+### Hooks
 
-参考一个完整的例子，[点击这里](https://github.com/kakajun/react-sketch-ruler/blob/main/packages/docs/src/examples/Comprehensive.tsx)
+如果你需要更底层的控制能力，可以直接使用提供的 Hooks：
 
-## api
+```tsx
+import {
+  useSketchRuler,
+  useCanvasTransform,
+  useGuideLines,
+  useInputManager,
+  useSnapDetection
+} from 'react-sketch-ruler'
+```
 
-### 属性
+## API
 
-| 属性名称 | 描述 | 类型 | 默认值 |
+### Props
+
+| 属性 | 描述 | 类型 | 默认值 |
 | --- | --- | --- | --- |
-| scale | 初始化标尺的缩放 | Number | 1(autoCenter 默认为true,初始值不生效, 后续外面变化不再监听,但内部scale变化会同步到外面) |
-| rate | 初始化标尺的缩放 | Number | 1 |
-| thick | 标尺的厚度 | Number | 16 |
-| width | 放置标尺窗口的宽度 | Number | 1400 |
-| height | 放置标尺窗口的高度 | Number | 900 |
-| paddingRatio | 画布与外框间隔 | Number | 20% (基于外框宽高最小长度) |
-| autoCenter | 自动居中对齐 | Boolean | true (设为false,那么需要在panzoomOption中传入startX,startY) |
-| eyeIcon | 睁眼图标 | String | - |
-| closeEyeIcon | 闭眼图标 | String | - |
-| canvasWidth | 画布宽 | Number | 1000 |
-| canvasHeight | 画布高 | Number | 700 |
-| isShowReferLine | 是否显示标线 | Boolean | true |
-| showRuler | 是否显示尺规 | Boolean | true |
-| showShadowText | 是否显示阴影文字 | Boolean | true |
-| lines | 初始化水平标尺上的参考线 | object<Array> | {h:[],v:[]} |
-| snapsObj | 吸附刻度集合 | object<Array> | {h:[],v:[]} |
-| snapThreshold | 吸附距离 | Number | 5 |
-| shadow | 阴影配置 | object<Number> | {x: 0,y: 0, width: 0, height: 0} |
-| gridRatio | 刻度分散比例 | Number | 1 |
-| selfHandle | 自己处理监听移动和缩放 | Boolean | false |
-| panzoomOption | panzoom相关的扩展参数 | object | - |
-| palette | 标尺的样式配置参数 | Object | 如下表 |
+| width | 容器宽度 | `number` | `1400` |
+| height | 容器高度 | `number` | `800` |
+| canvasWidth | 画布宽度 | `number` | `700` |
+| canvasHeight | 画布高度 | `number` | `700` |
+| thick | 标尺厚度 | `number` | `16` |
+| scale | 缩放值（受控属性） | `number` | `1` |
+| showRuler | 是否显示标尺 | `boolean` | `true` |
+| isShowReferLine | 是否显示参考线 | `boolean` | `true` |
+| lines | 初始化参考线 | `{ h: number[]; v: number[] }` | `{ h: [], v: [] }` |
+| palette | 标尺样式配置 | `PaletteType` | `{}` |
+| shadow | 阴影高亮区域 | `{ x, y, width, height }` | `{ x:0, y:0, width:0, height:0 }` |
+| zoomMode | 缩放原点模式 | `'pointer' \| 'viewport-center' \| 'content-center'` | `'pointer'` |
+| zoomStep | 缩放步长 | `number` | `0.25` |
+| minZoom | 最小缩放 | `number` | `0.1` |
+| maxZoom | 最大缩放 | `number` | `10` |
+| enableAnimation | 是否启用动画 | `boolean` | `false` |
+| animationMode | 动画模式 | `'direct' \| 'ease-out' \| 'damped' \| 'exponential'` | `'ease-out'` |
+| autoCenter | 初始化自动居中 | `boolean` | `true` |
+| initialOffset | 初始偏移（autoCenter=false 时生效） | `{ x: number; y: number }` | `{ x:0, y:0 }` |
+| snapThreshold | 吸附阈值 | `number` | `5` |
+| lockLine | 是否锁定参考线 | `boolean` | `false` |
+| selfHandle | 自行处理输入事件 | `boolean` | `false` |
+| plugins | 插件列表 | `SketchRulerPlugin[]` | `[]` |
+| showMinorTicks | 是否显示次刻度 | `boolean` | `false` |
+| eyeIcon | 左上角睁眼图标 Base64 | `string` | — |
+| closeEyeIcon | 左上角闭眼图标 Base64 | `string` | — |
+| deleteLabel | 删除参考线提示文字 | `string` | `'放开删除'` |
+| children | 画布内容与工具栏插槽 | `React.ReactNode` | — |
 
-| 属性名称        | 描述             | 默认值                         |
-| --------------- | ---------------- | ------------------------------ |
-| bgColor         | 画布背景         | #f6f7f9                        |
-| longfgColor     | 刻度背景         | #BABBBC                        |
-| fontColor       | 刻度字体颜色     | #7D8694                        |
-| fontShadowColor | 刻度阴影字体颜色 | #106ebe                        |
-| shadowColor     | 激活阴影背景     | #E8E8E8                        |
-| lineColor       | 对准线颜色       | #51d6a9                        |
-| lineType        | 对准线类型       | solid (solid \dashed \ dotted) |
-| lockLineColor   | 锁定对准线颜色   | #d4d7dc                        |
-| hoverColor      | 标签颜色字体     | #fff                           |
-| hoverBg         | 标签颜色背景     | #000                           |
-| borderColor     | 尺子外边框颜色   | #eeeeef                        |
+### Callbacks
 
-> 更多pazoom插件的配置的panzoomOption参数，可以参考[pazoom document](https://github.com/timmywil/panzoom)
-
-### Event
-
-| 事件名称 | 描述 | 回调参数 |
+| 回调 | 描述 | 参数 |
 | --- | --- | --- |
-| onHandleCornerClick | 左上角点击事件 |  |
-| updateScale | 更新scale事件 |  |
-| handleLine | 更新标线事件 |  |
-| onZoomChange | 画布移动,缩放事件 | {dimsOut:{elem: {}, parent: {}},originalEvent:{},scale,x,y} |
+| onUpdateScale | 缩放值变化 | `(scale: number) => void` |
+| onZoomChange | 缩放/平移变化 | `({ scale, x, y }) => void` |
+| onUpdateLines | 参考线变化 | `({ h: number[], v: number[] }) => void` |
+| onUpdateLockLine | 参考线锁定状态变化 | `(lock: boolean) => void` |
+| onHandleCornerClick | 左上角按钮点击 | `(showReferLine: boolean) => void` |
 
-### 使用说明
+### Ref
 
-1. 同时按Ctrl+鼠标滚轮缩放, 根据鼠标位置发生页面缩放
-2. 同时按空格+鼠标左键, 拖动画布
-3. 有些需要自己定义监听移动和缩放，不想按空格移动, 或者不想Ctrl+weel 移动, 那么可以设置selfHandle为true，然后通过ref获取到组件实例，然后通过实例调用组件的方法, 自定义监听按键
-4. 具体操作参见我插件里面的监听移动和缩放方法
+通过 `ref` 可以调用以下方法：
 
-```js
-const panzoomInstance = sketchruleRef.panzoomInstance
+| 方法 | 描述 |
+| --- | --- |
+| `engine` | TransformEngine 实例 |
+| `setTransform({ x?, y?, scale? })` | 设置变换状态 |
+| `zoomIn()` | 放大 |
+| `zoomOut()` | 缩小 |
+| `reset()` | 重置到初始状态 |
+| `zoomToPreset(scale)` | 缩放到预设比例 |
+| `setZoomMode(mode)` | 设置缩放模式 |
 
-document.addEventListener('wheel', function (e) {
-  if (e.ctrlKey || e.metaKey) {
-    panzoomInstance.zoomWithWheel(e)
-  }
-})
+### Palette
 
-// 让按下空格键才能移动画布
-document.addEventListener('keydown', function (e) {
-  if (e.key === ' ') {
-    panzoomInstance.bind()
-    e.preventDefault()
-  }
-})
+| 属性 | 描述 | 默认值 |
+| --- | --- | --- |
+| bgColor | 画布背景 | `#f6f7f9` |
+| tickColor | 刻度颜色 | `#BABBBC` |
+| labelColor | 刻度标签颜色 | `#7D8694` |
+| guideLineColor | 参考线颜色 | `#51d6a9` |
+| guideLineLockedColor | 锁定参考线颜色 | `#d4d7dc` |
+| hoverBg | 标签背景色 | `#000` |
+| hoverColor | 标签文字色 | `#fff` |
+| borderColor | 尺子边框颜色 | `#eeeeef` |
+| shadowColor | 阴影背景色 | `#e9f7fe` |
+| fontShadowColor | 阴影字体颜色 | `#106ebe` |
+| guideLineStyle | 参考线样式 | `'dashed'` |
+| guideLineWidth | 参考线宽度 | `1` |
+| labelEnabled | 是否显示标签 | `true` |
 
-document.addEventListener('keyup', function (e) {
-  if (e.key === ' ') {
-    panzoomInstance.destroy()
-  }
-})
+## Minimap API
+
+| 属性 | 描述 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| contentWidth | 内容宽度 | `number` | — |
+| contentHeight | 内容高度 | `number` | — |
+| viewportX | 视口 X 偏移 | `number` | — |
+| viewportY | 视口 Y 偏移 | `number` | — |
+| viewportWidth | 视口宽度 | `number` | — |
+| viewportHeight | 视口高度 | `number` | — |
+| scale | 缩放比例 | `number` | — |
+| width | 缩略图宽度 | `number` | `200` |
+| height | 缩略图高度 | `number` | `150` |
+
+| 回调 | 描述 | 参数 |
+| --- | --- | --- |
+| onNavigate | 导航到指定位置 | `(x: number, y: number) => void` |
+| onDragStart | 开始拖拽 | `() => void` |
+| onDragEnd | 结束拖拽 | `() => void` |
+
+## 2.x → 3.x 迁移指南
+
+v3.x 是架构重构版本，与 [vue3-sketch-ruler](https://github.com/kakajun/vue3-sketch-ruler) v3.x 对齐，内置 TransformEngine 替代了外部 `simple-panzoom` 依赖，并引入了 Minimap、插件系统、动画系统等全新能力。
+
+### 主要 Breaking Changes
+
+| 变更项 | 2.x 写法 | 3.x 写法 | 说明 |
+| --- | --- | --- | --- |
+| **组件名** | `<SketchRule>` | `<SketchRule>`（保持不变） | — |
+| **导出方式** | `import SketchRule from 'react-sketch-ruler'` | `import { SketchRule } from 'react-sketch-ruler'` | 改为命名导出，仍保留默认导出兼容 |
+| **工具栏插槽** | 通过 `ref` 调用 | `slot="toolbar"` 子元素 | 在 `children` 中传入 `<div slot="toolbar">...</div>` |
+| **缩放事件** | `onZoomChange` / `updateScale` | `onUpdateScale` / `onZoomChange` | `onUpdateScale` 仅通知 scale；`onZoomChange` 返回 `{ scale, x, y }` |
+| **参考线事件** | `handleLine` | `onUpdateLines` | 统一回调命名风格 |
+| **偏移控制** | `panzoomOption` | `autoCenter`、`initialOffset` | 移除 `panzoomOption`，改为内置引擎直接配置 |
+| **缩放控制** | `panzoomOption` | `zoomMode`、`zoomStep`、`minZoom`、`maxZoom` | 内置引擎直接配置 |
+| **动画系统** | 无 | `enableAnimation`、`animationMode` | 新增，支持 `ease-out`、`damped`、`exponential`、`direct` |
+| **阴影文字** | `showShadowText` | 移除 | 3.x 已移除该属性 |
+| **palette 属性** | `lineType`、`lineColor`、`longfgColor`、`fontColor` | `guideLineStyle`、`guideLineColor`、`tickColor`、`labelColor` | 命名规范化 |
+| **Ref 暴露** | `panzoomInstance` | `engine`（TransformEngine） | 直接暴露内置引擎实例 |
+| **Ref 方法** | `zoomIn()`、`zoomOut()`、`reset()` | 同上，并新增 `setTransform()`、`zoomToPreset()`、`setZoomMode()` | 方法更丰富 |
+| **外部依赖** | `simple-panzoom` | 零外部 panzoom 依赖 | 需从项目中移除 `simple-panzoom` |
+
+### 快速迁移示例
+
+**2.x 代码：**
+
+```tsx
+import SketchRule from 'react-sketch-ruler'
+
+<SketchRule
+  ref={sketchruleRef}
+  scale={state.scale}
+  panzoomOption={panzoomOption}
+  palette={{ lineType: 'dashed', lineColor: '#51d6a9' }}
+  handleLine={handleLinesChange}
+>
+  <div>...</div>
+</SketchRule>
 ```
 
-### 插槽提供方法
+**3.x 代码：**
 
-| 事件名称    | 描述              | 回调参数 |
-| ----------- | ----------------- | -------- |
-| reset       | 画布重置位置      |          |
-| zoomIn      | 画布放大          |          |
-| zoomOut     | 画布缩小          |          |
-| initPanzoom | 初始化panzoom实例 |          |
+```tsx
+import { SketchRule } from 'react-sketch-ruler'
 
-### 插槽ref
+<SketchRule
+  ref={sketchRef}
+  scale={state.scale}
+  zoomMode="pointer"
+  enableAnimation={true}
+  animationMode="ease-out"
+  palette={{ guideLineStyle: 'dashed', guideLineColor: '#51d6a9' }}
+  onUpdateLines={handleLinesChange}
+  onZoomChange={handleZoomChange}
+>
+  <div>...</div>
+  <div slot="toolbar">
+    <button onClick={() => sketchRef.current?.reset()}>还原</button>
+    <button onClick={() => sketchRef.current?.zoomIn()}>放大</button>
+    <button onClick={() => sketchRef.current?.zoomOut()}>缩小</button>
+    <button onClick={() => sketchRef.current?.zoomToPreset(1)}>100%</button>
+  </div>
+</SketchRule>
+```
 
-panzoomInstance panzoom实例
+### 新增能力速览
 
-### QQ 技术交流群：
+- **Minimap 缩略图**：独立组件，支持拖拽视口与点击跳转
+- **插件系统**：通过 `plugins` 属性注入生命周期钩子
+- **吸附引擎**：`snapThreshold` 配置参考线吸附阈值
+- **动画引擎**：`enableAnimation` + `animationMode` 实现平滑缩放/平移
+- **多实例支持**：每个 `SketchRule` 实例独立管理自己的 TransformEngine
 
-欢迎大家一起参与插件建设
+---
+
+## 开发
+
+```bash
+# 安装依赖
+pnpm install
+
+# 开发模式（先构建组件库，再启动文档站点）
+pnpm dev
+
+# 构建组件库
+pnpm build
+
+# 构建文档站点
+pnpm build:demo
+
+# 运行测试
+pnpm test
+
+# 格式化与检查
+pnpm fmt
+pnpm lint:check
+```
+
+## 🌈 应用案例
+
+> 如果你正在使用 `react-sketch-ruler`，欢迎提交 PR 添加你的项目！
+
+### QQ 技术交流群
 
 <a target="_blank" href="https://qm.qq.com/cgi-bin/qm/qr?k=oqnBX-qn7gkWsdfYQdvNCzYbkeNknuOc&jump_from=webapi&authKey=4YXd2jvmWYU0cN8zUky5DoCD6kz+fjUyWv782GLUjDEIHctXYviSXD/pbqxm/ZDD"><img border="0" src="https://github.com/kakajun/react-sketch-ruler/blob/main/packages/docs/src/assets/group.png" alt="react-sketch-ruler" title="点击这里加入QQ群640166628"></a>
 
@@ -206,8 +407,9 @@ panzoomInstance panzoom实例
 
 ## 最后
 
-这是个开源业余做的功能，欢迎加强该插件的小伙伴加入, 如果插件`react-sketch-ruler`对您有帮助，请给个star，您的鼓励是我最大的动力。
+这是个开源业余做的功能，欢迎加强该插件的小伙伴加入。如果 `react-sketch-ruler` 对您有帮助，请给个 star，您的鼓励是我最大的动力。
 
 ## 引用
 
-vue3标尺组件 [vue3-sketch-ruler](https://github.com/kakajun/vue3-sketch-ruler)
+- Vue3 版本：[vue3-sketch-ruler](https://github.com/kakajun/vue3-sketch-ruler)
+- Vue2 版本：[vue-sketch-ruler](https://github.com/chuxiaoguo/vue-sketch-ruler.git)

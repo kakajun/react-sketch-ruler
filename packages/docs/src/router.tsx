@@ -44,31 +44,33 @@ export const menuRoutes = [
     element: <InputTest />,
     meta: { title: 'inputTest' }
   },
+    {
+    path: '/esDragle',
+    element: <EsDragle />,
+    meta: { title: 'esDragle' }
+  },
   {
     path: '/bigscreen',
     element: <Bigscreen />,
     meta: { title: 'bigscreen' }
+  },
+   {
+    path: '/8k',
+    element: <EightK />,
+    meta: { title: '8k' }
   },
   {
     path: '/sketch-ruler',
     element: <EightKSketchRuler />,
     meta: { title: 'sketch-ruler' }
   },
-  {
-    path: '/8k',
-    element: <EightK />,
-    meta: { title: '8k' }
-  },
+
   {
     path: '/multi-instance',
     element: <MultiInstance />,
     meta: { title: 'multi-instance' }
   },
-  {
-    path: '/esDragle',
-    element: <EsDragle />,
-    meta: { title: 'esDragle' }
-  }
+
 ]
 
 export const router: ReturnType<typeof createHashRouter> = createHashRouter([
