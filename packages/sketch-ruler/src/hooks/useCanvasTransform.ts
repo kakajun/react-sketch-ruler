@@ -56,22 +56,35 @@ export function useCanvasTransform(options: CanvasTransformOptions = {}): UseCan
   let startOffset = { x: initialOffset.x, y: initialOffset.y }
 
   if (autoCenter && canvasSize && viewportSize) {
-    const fit = fitRect(
-      { x: 0, y: 0, width: canvasSize.width, height: canvasSize.height },
-      { x: 0, y: 0, width: viewportSize.width, height: viewportSize.height },
-      'contain',
-      paddingRatio
-    )
-    startScale = fit.scale
-    startOffset = { x: fit.x, y: fit.y }
+    const cw = Number(canvasSize.width)
+    const ch = Number(canvasSize.height)
+    const vw = Number(viewportSize.width)
+    const vh = Number(viewportSize.height)
+
+    if (cw > 0 && ch > 0 && vw > 0 && vh > 0) {
+      const fit = fitRect(
+        { x: 0, y: 0, width: cw, height: ch },
+        { x: 0, y: 0, width: vw, height: vh },
+        'contain',
+        paddingRatio
+      )
+      startScale = Number.isFinite(fit.scale) ? fit.scale : initialScale
+      startOffset = {
+        x: Number.isFinite(fit.x) ? fit.x : initialOffset.x,
+        y: Number.isFinite(fit.y) ? fit.y : initialOffset.y
+      }
+    }
   }
 
   const [scale, setScale] = useState(startScale)
   const [offset, setOffset] = useState({ x: startOffset.x, y: startOffset.y })
-  const [engine, setEngine] = useState<TransformEngine | null>(null)
+  const engineRef = useRef<TransformEngine | null>(null)
+  const rafRef = useRef<number | null>(null)
+  const pendingStateRef = useRef<TransformState | null>(null)
 
-  useEffect(() => {
-    const eng = new TransformEngine(
+  // 渲染阶段同步创建 engine，确保 ref 和回调在首次渲染就可使用
+  if (!engineRef.current) {
+    engineRef.current = new TransformEngine(
       { x: startOffset.x, y: startOffset.y, scale: startScale },
       {
         minZoom,
@@ -83,83 +96,111 @@ export function useCanvasTransform(options: CanvasTransformOptions = {}): UseCan
         timeConstant
       }
     )
-    setEngine(eng)
-    const unsubscribe = eng.onUpdate((state) => {
-      setScale(state.scale)
-      setOffset({ x: state.x, y: state.y })
+  }
+
+  // 用局部常量捕获 engine 实例，避免 StrictMode cleanup 把 ref 清为 null 后闭包读到 null
+  const engineInstance = engineRef.current
+
+  useEffect(() => {
+    const unsubscribe = engineInstance.onUpdate((state) => {
+      pendingStateRef.current = state
+      if (rafRef.current === null) {
+        rafRef.current = requestAnimationFrame(() => {
+          rafRef.current = null
+          const s = pendingStateRef.current
+          if (s) {
+            setScale(s.scale)
+            setOffset({ x: s.x, y: s.y })
+          }
+        })
+      }
     })
     return () => {
       unsubscribe()
-      eng.destroy()
-      setEngine(null)
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current)
+      }
+      engineInstance.destroy()
+      engineRef.current = null
     }
-  }, [minZoom, maxZoom, enableAnimation, animationMode])
+  }, [engineInstance, minZoom, maxZoom, enableAnimation, animationMode, dampingRatio, naturalFrequency, timeConstant])
+
+  // 当 viewportSize / canvasSize 变化时重新 autoCenter
+  useEffect(() => {
+    if (!autoCenter || !canvasSize || !viewportSize) return
+    const cw = Number(canvasSize.width)
+    const ch = Number(canvasSize.height)
+    const vw = Number(viewportSize.width)
+    const vh = Number(viewportSize.height)
+    if (cw > 0 && ch > 0 && vw > 0 && vh > 0) {
+      const fit = fitRect(
+        { x: 0, y: 0, width: cw, height: ch },
+        { x: 0, y: 0, width: vw, height: vh },
+        'contain',
+        paddingRatio
+      )
+      engineInstance.setTransform({ scale: fit.scale, x: fit.x, y: fit.y })
+    }
+  }, [
+    autoCenter,
+    engineInstance,
+    canvasSize?.width,
+    canvasSize?.height,
+    viewportSize?.width,
+    viewportSize?.height,
+    paddingRatio
+  ])
 
   const setTransform = useCallback(
     (t: Partial<TransformState>) => {
-      engine?.setTransform(t)
+      engineInstance.setTransform(t)
     },
-    [engine]
+    [engineInstance]
   )
 
   const panBy = useCallback(
     (dx: number, dy: number) => {
-      engine?.panBy(dx, dy)
+      engineInstance.panBy(dx, dy)
     },
-    [engine]
+    [engineInstance]
   )
 
   const zoomBy = useCallback(
     (dScale: number, originX: number, originY: number) => {
-      engine?.zoomBy(dScale, originX, originY)
+      engineInstance.zoomBy(dScale, originX, originY)
     },
-    [engine]
+    [engineInstance]
   )
 
   const zoomTo = useCallback(
     (targetScale: number, originX: number, originY: number) => {
-      engine?.zoomTo(targetScale, originX, originY)
+      engineInstance.zoomTo(targetScale, originX, originY)
     },
-    [engine]
+    [engineInstance]
   )
 
   const toWorldPoint = useCallback(
     (screenX: number, screenY: number) => {
-      return engine?.toWorldPoint(screenX, screenY) ?? { x: screenX, y: screenY }
+      return engineInstance.toWorldPoint(screenX, screenY) ?? { x: screenX, y: screenY }
     },
-    [engine]
+    [engineInstance]
   )
 
   const toScreenPoint = useCallback(
     (worldX: number, worldY: number) => {
-      return engine?.toScreenPoint(worldX, worldY) ?? { x: worldX, y: worldY }
+      return engineInstance.toScreenPoint(worldX, worldY) ?? { x: worldX, y: worldY }
     },
-    [engine]
+    [engineInstance]
   )
 
   const reset = useCallback(() => {
-    engine?.setTransform({ scale: startScale, x: startOffset.x, y: startOffset.y })
-  }, [engine, startScale, startOffset])
-
-  if (!engine) {
-    return {
-      scale,
-      offset,
-      engine: null as any,
-      setTransform: () => {},
-      panBy: () => {},
-      zoomBy: () => {},
-      zoomTo: () => {},
-      toWorldPoint: (x: number, y: number) => ({ x, y }),
-      toScreenPoint: (x: number, y: number) => ({ x, y }),
-      reset: () => {}
-    }
-  }
+    engineInstance.setTransform({ scale: startScale, x: startOffset.x, y: startOffset.y })
+  }, [engineInstance, startScale, startOffset])
 
   return {
     scale,
     offset,
-    engine,
+    engine: engineInstance,
     setTransform,
     panBy,
     zoomBy,

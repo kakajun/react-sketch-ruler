@@ -105,6 +105,15 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     const rectWidth = width
     const rectHeight = height
 
+    const canvasSize = useMemo(
+      () => ({ width: canvasWidth, height: canvasHeight }),
+      [canvasWidth, canvasHeight]
+    )
+    const viewportSize = useMemo(
+      () => ({ width: rectWidth, height: rectHeight }),
+      [rectWidth, rectHeight]
+    )
+
     const { engine, scale, offset, setTransform, zoomBy, zoomTo, reset } = useCanvasTransform({
       initialScale: propScale,
       initialOffset,
@@ -113,17 +122,21 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       enableAnimation,
       animationMode,
       autoCenter,
-      canvasSize: { width: canvasWidth, height: canvasHeight },
-      viewportSize: { width: rectWidth, height: rectHeight },
+      canvasSize,
+      viewportSize,
       paddingRatio: 0.2
     })
 
-    // 外部 prop 变化 → 同步到引擎
+    // 外部 prop 变化 → 同步到引擎（跳过首次渲染，避免覆盖 autoCenter 初始化）
+    const prevPropScaleRef = useRef(propScale)
     useEffect(() => {
-      if (Math.abs(propScale - scale) > 1e-10) {
-        setTransform({ scale: propScale })
+      if (Math.abs(propScale - prevPropScaleRef.current) > 1e-10) {
+        prevPropScaleRef.current = propScale
+        if (Math.abs(propScale - scale) > 1e-10) {
+          setTransform({ scale: propScale })
+        }
       }
-    }, [propScale])
+    }, [propScale, scale, setTransform])
 
     // 使用 InputManager 处理输入事件
     const { inputManager } = useInputManager(engine, canvasEditRef, {
@@ -226,19 +239,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       syncGuideLines(lines)
     }, [lines])
 
-    // 画布/容器尺寸变化时重新居中
-    useEffect(() => {
-      if (!autoCenter) return
-      if (width > 0 && height > 0 && canvasWidth > 0 && canvasHeight > 0) {
-        const fit = fitRect(
-          { x: 0, y: 0, width: canvasWidth, height: canvasHeight },
-          { x: 0, y: 0, width, height },
-          'contain',
-          0.2
-        )
-        setTransform({ scale: fit.scale, x: fit.x, y: fit.y })
-      }
-    }, [canvasWidth, canvasHeight, width, height, autoCenter])
+    // autoCenter 已在 useCanvasTransform 内部处理，此处不再重复
 
     useEffect(() => {
       setShowReferLine(isShowReferLine)

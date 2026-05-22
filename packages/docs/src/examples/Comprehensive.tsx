@@ -148,6 +148,7 @@ const Comprehensive: React.FC = () => {
   const zoomInMethod = () => sketchRef.current?.zoomIn()
 
   const handleZoomChange = (detail: { scale: number; x: number; y: number }) => {
+    setState({ scale: detail.scale })
     setViewportOffset({ x: detail.x, y: detail.y })
   }
 
