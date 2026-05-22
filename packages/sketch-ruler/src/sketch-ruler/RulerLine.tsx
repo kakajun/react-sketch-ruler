@@ -81,7 +81,9 @@ const RulerLineComponent = ({
 
         setDraggingPos(newPos)
         shouldDelete = newPos < 0 || newPos > limit
-        onUpdate?.(line.id, Math.round(newPos))
+        if (!shouldDelete) {
+          onUpdate?.(line.id, Math.round(newPos))
+        }
       }
 
       const onUp = () => {

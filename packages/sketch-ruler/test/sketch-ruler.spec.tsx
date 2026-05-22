@@ -1,7 +1,7 @@
 import React from 'react'
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { describe, test, expect, vi } from 'vitest'
-import SketchRule from '../src/index'
+import { SketchRule } from '../src/index'
 
 describe('SketchRule integration', () => {
   test('emits onUpdateScale on zoomIn', async () => {
@@ -27,9 +27,12 @@ describe('SketchRule integration', () => {
     })
 
     expect(ref.current?.zoomIn).toBeTypeOf('function')
-    ref.current!.zoomIn()
-    await new Promise((r) => setTimeout(r, 50))
-    expect(onUpdateScale).toHaveBeenCalled()
+    act(() => {
+      ref.current!.zoomIn()
+    })
+    await waitFor(() => {
+      expect(onUpdateScale).toHaveBeenCalled()
+    })
   })
 
   test('corner click emits onHandleCornerClick and toggles refer line', async () => {
@@ -147,5 +150,14 @@ describe('SketchRule integration', () => {
     // 验证两个实例操作的 DOM 元素不同
     expect(screen.getByTestId('page1')).toBeTruthy()
     expect(screen.getByTestId('page2')).toBeTruthy()
+
+    // 对第二个实例执行缩放，验证第一个实例没有收到 onUpdateScale 事件
+    const emitted1Before = onUpdateScale1.mock.calls.length
+    act(() => {
+      engine2.setTransform({ scale: 2 })
+    })
+    await new Promise((r) => setTimeout(r, 50))
+    const emitted1After = onUpdateScale1.mock.calls.length
+    expect(emitted1After).toBe(emitted1Before)
   })
 })

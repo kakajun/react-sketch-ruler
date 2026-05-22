@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   TransformEngine,
   fitRect,
@@ -79,8 +79,6 @@ export function useCanvasTransform(options: CanvasTransformOptions = {}): UseCan
   const [scale, setScale] = useState(startScale)
   const [offset, setOffset] = useState({ x: startOffset.x, y: startOffset.y })
   const [engine, setEngine] = useState<TransformEngine | null>(null)
-  const rafRef = useRef<number | null>(null)
-  const pendingStateRef = useRef<TransformState | null>(null)
 
   useEffect(() => {
     const eng = new TransformEngine(
@@ -97,24 +95,11 @@ export function useCanvasTransform(options: CanvasTransformOptions = {}): UseCan
     )
     setEngine(eng)
     const unsubscribe = eng.onUpdate((state) => {
-      pendingStateRef.current = state
-      if (rafRef.current === null) {
-        rafRef.current = requestAnimationFrame(() => {
-          rafRef.current = null
-          const s = pendingStateRef.current
-          if (s) {
-            setScale(s.scale)
-            setOffset({ x: s.x, y: s.y })
-          }
-        })
-      }
+      setScale(state.scale)
+      setOffset({ x: state.x, y: state.y })
     })
     return () => {
       unsubscribe()
-      if (rafRef.current !== null) {
-        cancelAnimationFrame(rafRef.current)
-        rafRef.current = null
-      }
       eng.destroy()
       setEngine(null)
     }

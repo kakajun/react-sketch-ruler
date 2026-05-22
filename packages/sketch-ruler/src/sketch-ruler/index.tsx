@@ -28,6 +28,10 @@ import type { SketchRulerProps, PaletteType, SketchRulerMethods, ZoomMode } from
 
 const ZOOM_PRESETS = [0.1, 0.25, 0.33, 0.5, 0.66, 1, 1.5, 2, 3, 4, 6, 8, 16]
 
+const DEFAULT_LINES: { h: number[]; v: number[] } = { h: [], v: [] }
+const DEFAULT_SHADOW = { x: 0, y: 0, width: 0, height: 0 }
+const DEFAULT_INITIAL_OFFSET = { x: 0, y: 0 }
+
 const usePaletteConfig = (palette: PaletteType | undefined) => {
   return useMemo(() => {
     const mapped: PaletteType = {
@@ -68,7 +72,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       canvasWidth = 700,
       canvasHeight = 700,
       palette,
-      lines = { h: [], v: [] },
+      lines = DEFAULT_LINES,
       isShowReferLine = true,
       snapThreshold = 5,
       lockLine = false,
@@ -81,8 +85,8 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       enableAnimation = false,
       plugins = [],
       autoCenter = true,
-      shadow = { x: 0, y: 0, width: 0, height: 0 },
-      initialOffset = { x: 0, y: 0 },
+      shadow = DEFAULT_SHADOW,
+      initialOffset = DEFAULT_INITIAL_OFFSET,
       showMinorTicks = false,
       eyeIcon,
       closeEyeIcon,
@@ -127,14 +131,17 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       paddingRatio: 0.2
     })
 
-    // 外部 prop 变化 → 同步到引擎（避免覆盖 autoCenter 初始化）
-    const scaleRef = useRef(scale)
-    scaleRef.current = scale
+    // 外部 prop 变化 → 同步到引擎（跳过首次渲染，避免覆盖 autoCenter 初始化）
+    const prevPropScaleRef = useRef(propScale)
     useEffect(() => {
-      if (Math.abs(propScale - scaleRef.current) > 1e-10) {
-        setTransform({ scale: propScale })
+      if (Math.abs(propScale - prevPropScaleRef.current) > 1e-10) {
+        prevPropScaleRef.current = propScale
+        const currentScale = engine?.getState().scale
+        if (currentScale !== undefined && Math.abs(propScale - currentScale) > 1e-10) {
+          setTransform({ scale: propScale })
+        }
       }
-    }, [propScale, setTransform])
+    }, [propScale, engine, setTransform])
 
     // 使用 InputManager 处理输入事件
     const { inputManager } = useInputManager(engine, canvasEditRef, {
@@ -233,9 +240,10 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       setGuideLines(updated)
     }
 
+    const linesKey = JSON.stringify(lines)
     useEffect(() => {
       syncGuideLines(lines)
-    }, [lines])
+    }, [linesKey])
 
     // autoCenter 已在 useCanvasTransform 内部处理，此处不再重复
 

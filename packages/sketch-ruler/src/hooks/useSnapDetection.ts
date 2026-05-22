@@ -18,14 +18,21 @@ export function useSnapDetection(
 ) {
   const { threshold = 5, strength = 0.5 } = options
 
+  const guideLineTargets = useMemo(() => {
+    return guideLines
+      .filter((l) => l.visible !== false)
+      .map((l) => l.position)
+  }, [guideLines])
+
   const engine = useMemo(() => {
     return new SnapEngine({
       threshold,
       scale,
       strength,
+      guideLineTargets,
       lines: guideLines
     })
-  }, [threshold, scale, strength, guideLines])
+  }, [threshold, scale, strength, guideLineTargets, guideLines])
 
   const detect = (screenPos: number, direction: 'h' | 'v'): SnapResult | null => {
     const offsetVal = direction === 'h' ? offset.y : offset.x
