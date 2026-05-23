@@ -157,6 +157,12 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     }, [zoomMode, inputManager])
 
     useEffect(() => {
+      if (animationMode) {
+        engine?.setAnimationMode(animationMode)
+      }
+    }, [animationMode, engine])
+
+    useEffect(() => {
       const interval = setInterval(() => {
         const cls = inputManager?.getCursorClass() ?? 'default'
         if (cls !== cursorClassRef.current) {

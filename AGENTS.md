@@ -15,16 +15,17 @@
 
 项目采用 **pnpm workspace** 管理的单体仓库（monorepo），包含两个子包：
 
-| 包路径 | 说明 |
-|--------|------|
+| 包路径                  | 说明                                                |
+| ----------------------- | --------------------------------------------------- |
 | `packages/sketch-ruler` | 组件库本体，发布到 npm（包名 `react-sketch-ruler`） |
-| `packages/docs` | 文档与示例站点，部署到 GitHub Pages |
+| `packages/docs`         | 文档与示例站点，部署到 GitHub Pages                 |
 
 ---
 
 ## 技术栈与运行时架构
 
 ### 核心依赖
+
 - **React**：Peer dependency，支持 `>=18 || >=19`
 - **React-DOM**：同上
 - **底层引擎**：`@sketch-ruler/core`（TransformEngine、PluginManager、CanvasManager 等）、`@sketch-ruler/canvas`（InputManager）
@@ -37,12 +38,14 @@
 - **包管理**：pnpm（`pnpm-workspace.yaml` 定义 `packages/*`）
 
 ### 构建产物（`packages/sketch-ruler`）
+
 - `lib/index.js` — ESM 入口
 - `lib/index.umd.cjs` — UMD 入口
 - `lib/index.css` — 组件样式
 - `lib/index.d.ts` — 类型声明
 
 ### 运行时架构要点
+
 - **TransformEngine**：内置变换引擎，负责缩放/平移状态管理，零外部 panzoom 依赖。
 - **InputManager**：来自 `@sketch-ruler/canvas`，封装鼠标/触摸/滚轮事件。
 - **PluginManager**：来自 `@sketch-ruler/core`，支持生命周期钩子（`beforeZoom`、`afterZoom`、`onLineCreate` 等）。
@@ -114,19 +117,19 @@ react-sketch-ruler
 
 所有命令均在仓库根目录执行：
 
-| 命令 | 说明 |
-|------|------|
-| `pnpm install` | 安装依赖 |
-| `pnpm dev` | 先构建组件库，再启动文档站点开发服务器（`0.0.0.0:5274`） |
-| `pnpm build` | 构建组件库（输出到 `packages/sketch-ruler/lib`） |
+| 命令              | 说明                                                     |
+| ----------------- | -------------------------------------------------------- |
+| `pnpm install`    | 安装依赖                                                 |
+| `pnpm dev`        | 先构建组件库，再启动文档站点开发服务器（`0.0.0.0:5274`） |
+| `pnpm build`      | 构建组件库（输出到 `packages/sketch-ruler/lib`）         |
 | `pnpm build:demo` | 构建组件库 + 构建文档站点（输出到 `packages/docs/dist`） |
-| `pnpm test` | 在 `packages/sketch-ruler` 中运行 Vitest |
-| `pnpm fmt` | 运行 `oxfmt` 格式化代码 |
-| `pnpm fmt:check` | 检查格式化是否合规 |
-| `pnpm lint` | 运行 `oxlint --fix` 自动修复问题 |
-| `pnpm lint:check` | 运行 `oxlint` 检查问题 |
-| `pnpm changelog` | 为组件库生成 `CHANGELOG.md`（Angular preset） |
-| `pnpm release` | 交互式发版：构建 → 更新版本号 → `npm publish` |
+| `pnpm test`       | 在 `packages/sketch-ruler` 中运行 Vitest                 |
+| `pnpm fmt`        | 运行 `oxfmt` 格式化代码                                  |
+| `pnpm fmt:check`  | 检查格式化是否合规                                       |
+| `pnpm lint`       | 运行 `oxlint --fix` 自动修复问题                         |
+| `pnpm lint:check` | 运行 `oxlint` 检查问题                                   |
+| `pnpm changelog`  | 为组件库生成 `CHANGELOG.md`（Angular preset）            |
+| `pnpm release`    | 交互式发版：构建 → 更新版本号 → `npm publish`            |
 
 ---
 
@@ -135,6 +138,7 @@ react-sketch-ruler
 项目使用 `oxfmt` 与 `oxlint` 做统一约束，配置不可随意更改。
 
 ### 格式化（`.oxfmtrc.json`）
+
 - 缩进：**2 个空格**，不使用 Tab
 - 分号：**不加**（`semi: false`）
 - 引号：字符串使用 **单引号**；JSX 属性使用双引号
@@ -143,6 +147,7 @@ react-sketch-ruler
 - 对象大括号两侧保留空格（`bracketSpacing: true`）
 
 ### Lint（`.oxlintrc.json`）
+
 - 环境：`browser`、`node`、`es2022`
 - 忽略目录：`node_modules`、`lib`
 - 强制规则（error 级别）：
@@ -153,6 +158,7 @@ react-sketch-ruler
 - `scripts/*.js` 中关闭 `typescript/no-require-imports`（脚本使用 CommonJS）
 
 ### TypeScript
+
 - 所有子包继承 `tsconfig.common.json`：
   - `strict: true`
   - `noImplicitReturns: true`
@@ -162,6 +168,7 @@ react-sketch-ruler
 - `packages/docs/tsconfig.json` 额外配置 `paths: { "@/*": ["src/*"] }`
 
 ### 编码约定
+
 - 注释以中文为主，变量命名可混合中英文。
 - 组件使用 `React.forwardRef` + `useImperativeHandle` 暴露命令式 API（`zoomIn`、`zoomOut`、`reset`、`setTransform`…）。
 - Hooks 文件统一放在 `src/hooks/`，按功能拆分（变换、参考线、输入、吸附等）。
@@ -188,6 +195,7 @@ react-sketch-ruler
 ## 发版与部署流程
 
 ### GitHub Pages 自动化部署
+
 - 触发条件：`push` 或 `pull_request` 到 `main` 分支
 - 工作流（`.github/workflows/gh-pages.yml`）：
   1. 安装 pnpm + Node.js（矩阵 `24.x`）
@@ -197,6 +205,7 @@ react-sketch-ruler
   5. 使用 `peaceiris/actions-gh-pages@v4` 将 `packages/docs/dist` 部署到 GitHub Pages
 
 ### npm 手动发版
+
 - 执行 `pnpm release`
 - 交互流程：
   1. 选择版本升级类型（patch / minor / major / custom）

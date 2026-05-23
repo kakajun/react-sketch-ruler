@@ -60,9 +60,7 @@ describe('useCanvasTransform', () => {
   })
 
   test('zoom clamps to min/max', async () => {
-    const { result } = renderHook(() =>
-      useCanvasTransform({ minZoom: 0.5, maxZoom: 5 })
-    )
+    const { result } = renderHook(() => useCanvasTransform({ minZoom: 0.5, maxZoom: 5 }))
     await waitFor(() => expect(result.current.engine).toBeTruthy())
     act(() => {
       result.current.zoomTo(0.1, 0, 0)

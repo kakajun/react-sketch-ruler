@@ -52,8 +52,8 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "@sketch-ruler/canvas": "^3.0.0",
-    "@sketch-ruler/core": "^3.0.0"
+    "@sketch-ruler/canvas": "^3.0.2",
+    "@sketch-ruler/core": "^3.0.2"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",

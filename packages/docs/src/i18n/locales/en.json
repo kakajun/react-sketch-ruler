@@ -1,6 +1,7 @@
 {
   "route": {
     "basic": "Basic Example",
+    "basic2": "Basic Example2",
     "comprehensive": "comprehensive",
     "comprehensive2": "comprehensive2",
     "customizeButtons": "customizeButtons",

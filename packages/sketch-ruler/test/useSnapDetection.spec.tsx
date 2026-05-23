@@ -16,9 +16,7 @@ describe('useSnapDetection', () => {
       useSnapDetection(
         1,
         { x: 0, y: 0 },
-        [
-          { id: 'h-1', orientation: 'h', position: 50, visible: true, locked: false }
-        ],
+        [{ id: 'h-1', orientation: 'h', position: 50, visible: true, locked: false }],
         { threshold: 10, strength: 0.5 }
       )
     )
@@ -48,9 +46,7 @@ describe('useSnapDetection', () => {
       useSnapDetection(
         1,
         { x: 0, y: 0 },
-        [
-          { id: 'h-1', orientation: 'h', position: 100, visible: true, locked: false }
-        ],
+        [{ id: 'h-1', orientation: 'h', position: 100, visible: true, locked: false }],
         { threshold: 10, strength: 0.5 }
       )
     )
@@ -66,9 +62,7 @@ describe('useSnapDetection', () => {
       useSnapDetection(
         2,
         { x: 0, y: 0 },
-        [
-          { id: 'h-1', orientation: 'h', position: 50, visible: true, locked: false }
-        ],
+        [{ id: 'h-1', orientation: 'h', position: 50, visible: true, locked: false }],
         { threshold: 10, strength: 0.5 }
       )
     )

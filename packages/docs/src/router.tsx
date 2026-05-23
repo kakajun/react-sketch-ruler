@@ -2,6 +2,7 @@ import { createHashRouter, Navigate } from 'react-router-dom'
 import HomeLayout from './views/Home'
 import React from 'react'
 import Basic from './examples/Basic'
+import Basic2 from './examples/Basic2'
 import Comprehensive from './examples/Comprehensive'
 import CustomizeButtons from './examples/CustomizeButtons'
 import Moveble from './examples/Moveble'
@@ -18,6 +19,11 @@ export const menuRoutes = [
     path: '/basic',
     element: <Basic />,
     meta: { title: 'basic' }
+  },
+  {
+    path: '/basic2',
+    element: <Basic2 />,
+    meta: { title: 'basic2' }
   },
   {
     path: '/comprehensive',
@@ -44,7 +50,7 @@ export const menuRoutes = [
     element: <InputTest />,
     meta: { title: 'inputTest' }
   },
-    {
+  {
     path: '/esDragle',
     element: <EsDragle />,
     meta: { title: 'esDragle' }
@@ -54,7 +60,7 @@ export const menuRoutes = [
     element: <Bigscreen />,
     meta: { title: 'bigscreen' }
   },
-   {
+  {
     path: '/8k',
     element: <EightK />,
     meta: { title: '8k' }
@@ -69,8 +75,7 @@ export const menuRoutes = [
     path: '/multi-instance',
     element: <MultiInstance />,
     meta: { title: 'multi-instance' }
-  },
-
+  }
 ]
 
 export const router: ReturnType<typeof createHashRouter> = createHashRouter([

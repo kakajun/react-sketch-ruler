@@ -19,9 +19,7 @@ export function useSnapDetection(
   const { threshold = 5, strength = 0.5 } = options
 
   const guideLineTargets = useMemo(() => {
-    return guideLines
-      .filter((l) => l.visible !== false)
-      .map((l) => l.position)
+    return guideLines.filter((l) => l.visible !== false).map((l) => l.position)
   }, [guideLines])
 
   const engine = useMemo(() => {

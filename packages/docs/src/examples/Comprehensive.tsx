@@ -2,9 +2,8 @@ import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { SketchRule } from 'react-sketch-ruler'
 import { Minimap, definePlugin } from 'react-sketch-ruler'
 import type { SketchRulerMethods } from 'react-sketch-ruler'
-import 'react-sketch-ruler/index.css'
+// import 'react-sketch-ruler/index.css'
 import bgImg from '@/assets/bg.png'
-import { Button, Input, Slider, Switch } from 'antd'
 import './Comprehensive.less'
 import { useTheme } from 'antd-style'
 
@@ -72,6 +71,9 @@ const Comprehensive: React.FC = () => {
   const [zoomMode, setZoomMode] = useState<'pointer' | 'viewport-center' | 'content-center'>(
     'pointer'
   )
+  const [animationMode, setAnimationMode] = useState<
+    'ease-out' | 'damped' | 'exponential' | 'direct'
+  >('ease-out')
   const [viewportOffset, setViewportOffset] = useState({ x: 0, y: 0 })
 
   const [post, setPost] = useState({
@@ -242,6 +244,18 @@ const Comprehensive: React.FC = () => {
         <button className="mr10 font16" onClick={changeShadow}>
           模拟阴影切换
         </button>
+        <select
+          className="mr10 font16"
+          value={animationMode}
+          onChange={(e) =>
+            setAnimationMode(e.target.value as 'ease-out' | 'damped' | 'exponential' | 'direct')
+          }
+        >
+          <option value="ease-out">ease-out</option>
+          <option value="damped">damped</option>
+          <option value="exponential">exponential</option>
+          <option value="direct">direct</option>
+        </select>
         <button className="mr10 font16" onClick={resetMethod}>
           还原
         </button>
@@ -301,7 +315,7 @@ const Comprehensive: React.FC = () => {
           lines={post.lines}
           shadow={post.shadow}
           enableAnimation={true}
-          animationMode="ease-out"
+          animationMode={animationMode}
           zoomMode={zoomMode}
           zoomStep={post.zoomStep}
           minZoom={post.minZoom}
@@ -315,7 +329,7 @@ const Comprehensive: React.FC = () => {
           <div data-type="page" style={canvasStyle}>
             <img className="img-style" src={bgImg} alt="" />
           </div>
-          <div slot="toolbar" className="btns">
+          <div slot="toolbar" className="cbtns">
             <button
               onClick={(e) => {
                 e.stopPropagation()

@@ -229,65 +229,65 @@ import {
 
 ### Callbacks
 
-| 回调 | 描述 | 参数 |
-| --- | --- | --- |
-| onUpdateScale | 缩放值变化 | `(scale: number) => void` |
-| onZoomChange | 缩放/平移变化 | `({ scale, x, y }) => void` |
-| onUpdateLines | 参考线变化 | `({ h: number[], v: number[] }) => void` |
-| onUpdateLockLine | 参考线锁定状态变化 | `(lock: boolean) => void` |
-| onHandleCornerClick | 左上角按钮点击 | `(showReferLine: boolean) => void` |
+| 回调                | 描述               | 参数                                     |
+| ------------------- | ------------------ | ---------------------------------------- |
+| onUpdateScale       | 缩放值变化         | `(scale: number) => void`                |
+| onZoomChange        | 缩放/平移变化      | `({ scale, x, y }) => void`              |
+| onUpdateLines       | 参考线变化         | `({ h: number[], v: number[] }) => void` |
+| onUpdateLockLine    | 参考线锁定状态变化 | `(lock: boolean) => void`                |
+| onHandleCornerClick | 左上角按钮点击     | `(showReferLine: boolean) => void`       |
 
 ### Ref
 
 通过 `ref` 可以调用以下方法：
 
-| 方法 | 描述 |
-| --- | --- |
-| `engine` | TransformEngine 实例 |
-| `setTransform({ x?, y?, scale? })` | 设置变换状态 |
-| `zoomIn()` | 放大 |
-| `zoomOut()` | 缩小 |
-| `reset()` | 重置到初始状态 |
-| `zoomToPreset(scale)` | 缩放到预设比例 |
-| `setZoomMode(mode)` | 设置缩放模式 |
+| 方法                               | 描述                 |
+| ---------------------------------- | -------------------- |
+| `engine`                           | TransformEngine 实例 |
+| `setTransform({ x?, y?, scale? })` | 设置变换状态         |
+| `zoomIn()`                         | 放大                 |
+| `zoomOut()`                        | 缩小                 |
+| `reset()`                          | 重置到初始状态       |
+| `zoomToPreset(scale)`              | 缩放到预设比例       |
+| `setZoomMode(mode)`                | 设置缩放模式         |
 
 ### Palette
 
-| 属性 | 描述 | 默认值 |
-| --- | --- | --- |
-| bgColor | 画布背景 | `#f6f7f9` |
-| tickColor | 刻度颜色 | `#BABBBC` |
-| labelColor | 刻度标签颜色 | `#7D8694` |
-| guideLineColor | 参考线颜色 | `#51d6a9` |
-| guideLineLockedColor | 锁定参考线颜色 | `#d4d7dc` |
-| hoverBg | 标签背景色 | `#000` |
-| hoverColor | 标签文字色 | `#fff` |
-| borderColor | 尺子边框颜色 | `#eeeeef` |
-| shadowColor | 阴影背景色 | `#e9f7fe` |
-| fontShadowColor | 阴影字体颜色 | `#106ebe` |
-| guideLineStyle | 参考线样式 | `'dashed'` |
-| guideLineWidth | 参考线宽度 | `1` |
-| labelEnabled | 是否显示标签 | `true` |
+| 属性                 | 描述           | 默认值     |
+| -------------------- | -------------- | ---------- |
+| bgColor              | 画布背景       | `#f6f7f9`  |
+| tickColor            | 刻度颜色       | `#BABBBC`  |
+| labelColor           | 刻度标签颜色   | `#7D8694`  |
+| guideLineColor       | 参考线颜色     | `#51d6a9`  |
+| guideLineLockedColor | 锁定参考线颜色 | `#d4d7dc`  |
+| hoverBg              | 标签背景色     | `#000`     |
+| hoverColor           | 标签文字色     | `#fff`     |
+| borderColor          | 尺子边框颜色   | `#eeeeef`  |
+| shadowColor          | 阴影背景色     | `#e9f7fe`  |
+| fontShadowColor      | 阴影字体颜色   | `#106ebe`  |
+| guideLineStyle       | 参考线样式     | `'dashed'` |
+| guideLineWidth       | 参考线宽度     | `1`        |
+| labelEnabled         | 是否显示标签   | `true`     |
 
 ## Minimap API
 
-| 属性 | 描述 | 类型 | 默认值 |
-| --- | --- | --- | --- |
-| contentWidth | 内容宽度 | `number` | — |
-| contentHeight | 内容高度 | `number` | — |
-| viewportX | 视口 X 偏移 | `number` | — |
-| viewportY | 视口 Y 偏移 | `number` | — |
-| viewportWidth | 视口宽度 | `number` | — |
-| viewportHeight | 视口高度 | `number` | — |
-| scale | 缩放比例 | `number` | — |
-| width | 缩略图宽度 | `number` | `200` |
-| height | 缩略图高度 | `number` | `150` |
+| 属性           | 描述        | 类型     | 默认值 |
+| -------------- | ----------- | -------- | ------ |
+| contentWidth   | 内容宽度    | `number` | —      |
+| contentHeight  | 内容高度    | `number` | —      |
+| viewportX      | 视口 X 偏移 | `number` | —      |
+| viewportY      | 视口 Y 偏移 | `number` | —      |
+| viewportWidth  | 视口宽度    | `number` | —      |
+| viewportHeight | 视口高度    | `number` | —      |
+| scale          | 缩放比例    | `number` | —      |
+| width          | 缩略图宽度  | `number` | `200`  |
+| height         | 缩略图高度  | `number` | `150`  |
 
-| 回调 | 描述 | 参数 |
-| --- | --- | --- |
-| onNavigate | 导航到指定位置 | `(x: number, y: number) => void` |
-| onDragStart | 开始拖拽 | `() => void` |
-| onDragEnd | 结束拖拽 | `() => void` |
+| 回调        | 描述           | 参数                             |
+| ----------- | -------------- | -------------------------------- |
+| onNavigate  | 导航到指定位置 | `(x: number, y: number) => void` |
+| onDragStart | 开始拖拽       | `() => void`                     |
+| onDragEnd   | 结束拖拽       | `() => void`                     |
 
 ## 2.x → 3.x 迁移指南
 
@@ -317,8 +317,7 @@ v3.x 是架构重构版本，与 [vue3-sketch-ruler](https://github.com/kakajun/
 
 ```tsx
 import SketchRule from 'react-sketch-ruler'
-
-<SketchRule
+;<SketchRule
   ref={sketchruleRef}
   scale={state.scale}
   panzoomOption={panzoomOption}
@@ -333,8 +332,7 @@ import SketchRule from 'react-sketch-ruler'
 
 ```tsx
 import { SketchRule } from 'react-sketch-ruler'
-
-<SketchRule
+;<SketchRule
   ref={sketchRef}
   scale={state.scale}
   zoomMode="pointer"

@@ -103,7 +103,15 @@ export function useCanvasTransform(options: CanvasTransformOptions = {}): UseCan
       eng.destroy()
       setEngine(null)
     }
-  }, [minZoom, maxZoom, enableAnimation, animationMode, dampingRatio, naturalFrequency, timeConstant])
+  }, [
+    minZoom,
+    maxZoom,
+    enableAnimation,
+    animationMode,
+    dampingRatio,
+    naturalFrequency,
+    timeConstant
+  ])
 
   // 当 viewportSize / canvasSize 变化时重新 autoCenter
   useEffect(() => {

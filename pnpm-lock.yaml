@@ -123,11 +123,11 @@ importers:
   packages/sketch-ruler:
     dependencies:
       '@sketch-ruler/canvas':
-        specifier: ^3.0.0
-        version: 3.0.0
+        specifier: ^3.0.2
+        version: 3.0.2
       '@sketch-ruler/core':
-        specifier: ^3.0.0
-        version: 3.0.0
+        specifier: ^3.0.2
+        version: 3.0.2
       react:
         specifier: '>=18 || >=19'
         version: 19.2.6
@@ -1137,8 +1137,14 @@ packages:
   '@sketch-ruler/canvas@3.0.0':
     resolution: {integrity: sha512-Ok5rLZfZk8io2lnsg/wWfU0R6dUonLZOaIO3TxRRgqfK/rre1mrkRQrTN7r4pp5D1gaL4DKMxqRcRfRT83+5lQ==}
 
+  '@sketch-ruler/canvas@3.0.2':
+    resolution: {integrity: sha512-W40+3fyhERtI8xorHyV4yeAsh22Zv9/ZGUhrCSrvRLvciEV4QbXIu+e6vbGoSKYQJ5n+GHKpodz91MmS5daHeg==}
+
   '@sketch-ruler/core@3.0.0':
     resolution: {integrity: sha512-4q6GiE+Fd/dVPiInuDWGupuRpXReOLM0uyVlgLgUL23GQdNs0nLlsVV/R08JYuWUJTzDnf6yEVazgd35rmVt+A==}
+
+  '@sketch-ruler/core@3.0.2':
+    resolution: {integrity: sha512-DD30rC2CVa8SCGkzVZREVFQqFEwAdIJC8Q7GcbmXXDnW233JngVg4/ZAB1taoxC+fho5E6+eVhAq3Atmhwmmjw==}
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
@@ -3902,7 +3908,13 @@ snapshots:
     dependencies:
       '@sketch-ruler/core': 3.0.0
 
+  '@sketch-ruler/canvas@3.0.2':
+    dependencies:
+      '@sketch-ruler/core': 3.0.2
+
   '@sketch-ruler/core@3.0.0': {}
+
+  '@sketch-ruler/core@3.0.2': {}
 
   '@standard-schema/spec@1.1.0': {}
 
