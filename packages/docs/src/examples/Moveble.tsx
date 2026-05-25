@@ -5,35 +5,72 @@ import MovebleCom from './MovebleCom'
 import './Comprehensive.less'
 import type { SketchRulerMethods } from 'react-sketch-ruler'
 import { useTheme } from 'antd-style'
-import { Button } from 'antd'
 
 const MoveblePage: React.FC = () => {
   const { appearance } = useTheme()
-  const [rectWidth] = useState(1470)
-  const [rectHeight] = useState(800)
-  const [canvasWidth] = useState(1920)
-  const [canvasHeight] = useState(1080)
   const sketchruleRef = useRef<SketchRulerMethods>(null)
+  const [lockLine, setLockLine] = useState(false)
 
   const [state, setState] = useState({
     scale: 1,
-    isBlack: false,
-    lines: { h: [0, 250], v: [0, 500] },
+    isBlack: false
+  })
+
+  const [post, setPost] = useState({
     thick: 20,
-    shadow: { x: 0, y: 0, width: 300, height: 300 },
-    isShowReferLine: true
+    width: 1470,
+    height: 800,
+    canvasWidth: 1242,
+    canvasHeight: 1660,
+    showRuler: true,
+    palette: {
+      bgColor: 'transparent',
+      guideLineColor: '#51d6a9',
+      guideLineStyle: 'dashed'
+    } as any,
+    shadow: {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0
+    },
+    isShowReferLine: true,
+    lines: {
+      h: [0, 250],
+      v: [0, 500]
+    }
   })
 
   useEffect(() => {
-    setState((prev) => ({ ...prev, isBlack: appearance !== 'light' }))
+    const isBlack = appearance !== 'light'
+    setState((prev) => ({ ...prev, isBlack }))
+    setPost((prev) => ({
+      ...prev,
+      palette: isBlack
+        ? {
+            bgColor: 'transparent',
+            hoverBg: '#fff',
+            hoverColor: '#000',
+            tickColor: '#BABBBC',
+            labelColor: '#DEDEDE',
+            shadowColor: '#525252',
+            guideLineColor: '#51d6a9',
+            borderColor: '#B5B5B5'
+          }
+        : {
+            bgColor: 'transparent',
+            guideLineColor: '#51d6a9',
+            guideLineStyle: 'dashed'
+          }
+    }))
   }, [appearance])
 
-  const resetMethod = () => sketchruleRef.current?.reset()
-  const zoomOutMethod = () => sketchruleRef.current?.zoomOut()
-  const zoomInMethod = () => sketchruleRef.current?.zoomIn()
-
   const handleLine = (lines: { h: number[]; v: number[] }) => {
-    setState((prev) => ({ ...prev, lines }))
+    setPost((prev) => ({ ...prev, lines }))
+  }
+
+  const handleZoomChange = (detail: { scale: number; x: number; y: number }) => {
+    setState((prev) => ({ ...prev, scale: detail.scale }))
   }
 
   const handleCornerClick = (e: boolean) => {
@@ -42,73 +79,91 @@ const MoveblePage: React.FC = () => {
 
   const cpuScale = state.scale.toFixed(2)
 
-  const cpuPalette = state.isBlack
-    ? {
-        bgColor: 'transparent',
-        hoverBg: '#fff',
-        hoverColor: '#000',
-        tickColor: '#BABBBC',
-        labelColor: '#DEDEDE',
-        shadowColor: '#525252',
-        guideLineColor: '#51d6a9',
-        borderColor: '#B5B5B5'
-      }
-    : {
-        bgColor: 'transparent',
-        guideLineColor: '#51d6a9'
-      }
+  const rectStyle = {
+    width: `${post.width}px`,
+    height: `${post.height}px`
+  }
 
   const canvasStyle = {
-    width: `${canvasWidth}px`,
-    height: `${canvasHeight}px`
+    width: `${post.canvasWidth}px`,
+    height: `${post.canvasHeight}px`
   }
 
   const updateShadow = (shadow: { x: number; y: number; width: number; height: number }) => {
-    setState((prev) => ({ ...prev, shadow }))
+    setPost((prev) => ({ ...prev, shadow }))
+  }
+
+  const updateSnapsObj = (snapsObj: { h: number[]; v: number[] }) => {
+    // snapsObj 由子组件计算并回传，父级可在此做额外处理
+    console.log('snapsObj', snapsObj)
   }
 
   return (
     <div className="demo">
-      <div className="top">
-        <div style={{ marginRight: '10px' }}> 缩放比例:{cpuScale} </div>
-        <a
-          href="https://github.com/kakajun/react-sketch-ruler"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          git源码
-        </a>
+      <div className="top font16">
+        <div className="mr10">鼠标中键移动画布</div>
+        <div className="scale mr10">缩放比:{cpuScale}</div>
       </div>
-      <div className={`wrapper ${state.isBlack ? 'blackwrapper' : 'whitewrapper'}`}>
+
+      <div
+        className={`wrapper ${state.isBlack ? 'blackwrapper' : 'whitewrapper'}`}
+        style={rectStyle}
+      >
         <SketchRule
-          scale={state.scale}
-          thick={state.thick}
-          width={rectWidth}
-          height={rectHeight}
-          palette={cpuPalette}
-          shadow={state.shadow}
-          canvasWidth={canvasWidth}
-          canvasHeight={canvasHeight}
           ref={sketchruleRef}
-          isShowReferLine={state.isShowReferLine}
+          scale={state.scale}
+          lockLine={lockLine}
+          selfHandle={true}
+          thick={post.thick}
+          width={post.width}
+          height={post.height}
+          canvasWidth={post.canvasWidth}
+          canvasHeight={post.canvasHeight}
+          showRuler={post.showRuler}
+          palette={post.palette}
+          shadow={post.shadow}
+          isShowReferLine={post.isShowReferLine}
+          lines={post.lines}
           onHandleCornerClick={handleCornerClick}
           onUpdateLines={handleLine}
-          lines={state.lines}
+          onZoomChange={handleZoomChange}
         >
-          <div data-type="page" style={canvasStyle}>
-            <MovebleCom updateShadow={updateShadow} zoom={state.scale} />
+          <div className="container" style={canvasStyle}>
+            <MovebleCom
+              scale={state.scale}
+              shadow={post.shadow}
+              onUpdateShadow={updateShadow}
+              onUpdateSnapsObj={updateSnapsObj}
+            />
           </div>
-          <div slot="toolbar" className="btns">
-            <Button size="small" onClick={resetMethod}>
-              还原
-            </Button>
-            <Button size="small" onClick={zoomInMethod}>
-              放大
-            </Button>
-            <Button size="small" onClick={zoomOutMethod}>
-              缩小
-            </Button>
-          </div>
+          {(props: any) => (
+            <div className="btns">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  props.tools.reset()
+                }}
+              >
+                还原
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  props.tools.zoomIn()
+                }}
+              >
+                放大
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  props.tools.zoomOut()
+                }}
+              >
+                缩小
+              </button>
+            </div>
+          )}
         </SketchRule>
       </div>
     </div>

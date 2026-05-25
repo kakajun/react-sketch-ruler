@@ -26,10 +26,14 @@
   "exports": {
     ".": {
       "types": "./lib/index.d.ts",
+      "development": "./src/index.tsx",
       "import": "./lib/index.js",
       "require": "./lib/index.umd.cjs"
     },
-    "./index.css": "./lib/index.css"
+    "./index.css": {
+      "development": "./src/sketch-ruler/index.less",
+      "import": "./lib/index.css"
+    }
   },
   "scripts": {
     "build": "vite build",

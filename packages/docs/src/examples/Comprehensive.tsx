@@ -186,7 +186,6 @@ const Comprehensive: React.FC = () => {
   }
 
   const scaleChange = (value: number) => {
-    setState({ scale: value })
     sketchRef.current?.setTransform({ scale: value })
   }
 
@@ -301,7 +300,6 @@ const Comprehensive: React.FC = () => {
       <div className={`wrapper ${isBlack ? 'blackwrapper' : 'whitewrapper'}`} style={rectStyle}>
         <SketchRule
           ref={sketchRef}
-          scale={state.scale}
           lockLine={lockLine}
           width={post.width}
           height={post.height}

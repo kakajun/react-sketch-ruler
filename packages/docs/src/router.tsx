@@ -11,7 +11,6 @@ import Bigscreen from './examples/bigscreen/Bigscreen'
 import EightK from './examples/EightK'
 import EightKSketchRuler from './examples/EightKSketchRuler'
 import MultiInstance from './examples/MultiInstance'
-import EsDragle from './examples/EsDragle'
 import SelectoDemo from './examples/SelectoDemo'
 
 export const menuRoutes = [
@@ -49,11 +48,6 @@ export const menuRoutes = [
     path: '/inputTest',
     element: <InputTest />,
     meta: { title: 'inputTest' }
-  },
-  {
-    path: '/esDragle',
-    element: <EsDragle />,
-    meta: { title: 'esDragle' }
   },
   {
     path: '/bigscreen',

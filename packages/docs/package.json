@@ -10,11 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "react-sketch-ruler": "workspace:*",
     "@sketch-ruler/canvas": "^3.0.0",
     "@sketch-ruler/core": "^3.0.0",
     "i18next": "^26.2.0",
     "i18next-browser-languagedetector": "^8.2.1",
     "react-es-drager": "^1.0.5",
-    "react-i18next": "^17.0.8"
+    "react-i18next": "^17.0.8",
+    "react-moveable": "^0.56.0",
+    "selecto": "^1.26.3"
   }
 }

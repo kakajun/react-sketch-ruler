@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "dev": "pnpm build && pnpm --filter ./packages/docs dev",
+    "d": "pnpm --filter ./packages/docs dev",
     "build": "pnpm --filter ./packages/sketch-ruler build",
     "build:demo": "pnpm build && pnpm --filter ./packages/docs build",
     "test": "pnpm --filter ./packages/sketch-ruler test",
@@ -42,7 +43,7 @@
     "react-i18next": "^17.0.8",
     "react-moveable": "^0.56.0",
     "react-router-dom": "^7.15.1",
-    "react-sketch-ruler": "workspace:*",
+
     "semver": "^7.8.0",
     "typescript": "^6.0.3",
     "vite": "^8.0.13",

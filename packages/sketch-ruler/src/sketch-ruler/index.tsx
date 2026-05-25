@@ -263,27 +263,30 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
 
     const handleAddLine = (line: Omit<GuideLine, 'id'>): void => {
       const newLine: GuideLine = { ...line, id: generateLineId() }
-      setGuideLines((prev) => [...prev, newLine])
+      const next = [...guideLines, newLine]
+      setGuideLines(next)
       pluginManagerRef.current.onLineCreate({ line: newLine })
-      onUpdateLines?.(getExportedLines())
+      onUpdateLines?.(exportLines(next))
     }
 
     const handleUpdateLine = (id: string, position: number): void => {
       const line = guideLines.find((l) => l.id === id)
       if (!line) return
       const from = line.position
-      setGuideLines((prev) => prev.map((l) => (l.id === id ? { ...l, position } : l)))
+      const next = guideLines.map((l) => (l.id === id ? { ...l, position } : l))
+      setGuideLines(next)
       pluginManagerRef.current.onLineMove({ line: { ...line, position }, from, to: position })
-      onUpdateLines?.(getExportedLines())
+      onUpdateLines?.(exportLines(next))
     }
 
     const handleDeleteLine = (id: string): void => {
       const line = guideLines.find((l) => l.id === id)
-      setGuideLines((prev) => prev.filter((l) => l.id !== id))
+      const next = guideLines.filter((l) => l.id !== id)
+      setGuideLines(next)
       if (line) {
         pluginManagerRef.current.onLineDelete({ line })
       }
-      onUpdateLines?.(getExportedLines())
+      onUpdateLines?.(exportLines(next))
     }
 
     // === 通知外部缩放变化 ===
@@ -398,7 +401,9 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     // 处理children：分离 default 和 toolbar
     const [defaultSlot, toolbarSlot] = React.Children.toArray(children).reduce(
       (acc: [React.ReactNode | null, React.ReactNode | null], child: React.ReactNode) => {
-        if (React.isValidElement(child)) {
+        if (typeof child === 'function') {
+          acc[1] = child
+        } else if (React.isValidElement(child)) {
           const el = child as React.ReactElement<any>
           if (el.props.slot === 'toolbar') {
             acc[1] = el

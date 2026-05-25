@@ -1,19 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
-import Moveable from 'react-moveable' // 假设 Moveable 已经适配了 React
-// 临时定义 ShadowType，避免找不到模块报错
-type ShadowType = {
-  x: number
-  y: number
-  width: number
-  height: number
-}
+import Moveable from 'react-moveable'
 
-interface MovebleComProps {
-  updateShadow: (props: ShadowType) => void
-  zoom?: number
-}
-
-type TargetItem = {
+interface TargetItem {
   id: string
   className: string
   left: number
@@ -21,11 +9,18 @@ type TargetItem = {
   background: string
   width: number
   height: number
-  zIndex?: number // 可选字段
+  zIndex?: number
 }
 
-const MovebleCom = ({ updateShadow, zoom = 1 }: MovebleComProps) => {
-  const [targetId, setTargetId] = useState<string | null>('target0')
+interface MovebleComProps {
+  scale: number
+  shadow: { x: number; y: number; width: number; height: number }
+  onUpdateShadow?: (shadow: { x: number; y: number; width: number; height: number }) => void
+  onUpdateSnapsObj?: (snapsObj: { h: number[]; v: number[] }) => void
+}
+
+const MovebleCom = ({ scale, shadow, onUpdateShadow, onUpdateSnapsObj }: MovebleComProps) => {
+  const [targetId, setTargetId] = useState<string | null>(null)
   const [targetEl, setTargetEl] = useState<HTMLElement | null>(null)
   const [targetList, setTargetList] = useState<TargetItem[]>([
     {
@@ -60,7 +55,8 @@ const MovebleCom = ({ updateShadow, zoom = 1 }: MovebleComProps) => {
     }
   ])
 
-  const moveableRef = useRef(null)
+  const moveableRef = useRef<any>(null)
+  const copyTargetList = useRef<TargetItem[]>([])
 
   const snapDirections = {
     top: true,
@@ -80,21 +76,7 @@ const MovebleCom = ({ updateShadow, zoom = 1 }: MovebleComProps) => {
     middle: true
   }
 
-  const copyTargetList = useRef<TargetItem[]>([])
-
-  const handleClick = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    item: {
-      id: any
-      className?: string
-      left?: number
-      top?: number
-      background?: string
-      width?: number
-      height?: number
-      zIndex?: number | undefined
-    }
-  ) => {
+  const handleClick = (event: React.MouseEvent<HTMLDivElement>, item: TargetItem) => {
     setTargetList((prevList) =>
       prevList.map((o) => ({
         ...o,
@@ -104,7 +86,7 @@ const MovebleCom = ({ updateShadow, zoom = 1 }: MovebleComProps) => {
     setTargetId(item.id)
     setTimeout(() => {
       if (moveableRef.current) {
-        ;(moveableRef.current as any).dragStart(event)
+        moveableRef.current.dragStart(event.nativeEvent)
       }
     }, 0)
   }
@@ -113,55 +95,52 @@ const MovebleCom = ({ updateShadow, zoom = 1 }: MovebleComProps) => {
     const el = targetId ? document.getElementById(targetId) : null
     setTargetEl(el)
     if (el && moveableRef.current) {
-      ;(moveableRef.current as any).updateRect()
+      moveableRef.current.updateRect()
     }
   }, [targetId])
+
+  useEffect(() => {
+    const h = targetList.map((item) => item.top)
+    const v = targetList.map((item) => item.left)
+    onUpdateSnapsObj?.({ h, v })
+  }, [targetList, onUpdateSnapsObj])
 
   const onDragStart = () => {
     copyTargetList.current = JSON.parse(JSON.stringify(targetList)) as TargetItem[]
   }
 
   const onDrag = (params: { target: any; translate: any }) => {
-    // 使用 setTargetList
     const { target, translate } = params
     const { id } = target.dataset
     const arr = copyTargetList.current.find((o) => o.id === id)
     if (!arr) return
     const { left, top, width, height } = arr
     const [x, y] = translate
-    // 获取当前对象并更新其位置
-    const updatedList = targetList.map((o) =>
-      o.id === id ? { ...o, left: left + x, top: top + y } : o
-    )
+    const newLeft = left + x
+    const newTop = top + y
 
-    // 更新状态
-    setTargetList(updatedList)
-    updateShadow({ x: left + x, y: top + y, width, height })
+    setTargetList((prevList) =>
+      prevList.map((o) =>
+        o.id === id ? { ...o, left: newLeft, top: newTop } : o
+      )
+    )
+    onUpdateShadow?.({ x: newLeft, y: newTop, width, height })
   }
 
-  const getStyle = (item: {
-    id?: string
-    className?: string
-    left: any
-    top: any
-    background: any
-    width: any
-    height: any
-    zIndex: any
-  }) => ({
+  const getStyle = (item: TargetItem) => ({
     left: `${item.left}px`,
     top: `${item.top}px`,
     lineHeight: `${item.height}px`,
     width: `${item.width}px`,
     height: `${item.height}px`,
     zIndex: item.zIndex,
-    transform: 'rotate(0deg)', // 覆盖原来的,否则会有偏移
+    transform: 'rotate(0deg)',
     background: item.background
   })
 
   const onDragEnd = () => {
     if (moveableRef.current) {
-      ;(moveableRef.current as any).updateRect()
+      moveableRef.current.updateRect()
     }
   }
 
@@ -188,7 +167,7 @@ const MovebleCom = ({ updateShadow, zoom = 1 }: MovebleComProps) => {
         snapGap
         snapDirections={snapDirections}
         elementSnapDirections={elementSnapDirections}
-        snapThreshold={5 / zoom}
+        snapThreshold={5 / scale}
         target={targetEl || undefined}
         visible={!!targetEl}
         draggable
@@ -199,9 +178,10 @@ const MovebleCom = ({ updateShadow, zoom = 1 }: MovebleComProps) => {
         onDrag={onDrag}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}
-        zoom={zoom}
+        zoom={scale}
         rootContainer={document.querySelector('.canvasedit') as HTMLElement}
         container={document.querySelector('.canvasedit') as HTMLElement}
+        elementGuidelines={['.container', '.element0', '.element1', '.element2']}
       />
     </div>
   )
