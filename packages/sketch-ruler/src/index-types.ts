@@ -121,6 +121,8 @@ export interface LineProps {
   vertical: boolean
   canvasWidth: number
   canvasHeight: number
+  width?: number
+  height?: number
   lockLine?: boolean
   deleteLabel?: string
   onUpdate?: (id: string, position: number) => void

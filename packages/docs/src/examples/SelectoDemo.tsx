@@ -48,8 +48,8 @@ const SelectoDemo: React.FC = () => {
 
   return (
     <div className="moveable app">
-      <div className="container">
-        <div className="logo logos">
+      <div className="container" style={{ transform: 'scale(1)' }}>
+        <div id="logo" className="logo logos">
           <a>
             <img
               src="https://daybrush.com/selecto/images/256x256.png"
@@ -80,6 +80,7 @@ const SelectoDemo: React.FC = () => {
           selectFromInside={false}
           toggleContinueSelect={['shift']}
           ratio={0}
+          keyContainer={window}
           onDragStart={onDragStart}
           onSelectEnd={onSelectEnd}
         />

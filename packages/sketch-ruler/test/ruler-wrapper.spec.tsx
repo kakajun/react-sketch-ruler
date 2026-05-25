@@ -90,7 +90,37 @@ describe('RulerWrapper line boundary deletion', () => {
     fireEvent.mouseUp(document, { clientY: -50 })
 
     expect(onDeleteLine).toHaveBeenCalledWith('h-1')
-    expect(onUpdateLine).not.toHaveBeenCalled()
+    expect(onUpdateLine).toHaveBeenCalled()
+  })
+
+  test('should delete line based on world position even when offset makes screen position positive', () => {
+    const onDeleteLine = vi.fn()
+    const onUpdateLine = vi.fn()
+    const { container } = renderRulerWrapper({
+      lines: [{ id: 'h-1', orientation: 'h', position: 100, visible: true, locked: false }],
+      offset: { x: 100, y: 100 },
+      onDeleteLine,
+      onUpdateLine
+    })
+
+    const lineEl = container.querySelector('.line') as HTMLElement
+    expect(lineEl).toBeTruthy()
+
+    // Drag to world pos 0 (just at boundary, should NOT delete)
+    fireEvent.mouseDown(lineEl, { clientY: 120 })
+    fireEvent.mouseMove(document, { clientY: 20 })
+    fireEvent.mouseUp(document, { clientY: 20 })
+    expect(onDeleteLine).not.toHaveBeenCalled()
+
+    // Drag further to world pos -20 (out of boundary, SHOULD delete)
+    // screenPos = -20 * 1 + 100 = 80 (looks inside container)
+    // but worldPos = -20 < -10, so it should be deleted
+    fireEvent.mouseDown(lineEl, { clientY: 120 })
+    fireEvent.mouseMove(document, { clientY: 0 })
+    fireEvent.mouseUp(document, { clientY: 0 })
+
+    expect(onDeleteLine).toHaveBeenCalledWith('h-1')
+    expect(onUpdateLine).toHaveBeenCalled()
   })
 
   test('should call onDeleteLine when dragging an existing horizontal line out of bottom boundary', () => {

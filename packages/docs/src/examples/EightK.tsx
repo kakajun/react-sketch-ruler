@@ -124,7 +124,7 @@ const EightK: React.FC = () => {
   }
 
   return (
-    <div className="wrapper" ref={wrapperRef}>
+    <div className="eight-k-page wrapper" ref={wrapperRef}>
       <div className="description">
         说明: 该案例展示了大分辨率8K大屏(8800*5097)上使用 @sketch-ruler/core 的 TransformEngine,
         依然能做到上下左右居中正确

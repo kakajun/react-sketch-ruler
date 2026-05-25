@@ -58,11 +58,14 @@
 
   .canvasedit {
     transform-origin: 0 0;
+    will-change: transform;
+    backface-visibility: hidden;
   }
 
   .canvasedit-parent {
     position: absolute;
     overflow: hidden;
+    isolation: isolate;
   }
 
   .corner {

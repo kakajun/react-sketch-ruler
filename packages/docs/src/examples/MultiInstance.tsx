@@ -111,9 +111,7 @@ const MultiInstance: React.FC = () => {
     manager.removeCanvas(id)
   }
 
-  const handleAddCanvas = () => {
-    const name = selectedTemplate
-    if (!name) return
+  const handleAddCanvas = (name: string) => {
     const id = manager.applyTemplate(name)
     if (id) {
       manager.switchCanvas(id)
@@ -149,9 +147,10 @@ const MultiInstance: React.FC = () => {
               className="template-select"
               value={selectedTemplate}
               onChange={(e) => {
-                setSelectedTemplate(e.target.value)
-                if (e.target.value) {
-                  setTimeout(() => handleAddCanvas(), 0)
+                const value = e.target.value
+                setSelectedTemplate(value)
+                if (value) {
+                  handleAddCanvas(value)
                 }
               }}
             >

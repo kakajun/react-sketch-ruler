@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import { flushSync } from 'react-dom'
 import Moveable from 'react-moveable'
 
 interface TargetItem {
@@ -21,7 +22,6 @@ interface MovebleComProps {
 
 const MovebleCom = ({ scale, shadow, onUpdateShadow, onUpdateSnapsObj }: MovebleComProps) => {
   const [targetId, setTargetId] = useState<string | null>(null)
-  const [targetEl, setTargetEl] = useState<HTMLElement | null>(null)
   const [targetList, setTargetList] = useState<TargetItem[]>([
     {
       id: 'target0',
@@ -77,24 +77,22 @@ const MovebleCom = ({ scale, shadow, onUpdateShadow, onUpdateSnapsObj }: Moveble
   }
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>, item: TargetItem) => {
-    setTargetList((prevList) =>
-      prevList.map((o) => ({
-        ...o,
-        zIndex: o.id === item.id ? 2 : 1
-      }))
-    )
-    setTargetId(item.id)
-    setTimeout(() => {
-      if (moveableRef.current) {
-        moveableRef.current.dragStart(event.nativeEvent)
-      }
-    }, 0)
+    flushSync(() => {
+      setTargetList((prevList) =>
+        prevList.map((o) => ({
+          ...o,
+          zIndex: o.id === item.id ? 2 : 1
+        }))
+      )
+      setTargetId(item.id)
+    })
+    if (moveableRef.current) {
+      moveableRef.current.dragStart(event.nativeEvent)
+    }
   }
 
   useEffect(() => {
-    const el = targetId ? document.getElementById(targetId) : null
-    setTargetEl(el)
-    if (el && moveableRef.current) {
+    if (targetId && moveableRef.current) {
       moveableRef.current.updateRect()
     }
   }, [targetId])
@@ -149,7 +147,7 @@ const MovebleCom = ({ scale, shadow, onUpdateShadow, onUpdateSnapsObj }: Moveble
       {targetList.map((item) => (
         <div
           key={item.id}
-          className={`target ${item.className}`}
+          className={`moveble-target ${item.className}`}
           data-id={item.id}
           data-left={item.left}
           data-top={item.top}
@@ -168,8 +166,8 @@ const MovebleCom = ({ scale, shadow, onUpdateShadow, onUpdateSnapsObj }: Moveble
         snapDirections={snapDirections}
         elementSnapDirections={elementSnapDirections}
         snapThreshold={5 / scale}
-        target={targetEl || undefined}
-        visible={!!targetEl}
+        target={targetId ? `#${targetId}` : undefined}
+        visible={!!targetId}
         draggable
         throttleDrag={1}
         edgeDraggable={false}
@@ -181,7 +179,7 @@ const MovebleCom = ({ scale, shadow, onUpdateShadow, onUpdateSnapsObj }: Moveble
         zoom={scale}
         rootContainer={document.querySelector('.canvasedit') as HTMLElement}
         container={document.querySelector('.canvasedit') as HTMLElement}
-        elementGuidelines={['.container', '.element0', '.element1', '.element2']}
+        elementGuidelines={['.moveble-container', '.element0', '.element1', '.element2']}
       />
     </div>
   )

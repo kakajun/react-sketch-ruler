@@ -95,8 +95,8 @@ const EightKSketchRuler: React.FC = () => {
             onUpdateScale={setScale}
             palette={cpuPalette}
           >
-            <div style={{ width: '100%', height: '100%' }}>
-              <img style={{ width: '100%', height: '100%' }} src={bgImg} alt="8K Screen" />
+            <div style={{ width: '100%', height: '100%', transform: 'translateZ(0)' }}>
+              <img style={{ width: '100%', height: '100%', transform: 'translateZ(0)' }} src={bgImg} alt="8K Screen" />
             </div>
             <div slot="toolbar" className="btns">
               <button onClick={handleReset}>还原</button>

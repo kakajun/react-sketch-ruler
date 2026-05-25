@@ -9,6 +9,8 @@ const RulerLineComponent = ({
   vertical,
   canvasWidth,
   canvasHeight,
+  width = 0,
+  height = 0,
   lockLine = false,
   deleteLabel = '放开删除',
   onUpdate,
@@ -60,7 +62,6 @@ const RulerLineComponent = ({
   }, [lockLine])
 
   const pos = line.position * scale + offset
-  const limit = vertical ? canvasWidth : canvasHeight
 
   const style = useMemo(() => {
     const cursor = line.locked || lockLine ? 'default' : vertical ? 'ew-resize' : 'ns-resize'
@@ -69,7 +70,7 @@ const RulerLineComponent = ({
       return {
         left: `${pos}px`,
         top: 0,
-        height: '100vh',
+        height: `${height}px`,
         width: '1px',
         borderLeft: `1px dashed ${palette.guideLineColor}`,
         cursor,
@@ -79,21 +80,22 @@ const RulerLineComponent = ({
     return {
       top: `${pos}px`,
       left: 0,
-      width: '100vw',
+      width: `${width}px`,
       height: '1px',
       borderBottom: `1px dashed ${palette.guideLineColor}`,
       cursor,
       pointerEvents
     }
-  }, [pos, vertical, palette.guideLineColor, line.locked, lockLine])
+  }, [pos, vertical, palette.guideLineColor, line.locked, lockLine, width, height])
 
   const labelText = useMemo(() => {
     const displayPos = draggingPos !== null ? draggingPos : line.position
+    const limit = vertical ? canvasWidth : canvasHeight
     if (displayPos < 0 || displayPos > limit) {
       return deleteLabel
     }
     return `${vertical ? 'X' : 'Y'}: ${Math.round(displayPos)}`
-  }, [draggingPos, line.position, limit, deleteLabel, vertical])
+  }, [draggingPos, line.position, canvasWidth, canvasHeight, deleteLabel, vertical])
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -119,7 +121,10 @@ const RulerLineComponent = ({
         }
 
         if (mountedRef.current) setDraggingPos(newPos)
-        shouldDelete = newPos < 0 || newPos > limit
+
+        const limit = vertical ? canvasWidth : canvasHeight
+        shouldDelete = newPos < -10 / scale || newPos > limit + 10 / scale
+
         onUpdate?.(lineRef.current.id, Math.round(newPos))
       }
 
@@ -139,7 +144,7 @@ const RulerLineComponent = ({
       document.addEventListener('mousemove', onMove)
       document.addEventListener('mouseup', onUp)
     },
-    [lockLine, vertical, scale, limit, onUpdate, onDelete]
+    [lockLine, vertical, scale, offset, width, height, onUpdate, onDelete]
   )
 
   return (

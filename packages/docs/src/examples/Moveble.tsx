@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { SketchRule } from 'react-sketch-ruler'
 import 'react-sketch-ruler/index.css'
 import MovebleCom from './MovebleCom'
-import './Comprehensive.less'
+import './Moveble.less'
 import type { SketchRulerMethods } from 'react-sketch-ruler'
 import { useTheme } from 'antd-style'
 
@@ -128,7 +128,7 @@ const MoveblePage: React.FC = () => {
           onUpdateLines={handleLine}
           onZoomChange={handleZoomChange}
         >
-          <div className="container" style={canvasStyle}>
+          <div className="moveble-container" style={canvasStyle}>
             <MovebleCom
               scale={state.scale}
               shadow={post.shadow}
