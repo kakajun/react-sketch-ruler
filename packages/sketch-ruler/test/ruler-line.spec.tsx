@@ -45,17 +45,23 @@ describe('RulerLine', () => {
     fireEvent.mouseEnter(line!)
 
     // 50ms 延迟后标签显示
-    await waitFor(() => {
-      expect(container.querySelector('.line-label')).toBeTruthy()
-    }, { timeout: 100 })
+    await waitFor(
+      () => {
+        expect(container.querySelector('.line-label')).toBeTruthy()
+      },
+      { timeout: 100 }
+    )
 
     // leave
     fireEvent.mouseLeave(line!)
 
     // 200ms 延迟后标签隐藏
-    await waitFor(() => {
-      expect(container.querySelector('.line-label')).not.toBeTruthy()
-    }, { timeout: 300 })
+    await waitFor(
+      () => {
+        expect(container.querySelector('.line-label')).not.toBeTruthy()
+      },
+      { timeout: 300 }
+    )
   })
 
   test('locked line does not show label on hover', async () => {

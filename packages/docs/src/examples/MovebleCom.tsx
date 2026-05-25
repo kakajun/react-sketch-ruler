@@ -118,9 +118,7 @@ const MovebleCom = ({ scale, shadow, onUpdateShadow, onUpdateSnapsObj }: Moveble
     const newTop = top + y
 
     setTargetList((prevList) =>
-      prevList.map((o) =>
-        o.id === id ? { ...o, left: newLeft, top: newTop } : o
-      )
+      prevList.map((o) => (o.id === id ? { ...o, left: newLeft, top: newTop } : o))
     )
     onUpdateShadow?.({ x: newLeft, y: newTop, width, height })
   }

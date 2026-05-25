@@ -148,12 +148,7 @@ const RulerLineComponent = ({
   )
 
   return (
-    <div
-      ref={lineElRef}
-      className="line"
-      style={style}
-      onMouseDown={handleMouseDown}
-    >
+    <div ref={lineElRef} className="line" style={style} onMouseDown={handleMouseDown}>
       {showLabel && (
         <span
           className="line-label"
