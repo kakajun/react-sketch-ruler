@@ -3,6 +3,8 @@ import { describe, test, expect } from 'vitest'
 import { useSketchRuler } from '../src/hooks/useSketchRuler'
 
 describe('useSketchRuler', () => {
+  // 测试 useSketchRuler Hook 的状态管理与方法行为
+  // 验证 Hook 返回引擎实例及初始状态
   test('returns engine and state', () => {
     const { result } = renderHook(() =>
       useSketchRuler({
@@ -20,6 +22,7 @@ describe('useSketchRuler', () => {
     expect(result.current.rectHeight).toBe(600)
   })
 
+  // 验证 addLine 添加参考线与 updateLine 更新位置能正确修改状态
   test('addLine and updateLine update state', () => {
     const { result } = renderHook(() =>
       useSketchRuler({
@@ -46,6 +49,7 @@ describe('useSketchRuler', () => {
     expect(result.current.horizontalLines[0].position).toBe(200)
   })
 
+  // 验证 removeLine 能删除指定参考线
   test('removeLine deletes line', () => {
     const { result } = renderHook(() =>
       useSketchRuler({
@@ -68,6 +72,7 @@ describe('useSketchRuler', () => {
     expect(result.current.horizontalLines).toHaveLength(0)
   })
 
+  // 验证 zoomIn 放大与 reset 重置功能正常
   test('zoomIn/zoomOut/reset work', () => {
     const { result } = renderHook(() =>
       useSketchRuler({
@@ -93,6 +98,7 @@ describe('useSketchRuler', () => {
     expect(result.current.scale).toBe(initialScale)
   })
 
+  // 验证自定义调色板与默认调色板正确合并
   test('paletteCpu merges custom palette', () => {
     const { result } = renderHook(() =>
       useSketchRuler({
@@ -108,6 +114,7 @@ describe('useSketchRuler', () => {
     expect(result.current.paletteCpu.tickColor).toBeDefined()
   })
 
+  // 验证初始化参考线与后续状态更新均正确
   test('lines initialization and state updates work correctly', () => {
     const { result } = renderHook(() =>
       useSketchRuler({

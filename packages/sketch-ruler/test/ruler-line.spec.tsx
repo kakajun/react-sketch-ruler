@@ -17,6 +17,7 @@ const defaultPalette = {
 }
 
 describe('RulerLine', () => {
+  // 测试鼠标悬停/移出时标签的显示与隐藏时序
   test('hover shows label after 50ms and leave hides it after 200ms', async () => {
     const onUpdate = vi.fn()
     const onDelete = vi.fn()
@@ -64,6 +65,7 @@ describe('RulerLine', () => {
     )
   })
 
+  // 测试锁定状态下的参考线悬停时不显示标签
   test('locked line does not show label on hover', async () => {
     const { container } = render(
       <RulerLine
@@ -84,6 +86,7 @@ describe('RulerLine', () => {
     expect(container.querySelector('.line-label')).not.toBeTruthy()
   })
 
+  // 测试 lockLine 属性禁止悬停时显示标签
   test('lockLine prop prevents label on hover', async () => {
     const { container } = render(
       <RulerLine

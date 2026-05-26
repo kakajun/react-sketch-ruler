@@ -3,6 +3,8 @@ import { describe, test, expect } from 'vitest'
 import { useSnapDetection } from '../src/hooks/useSnapDetection'
 
 describe('useSnapDetection', () => {
+  // 测试吸附检测 Hook 在不同场景下的行为
+  // 没有参考线时 detect 应返回 null
   test('returns null when no guideLines', () => {
     const { result } = renderHook(() =>
       useSnapDetection(1, { x: 0, y: 0 }, [], { threshold: 10, strength: 0.5 })
@@ -11,6 +13,7 @@ describe('useSnapDetection', () => {
     expect(result.current.detect(50, 'h')).toBeNull()
   })
 
+  // 屏幕坐标靠近参考线时，应吸附到最近的目标
   test('snaps to nearest guide line target', () => {
     const { result } = renderHook(() =>
       useSnapDetection(
@@ -26,6 +29,7 @@ describe('useSnapDetection', () => {
     expect(snapResult!.target.type).toBe('guide-line')
   })
 
+  // 超出吸附阈值时不应产生吸附结果
   test('does not snap when beyond threshold', () => {
     const { result } = renderHook(() =>
       useSnapDetection(
@@ -41,6 +45,7 @@ describe('useSnapDetection', () => {
     expect(result.current.detect(50, 'h')).toBeNull()
   })
 
+  // 软吸附模式下，结果位置应在当前位置与目标之间按 strength 插值
   test('applies soft snap strength', () => {
     const { result } = renderHook(() =>
       useSnapDetection(
@@ -57,6 +62,7 @@ describe('useSnapDetection', () => {
     expect(snapResult!.position).toBeCloseTo(95, 1)
   })
 
+  // 缩放级别变化时，吸附阈值应随之调整
   test('scales threshold with zoom level', () => {
     const { result } = renderHook(() =>
       useSnapDetection(
@@ -71,6 +77,7 @@ describe('useSnapDetection', () => {
     expect(snapResult).not.toBeNull()
   })
 
+  // 缩放为 0 或负数时，吸附应直接返回 null
   test('returns null for zero or negative scale', () => {
     const { result } = renderHook(() =>
       useSnapDetection(

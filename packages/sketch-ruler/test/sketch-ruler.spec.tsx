@@ -4,6 +4,7 @@ import { describe, test, expect, vi } from 'vitest'
 import { SketchRule } from '../src/index'
 
 describe('SketchRule integration', () => {
+  // 测试 zoomIn 后会触发 onUpdateScale 回调
   test('emits onUpdateScale on zoomIn', async () => {
     const onUpdateScale = vi.fn()
     const ref = React.createRef<any>()
@@ -35,6 +36,7 @@ describe('SketchRule integration', () => {
     })
   })
 
+  // 测试点击左上角 eye 图标触发 onHandleCornerClick 并切换参考线显隐
   test('corner click emits onHandleCornerClick and toggles refer line', async () => {
     const onHandleCornerClick = vi.fn()
 
@@ -57,6 +59,7 @@ describe('SketchRule integration', () => {
     expect(typeof onHandleCornerClick.mock.calls[0][0]).toBe('boolean')
   })
 
+  // 测试 lockLine 属性控制参考线的交互状态
   test('lockLine prop controls line interactivity', async () => {
     const ref = React.createRef<any>()
 
@@ -95,6 +98,7 @@ describe('SketchRule integration', () => {
     expect(document.querySelector('.sketch-ruler')).toBeTruthy()
   })
 
+  // 测试多个 SketchRule 实例拥有独立的 TransformEngine
   test('multiple instances have independent engines', async () => {
     const onUpdateScale1 = vi.fn()
     const onUpdateScale2 = vi.fn()

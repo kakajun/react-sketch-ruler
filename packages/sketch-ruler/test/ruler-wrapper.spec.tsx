@@ -69,10 +69,12 @@ function renderRulerWrapper(props: Record<string, any> = {}) {
 }
 
 describe('RulerWrapper line boundary deletion', () => {
+  // 该 describe 块测试参考线拖出边界时的删除逻辑及新建参考线的边界限制
   afterEach(() => {
     fireEvent.mouseUp(document)
   })
 
+  // 水平参考线拖出上边界时应触发 onDeleteLine
   test('should call onDeleteLine when dragging an existing horizontal line out of top boundary', () => {
     const onDeleteLine = vi.fn()
     const onUpdateLine = vi.fn()
@@ -93,6 +95,7 @@ describe('RulerWrapper line boundary deletion', () => {
     expect(onUpdateLine).toHaveBeenCalled()
   })
 
+  // 即使 offset 使屏幕坐标为正，也应根据世界坐标判断是否超出边界并删除
   test('should delete line based on world position even when offset makes screen position positive', () => {
     const onDeleteLine = vi.fn()
     const onUpdateLine = vi.fn()
@@ -123,6 +126,7 @@ describe('RulerWrapper line boundary deletion', () => {
     expect(onUpdateLine).toHaveBeenCalled()
   })
 
+  // 水平参考线拖出下边界时应触发 onDeleteLine
   test('should call onDeleteLine when dragging an existing horizontal line out of bottom boundary', () => {
     const onDeleteLine = vi.fn()
     const { container } = renderRulerWrapper({
@@ -138,6 +142,7 @@ describe('RulerWrapper line boundary deletion', () => {
     expect(onDeleteLine).toHaveBeenCalledWith('h-2')
   })
 
+  // 垂直参考线拖出右边界时应触发 onDeleteLine
   test('should call onDeleteLine when dragging an existing vertical line out of right boundary', () => {
     const onDeleteLine = vi.fn()
     const { container } = renderRulerWrapper({
@@ -154,6 +159,7 @@ describe('RulerWrapper line boundary deletion', () => {
     expect(onDeleteLine).toHaveBeenCalledWith('v-1')
   })
 
+  // 参考线在边界内拖动时应触发 onUpdateLine 而不是 onDeleteLine
   test('should call onUpdateLine when dragging line within boundary', () => {
     const onUpdateLine = vi.fn()
     const onDeleteLine = vi.fn()
@@ -172,6 +178,7 @@ describe('RulerWrapper line boundary deletion', () => {
     expect(onDeleteLine).not.toHaveBeenCalled()
   })
 
+  // 拖出边界时默认显示中文删除提示标签
   test('should show default delete label when dragging line out of boundary', async () => {
     const { container } = renderRulerWrapper({
       lines: [{ id: 'h-1', orientation: 'h', position: 100, visible: true, locked: false }]
@@ -190,6 +197,7 @@ describe('RulerWrapper line boundary deletion', () => {
     fireEvent.mouseUp(document, { clientY: -50 })
   })
 
+  // 拖出边界时支持自定义删除提示标签文本
   test('should show custom delete label when dragging line out of boundary', async () => {
     const { container } = renderRulerWrapper({
       deleteLabel: 'Release to delete',
@@ -209,6 +217,7 @@ describe('RulerWrapper line boundary deletion', () => {
     fireEvent.mouseUp(document, { clientY: -50 })
   })
 
+  // 在标尺区域内新建水平参考线时应触发 onAddLine
   test('should call onAddLine when creating a new horizontal line within boundary', () => {
     const onAddLine = vi.fn()
     const { canvas } = renderRulerWrapper({ onAddLine })
@@ -224,6 +233,7 @@ describe('RulerWrapper line boundary deletion', () => {
     expect(payload.position).toBe(10)
   })
 
+  // 在上边界外新建参考线时不应触发 onAddLine
   test('should not call onAddLine when creating a new line beyond top boundary', () => {
     const onAddLine = vi.fn()
     const { canvas } = renderRulerWrapper({ onAddLine })
@@ -235,6 +245,7 @@ describe('RulerWrapper line boundary deletion', () => {
     expect(onAddLine).not.toHaveBeenCalled()
   })
 
+  // 在下边界外新建参考线时不应触发 onAddLine
   test('should not call onAddLine when creating a new line beyond bottom boundary', () => {
     const onAddLine = vi.fn()
     const { canvas } = renderRulerWrapper({ onAddLine })
@@ -246,6 +257,7 @@ describe('RulerWrapper line boundary deletion', () => {
     expect(onAddLine).not.toHaveBeenCalled()
   })
 
+  // 在右边界外新建垂直参考线时不应触发 onAddLine
   test('should not call onAddLine when creating a new vertical line beyond right boundary', () => {
     const onAddLine = vi.fn()
     const { canvas } = renderRulerWrapper({ vertical: true, onAddLine })
@@ -257,6 +269,7 @@ describe('RulerWrapper line boundary deletion', () => {
     expect(onAddLine).not.toHaveBeenCalled()
   })
 
+  // 锁定状态的参考线拖出边界时不应触发删除或更新
   test('should not call onDeleteLine for locked lines', () => {
     const onDeleteLine = vi.fn()
     const onUpdateLine = vi.fn()
