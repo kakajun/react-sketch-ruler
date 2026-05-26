@@ -166,17 +166,26 @@ const Demo: React.FC = () => {
 import { definePlugin } from 'react-sketch-ruler'
 import type { SketchRulerPlugin } from 'react-sketch-ruler'
 
-const plugins: SketchRulerPlugin[] = [
-  definePlugin(() => ({
-    name: 'demo-logger',
-    onLineCreate: (ctx) => console.log('line created', ctx.line.id),
-    onLineDelete: (ctx) => console.log('line deleted', ctx.line.id)
-  }))()
-]
+const myPlugin = definePlugin(() => ({
+  name: 'demo-logger',
+  beforeZoom(ctx) {
+    if (ctx.to > 3) ctx.cancel()
+  },
+  afterZoom(ctx) {
+    console.log('zoom', ctx.from, '→', ctx.to)
+  },
+  onLineCreate: (ctx) => console.log('line created', ctx.line.id),
+  onLineDelete: (ctx) => console.log('line deleted', ctx.line.id)
+}))
 
-// 使用
-<SketchRule plugins={plugins} ... />
+// 使用（建议用 useMemo 缓存，避免反复注册）
+function App() {
+  const plugins = React.useMemo(() => [myPlugin()], [])
+  return <SketchRule plugins={plugins} ... />
+}
 ```
+
+插件支持以下生命周期钩子：`beforeZoom` / `afterZoom` / `beforePan` / `afterPan` / `onSnap` / `onLineCreate` / `onLineDelete` / `onLineMove`，以及自定义渲染器 `registerRenderer`。详见源码 `packages/sketch-ruler/AGENTS.md`。
 
 ### Hooks
 

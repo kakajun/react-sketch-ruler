@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react'
+
 import { SketchRule } from 'react-sketch-ruler'
 import { Minimap, definePlugin } from 'react-sketch-ruler'
-import type { SketchRulerMethods } from 'react-sketch-ruler'
+import type { SketchRulerMethods, ZoomMode } from 'react-sketch-ruler'
 // import 'react-sketch-ruler/index.css'
 import bgImg from '@/assets/bg.png'
 import './Comprehensive.less'
@@ -68,9 +69,7 @@ const Comprehensive: React.FC = () => {
   const { appearance } = useTheme()
   const sketchRef = useRef<SketchRulerMethods>(null)
   const [lockLine, setLockLine] = useState(false)
-  const [zoomMode, setZoomMode] = useState<'pointer' | 'viewport-center' | 'content-center'>(
-    'pointer'
-  )
+  const [zoomMode, setZoomMode] = useState<ZoomMode>('pointer')
   const [animationMode, setAnimationMode] = useState<
     'ease-out' | 'damped' | 'exponential' | 'direct'
   >('ease-out')
@@ -150,7 +149,6 @@ const Comprehensive: React.FC = () => {
   const zoomInMethod = () => sketchRef.current?.zoomIn()
 
   const handleZoomChange = (detail: { scale: number; x: number; y: number }) => {
-    setState({ scale: detail.scale })
     setViewportOffset({ x: detail.x, y: detail.y })
   }
 
@@ -174,7 +172,7 @@ const Comprehensive: React.FC = () => {
   }
 
   const toggleZoomMode = () => {
-    const modes: Array<'pointer' | 'viewport-center' | 'content-center'> = [
+    const modes: Array<ZoomMode> = [
       'pointer',
       'viewport-center',
       'content-center'
@@ -186,7 +184,7 @@ const Comprehensive: React.FC = () => {
   }
 
   const scaleChange = (value: number) => {
-    sketchRef.current?.setTransform({ scale: value })
+    setState((prev) => ({ ...prev, scale: value }))
   }
 
   const handleNavigate = (x: number, y: number) => {
@@ -300,6 +298,7 @@ const Comprehensive: React.FC = () => {
       <div className={`wrapper ${isBlack ? 'blackwrapper' : 'whitewrapper'}`} style={rectStyle}>
         <SketchRule
           ref={sketchRef}
+          scale={state.scale}
           lockLine={lockLine}
           width={post.width}
           height={post.height}

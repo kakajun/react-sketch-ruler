@@ -3,11 +3,11 @@ import Minimap from './minimap/index'
 export type {
   SketchRulerProps,
   SketchRulerMethods,
-  ZoomMode,
   PaletteType,
   LineType,
   GuideLine
 } from './index-types'
+export type { ZoomMode } from '@sketch-ruler/core'
 export type { MinimapProps } from './minimap/index'
 
 // 核心类型重新导出

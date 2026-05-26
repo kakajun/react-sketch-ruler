@@ -1,13 +1,14 @@
 {
   "name": "react-sketch-ruler",
-  "version": "3.0.0-beta.0",
+  "version": "3.1.0",
   "author": "kakajun <253495832@qq.com>",
   "license": "MIT",
   "type": "module",
   "private": false,
   "files": [
     "lib",
-    "src"
+    "src",
+    "AGENTS.md"
   ],
   "repository": {
     "type": "git",
@@ -56,8 +57,8 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "@sketch-ruler/canvas": "^3.0.2",
-    "@sketch-ruler/core": "^3.0.2"
+    "@sketch-ruler/canvas": "^3.1.0",
+    "@sketch-ruler/core": "^3.1.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",

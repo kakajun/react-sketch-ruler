@@ -18,6 +18,7 @@
 | 包路径                  | 说明                                                |
 | ----------------------- | --------------------------------------------------- |
 | `packages/sketch-ruler` | 组件库本体，发布到 npm（包名 `react-sketch-ruler`） |
+| `packages/sketch-ruler/AGENTS.md` | 插件系统详细指南（面向 AI 助手）             |
 | `packages/docs`         | 文档与示例站点，部署到 GitHub Pages                 |
 
 ---
@@ -49,6 +50,7 @@
 - **TransformEngine**：内置变换引擎，负责缩放/平移状态管理，零外部 panzoom 依赖。
 - **InputManager**：来自 `@sketch-ruler/canvas`，封装鼠标/触摸/滚轮事件。
 - **PluginManager**：来自 `@sketch-ruler/core`，支持生命周期钩子（`beforeZoom`、`afterZoom`、`onLineCreate` 等）。
+- **缩放原点计算**：`zoomMode`（`pointer` / `viewport-center` / `content-center`）统一由 `@sketch-ruler/core` 的 `getZoomOrigin()` 计算，React 层不再手写原点逻辑。
 - **插槽机制**：`SketchRule` 的 `children` 中，若元素带有 `slot="toolbar"`，会被提取到顶部工具栏区域渲染；其余内容作为画布主体。
 - **多实例**：每个 `SketchRule` 实例拥有独立的 `TransformEngine`。
 
@@ -82,7 +84,13 @@ react-sketch-ruler
 │   │   │   │   └── index.ts       # definePlugin 辅助函数 + 核心类型重导出
 │   │   │   └── global.d.ts        # *.less 模块声明
 │   │   ├── test/
-│   │   │   └── sketch-ruler.spec.tsx  # 唯一测试文件（Vitest）
+│   │   │   ├── sketch-ruler.spec.tsx      # 主组件测试
+│   │   │   ├── use-canvas-transform.spec.ts
+│   │   │   ├── use-guide-lines.spec.ts
+│   │   │   ├── use-input-manager.spec.ts
+│   │   │   ├── use-ruler-scale.spec.ts
+│   │   │   ├── use-sketch-ruler.spec.ts
+│   │   │   └── use-snap-detection.spec.ts # Hooks 测试
 │   │   ├── vite.config.ts         # 库构建配置
 │   │   ├── tsconfig.json          # 继承 ../../tsconfig.common.json
 │   │   └── package.json           # 包名 react-sketch-ruler
@@ -181,12 +189,15 @@ react-sketch-ruler
 
 - **框架**：Vitest
 - **DOM 环境**：`jsdom`
-- **测试文件位置**：`packages/sketch-ruler/test/sketch-ruler.spec.tsx`
-- **当前覆盖范围**（共 4 个 case）：
-  1. `zoomIn` 后触发 `onUpdateScale` 回调
-  2. 点击左上角 eye 图标触发 `onHandleCornerClick` 并切换参考线显隐
-  3. `lockLine` prop 控制参考线交互状态
-  4. 多实例拥有独立的 `TransformEngine`
+- **测试文件位置**：`packages/sketch-ruler/test/`，共 7 个测试文件
+- **当前覆盖范围**（共 51 条用例）：
+  - 主组件：`zoomIn` / `zoomOut` / `reset` / `setTransform` / `zoomToPreset`、参考线显隐切换、锁定交互、多实例独立引擎
+  - `useCanvasTransform`：engine 初始化、缩放/平移动画回调、边界约束、动画模式切换
+  - `useGuideLines`：参考线 CRUD、导入导出、锁定、可见性
+  - `useInputManager`：滚轮缩放、拖拽平移、滚轮方向配置
+  - `useRulerScale`：刻度计算、主次刻度、偏移响应
+  - `useSketchRuler`：组合 Hook 状态同步、事件分发
+  - `useSnapDetection`：吸附目标检测、阈值过滤、优先级
 - **运行**：`pnpm test`（即 `vitest run`）
 - CI 流程中会在构建 Demo 前先执行测试。
 
@@ -236,3 +247,4 @@ react-sketch-ruler
 5. **测试文件请放在 `packages/sketch-ruler/test/`**：CI 与 `vitest` 默认会扫描该目录。
 6. **发布前务必执行 `pnpm build`**：确保 `lib/` 产物与源码一致；`pnpm release` 已包含此步骤。
 7. **保持中英文注释风格**：现有代码以中文注释为主，新增代码建议延续此风格。
+8. **插件开发请参考 `packages/sketch-ruler/AGENTS.md`**：该文件详细说明了插件生命周期、自定义渲染器、`definePlugin` 用法及注意事项。

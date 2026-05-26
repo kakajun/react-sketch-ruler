@@ -12,7 +12,8 @@ import {
   PluginManager,
   importLines,
   exportLines,
-  generateLineId
+  generateLineId,
+  getZoomOrigin
 } from '@sketch-ruler/core'
 import type {
   TransformEngine,
@@ -136,12 +137,20 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
     useEffect(() => {
       if (Math.abs(propScale - prevPropScaleRef.current) > 1e-10) {
         prevPropScaleRef.current = propScale
-        const currentScale = engine?.getState().scale
+        const s = engine?.getState()
+        const currentScale = s?.scale
         if (currentScale !== undefined && Math.abs(propScale - currentScale) > 1e-10) {
-          setTransform({ scale: propScale })
+          const origin = getZoomOrigin({
+            mode: zoomMode,
+            viewportSize: { width: rectWidth, height: rectHeight },
+            contentSize: { width: canvasWidth, height: canvasHeight },
+            offset: { x: s?.x ?? offset.x, y: s?.y ?? offset.y },
+            scale: s?.scale ?? scale
+          })
+          zoomTo(propScale, origin.x, origin.y)
         }
       }
-    }, [propScale, engine, setTransform])
+    }, [propScale, engine, zoomMode, rectWidth, rectHeight, canvasWidth, canvasHeight, zoomTo])
 
     // 使用 InputManager 处理输入事件
     const { inputManager } = useInputManager(engine, canvasEditRef, {
@@ -295,14 +304,14 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       onZoomChange?.({ scale, x: offset.x, y: offset.y })
     }, [scale, offset.x, offset.y])
 
-    const getZoomOrigin = useCallback((): { x: number; y: number } => {
+    const getPointerOrigin = useCallback((): { x: number; y: number } => {
       const parent = canvasEditRef.current?.parentElement
       const rect = parent ? parent.getBoundingClientRect() : new DOMRect(0, 0, 0, 0)
       return { x: rect.width / 2, y: rect.height / 2 }
     }, [])
 
     const zoomIn = useCallback(async () => {
-      const { x: cx, y: cy } = getZoomOrigin()
+      const { x: cx, y: cy } = getPointerOrigin()
       const from = scale
       const to = from + zoomStep
       const allowed = await pluginManagerRef.current.beforeZoom({
@@ -315,10 +324,10 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
         zoomBy(zoomStep, cx, cy)
         pluginManagerRef.current.afterZoom({ from, to, center: { x: cx, y: cy } })
       }
-    }, [zoomBy, zoomStep, getZoomOrigin, scale])
+    }, [zoomBy, zoomStep, getPointerOrigin, scale])
 
     const zoomOut = useCallback(async () => {
-      const { x: cx, y: cy } = getZoomOrigin()
+      const { x: cx, y: cy } = getPointerOrigin()
       const from = scale
       const to = from - zoomStep
       const allowed = await pluginManagerRef.current.beforeZoom({
@@ -331,7 +340,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
         zoomBy(-zoomStep, cx, cy)
         pluginManagerRef.current.afterZoom({ from, to, center: { x: cx, y: cy } })
       }
-    }, [zoomBy, zoomStep, getZoomOrigin, scale])
+    }, [zoomBy, zoomStep, getPointerOrigin, scale])
 
     const handleCornerClick = () => {
       const next = !showReferLine
@@ -350,7 +359,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       async (preset: number) => {
         const target =
           ZOOM_PRESETS.find((p) => p >= preset) ?? ZOOM_PRESETS[ZOOM_PRESETS.length - 1]
-        const { x: cx, y: cy } = getZoomOrigin()
+        const { x: cx, y: cy } = getPointerOrigin()
         const from = scale
         const allowed = await pluginManagerRef.current.beforeZoom({
           from,
@@ -363,7 +372,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
           pluginManagerRef.current.afterZoom({ from, to: target, center: { x: cx, y: cy } })
         }
       },
-      [zoomTo, getZoomOrigin, scale]
+      [zoomTo, getPointerOrigin, scale]
     )
 
     useImperativeHandle(ref, () => ({

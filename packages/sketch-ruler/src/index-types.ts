@@ -3,10 +3,11 @@ import type {
   TransformEngine,
   TransformState,
   GuideLine,
-  SketchRulerPlugin
+  SketchRulerPlugin,
+  ZoomMode
 } from '@sketch-ruler/core'
 
-export type { GuideLine, SketchRulerPlugin } from '@sketch-ruler/core'
+export type { GuideLine, SketchRulerPlugin, ZoomMode } from '@sketch-ruler/core'
 
 export interface PaletteType {
   bgColor?: string
@@ -52,7 +53,6 @@ export interface LineType {
   v: number[]
 }
 
-export type ZoomMode = 'pointer' | 'viewport-center' | 'content-center'
 
 export interface SketchRulerProps {
   showRuler?: boolean

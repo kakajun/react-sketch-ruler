@@ -51,6 +51,7 @@
 h1,
 .description {
   text-align: center;
+  margin-bottom: 10px;
 }
 
 .button {
@@ -86,9 +87,13 @@ h1,
 #selecto1 .cube {
   transition: all ease 0.2s;
 }
-
+.moveable{
+  display: flex;
+  flex-direction: column;
+}
 .moveable #selecto1 .cube {
   transition: none;
+
 }
 
 .selecto-area .selected {
@@ -154,4 +159,27 @@ h1,
   stroke: #333;
   stroke-width: 2;
   fill: transparent;
+}
+
+.wrapper {
+  margin: 0 auto;
+  background-size:
+    21px 21px,
+    21px 21px;
+  border: 1px solid #dadadc;
+}
+
+.whitewrapper {
+  background-color: #fafafc;
+  background-image:
+    linear-gradient(#fafafc 20px, transparent 0),
+    linear-gradient(90deg, transparent 20px, #373739 0);
+}
+
+.btns {
+  position: absolute;
+  display: flex;
+  bottom: 20px;
+  right: 40px;
+  z-index: 999;
 }
