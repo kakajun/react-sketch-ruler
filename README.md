@@ -225,6 +225,7 @@ import {
 | enableAnimation | 是否启用动画 | `boolean` | `false` |
 | animationMode | 动画模式 | `'direct' \| 'ease-out' \| 'damped' \| 'exponential'` | `'ease-out'` |
 | autoCenter | 初始化自动居中 | `boolean` | `true` |
+| paddingRatio | 自动居中边距比（`0~0.5`） | `number` | `0.2` |
 | initialOffset | 初始偏移（autoCenter=false 时生效） | `{ x: number; y: number }` | `{ x:0, y:0 }` |
 | snapThreshold | 吸附阈值 | `number` | `5` |
 | lockLine | 是否锁定参考线 | `boolean` | `false` |
@@ -311,7 +312,7 @@ v3.x 是架构重构版本，与 [vue3-sketch-ruler](https://github.com/kakajun/
 | **工具栏插槽** | 通过 `ref` 调用 | `slot="toolbar"` 子元素 | 在 `children` 中传入 `<div slot="toolbar">...</div>` |
 | **缩放事件** | `onZoomChange` / `updateScale` | `onUpdateScale` / `onZoomChange` | `onUpdateScale` 仅通知 scale；`onZoomChange` 返回 `{ scale, x, y }` |
 | **参考线事件** | `handleLine` | `onUpdateLines` | 统一回调命名风格 |
-| **偏移控制** | `panzoomOption` | `autoCenter`、`initialOffset` | 移除 `panzoomOption`，改为内置引擎直接配置 |
+| **偏移控制** | `panzoomOption` | `autoCenter`、`paddingRatio`、`initialOffset` | 移除 `panzoomOption`，改为内置引擎直接配置 |
 | **缩放控制** | `panzoomOption` | `zoomMode`、`zoomStep`、`minZoom`、`maxZoom` | 内置引擎直接配置 |
 | **动画系统** | 无 | `enableAnimation`、`animationMode` | 新增，支持 `ease-out`、`damped`、`exponential`、`direct` |
 | **阴影文字** | `showShadowText` | 移除 | 3.x 已移除该属性 |
@@ -368,6 +369,7 @@ import { SketchRule } from 'react-sketch-ruler'
 - **吸附引擎**：`snapThreshold` 配置参考线吸附阈值
 - **动画引擎**：`enableAnimation` + `animationMode` 实现平滑缩放/平移
 - **多实例支持**：每个 `SketchRule` 实例独立管理自己的 TransformEngine
+- **纯原生零依赖**：核心引擎 `@sketch-ruler/core` 纯原生实现，无需 panzoom 等第三方库
 
 ---
 

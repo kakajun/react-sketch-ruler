@@ -88,6 +88,7 @@ const Comprehensive: React.FC = () => {
     minZoom: 0.1,
     maxZoom: 3,
     snapThreshold: 5,
+    paddingRatio: 0.1,
     lines: {
       h: [0, 250],
       v: [0, 500]
@@ -149,6 +150,7 @@ const Comprehensive: React.FC = () => {
   const zoomInMethod = () => sketchRef.current?.zoomIn()
 
   const handleZoomChange = (detail: { scale: number; x: number; y: number }) => {
+    setState((prev) => ({ ...prev, scale: detail.scale }))
     setViewportOffset({ x: detail.x, y: detail.y })
   }
 
@@ -284,6 +286,18 @@ const Comprehensive: React.FC = () => {
           onChange={(e) => setPost((p) => ({ ...p, snapThreshold: Number(e.target.value) }))}
           style={{ width: 80 }}
         />
+        <span className="mr10 font16">边距比:{post.paddingRatio}</span>
+        <input
+          className="mr10 font16"
+          type="range"
+          min={0}
+          max={0.5}
+          step={0.05}
+          value={post.paddingRatio}
+          onChange={(e) => setPost((p) => ({ ...p, paddingRatio: Number(e.target.value) }))}
+          style={{ width: 80 }}
+        />
+        <span className="mr10 font16">缩放:</span>
         <input
           className="mr10 font16"
           type="range"
@@ -318,6 +332,7 @@ const Comprehensive: React.FC = () => {
           minZoom={post.minZoom}
           maxZoom={post.maxZoom}
           snapThreshold={post.snapThreshold}
+          paddingRatio={post.paddingRatio}
           plugins={plugins}
           onZoomChange={handleZoomChange}
           onUpdateLines={handleLinesChange}

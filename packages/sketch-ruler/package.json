@@ -1,6 +1,6 @@
 {
   "name": "react-sketch-ruler",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "author": "kakajun <253495832@qq.com>",
   "license": "MIT",
   "type": "module",
@@ -57,8 +57,8 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "@sketch-ruler/canvas": "^3.1.0",
-    "@sketch-ruler/core": "^3.1.0"
+    "@sketch-ruler/canvas": "^3.1.1",
+    "@sketch-ruler/core": "^3.1.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",

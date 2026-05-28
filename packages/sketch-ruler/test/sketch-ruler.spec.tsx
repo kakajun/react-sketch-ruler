@@ -59,6 +59,59 @@ describe('SketchRule integration', () => {
     expect(typeof onHandleCornerClick.mock.calls[0][0]).toBe('boolean')
   })
 
+  // 测试 paddingRatio 影响 autoCenter 的初始缩放与偏移
+  test('paddingRatio affects autoCenter initial scale and offset', async () => {
+    const ref = React.createRef<any>()
+
+    const { rerender } = render(
+      <SketchRule
+        ref={ref}
+        width={1000}
+        height={800}
+        canvasWidth={2000}
+        canvasHeight={1600}
+        autoCenter={true}
+        paddingRatio={0.2}
+        selfHandle={true}
+      >
+        <div data-testid="page" style={{ width: '2000px', height: '1600px' }} />
+      </SketchRule>
+    )
+
+    await waitFor(() => {
+      expect(ref.current).toBeTruthy()
+    })
+    await new Promise((r) => setTimeout(r, 50))
+
+    const engine = ref.current?.engine
+    const state = engine?.getState()
+
+    // paddingRatio=0.2 时，可用视口为 1000*0.8=800, 800*0.8=640
+    // 画布 2000x1600，scale = min(800/2000, 640/1600) = 0.4
+    expect(state.scale).toBeCloseTo(0.4, 5)
+
+    // 更新 paddingRatio 为 0，应重新 fit（无留白）
+    rerender(
+      <SketchRule
+        ref={ref}
+        width={1000}
+        height={800}
+        canvasWidth={2000}
+        canvasHeight={1600}
+        autoCenter={true}
+        paddingRatio={0}
+        selfHandle={true}
+      >
+        <div data-testid="page" style={{ width: '2000px', height: '1600px' }} />
+      </SketchRule>
+    )
+    await new Promise((r) => setTimeout(r, 50))
+
+    const newState = engine?.getState()
+    // paddingRatio=0 时，scale = min(1000/2000, 800/1600) = 0.5
+    expect(newState.scale).toBeCloseTo(0.5, 5)
+  })
+
   // 测试 lockLine 属性控制参考线的交互状态
   test('lockLine prop controls line interactivity', async () => {
     const ref = React.createRef<any>()

@@ -5,3 +5,5 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - '@sketch-ruler/canvas@3.1.0'
   - '@sketch-ruler/core@3.1.0'
+  - '@sketch-ruler/canvas@3.1.1'
+  - '@sketch-ruler/core@3.1.1'

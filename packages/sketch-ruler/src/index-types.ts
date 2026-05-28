@@ -76,6 +76,7 @@ export interface SketchRulerProps {
   enableAnimation?: boolean
   plugins?: SketchRulerPlugin[]
   autoCenter?: boolean
+  paddingRatio?: number
   shadow?: ShadowType
   initialOffset?: { x: number; y: number }
   showMinorTicks?: boolean

@@ -86,6 +86,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       enableAnimation = false,
       plugins = [],
       autoCenter = true,
+      paddingRatio = 0.2,
       shadow = DEFAULT_SHADOW,
       initialOffset = DEFAULT_INITIAL_OFFSET,
       showMinorTicks = false,
@@ -129,7 +130,7 @@ const SketchRule = React.forwardRef<SketchRulerMethods, SketchRulerProps>(
       autoCenter,
       canvasSize,
       viewportSize,
-      paddingRatio: 0.2
+      paddingRatio
     })
 
     // 外部 prop 变化 → 同步到引擎（跳过首次渲染，避免覆盖 autoCenter 初始化）

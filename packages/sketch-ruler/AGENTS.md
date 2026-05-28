@@ -14,6 +14,16 @@
 - 管理参考线渲染与交互
 - **透传插件系统**：`plugins` prop 直接对接底层 `PluginManager`
 
+### SketchRuler 关键 Props
+
+| 属性 | 说明 | 默认值 |
+| --- | --- | --- |
+| `autoCenter` | 初始化时自动将画布居中 | `true` |
+| `paddingRatio` | 自动居中时的边距比例（`0 ~ 0.5`），控制画布四周留白 | `0.2` |
+| `initialOffset` | `autoCenter=false` 时使用的初始偏移 | `{ x:0, y:0 }` |
+
+> `paddingRatio` 变更后会实时触发重新 fit 并更新画布位置（仅 `autoCenter=true` 时生效）。
+
 ---
 
 ## 插件系统架构
