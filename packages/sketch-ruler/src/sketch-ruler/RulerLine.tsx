@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useMemo, memo, useRef, useEffect } from 'react'
+import React, { useState, useCallback, useMemo, memo, useRef } from 'react'
+import { getTickConfig } from '@sketch-ruler/core'
 import type { LineProps } from '../index-types'
 
 const RulerLineComponent = ({
@@ -11,61 +12,22 @@ const RulerLineComponent = ({
   canvasHeight,
   width = 0,
   height = 0,
+  thick = 16,
   lockLine = false,
   deleteLabel = '放开删除',
+  isInScale = false,
   onUpdate,
   onDelete
 }: LineProps) => {
   const [draggingPos, setDraggingPos] = useState<number | null>(null)
-  const [showLabel, setShowLabel] = useState(false)
-  const labelTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const lineElRef = useRef<HTMLDivElement | null>(null)
-  const mountedRef = useRef(true)
-  mountedRef.current = true
   const lineRef = useRef(line)
   lineRef.current = line
-
-  useEffect(() => {
-    return () => {
-      mountedRef.current = false
-      if (labelTimerRef.current) clearTimeout(labelTimerRef.current)
-    }
-  }, [])
-
-  useEffect(() => {
-    const el = lineElRef.current
-    if (!el || lockLine) return
-
-    const handleEnter = () => {
-      if (lineRef.current.locked) return
-      if (labelTimerRef.current) clearTimeout(labelTimerRef.current)
-      labelTimerRef.current = setTimeout(() => {
-        if (mountedRef.current) setShowLabel(true)
-      }, 50)
-    }
-
-    const handleLeave = () => {
-      if (lineRef.current.locked) return
-      if (labelTimerRef.current) clearTimeout(labelTimerRef.current)
-      labelTimerRef.current = setTimeout(() => {
-        if (mountedRef.current) setShowLabel(false)
-      }, 200)
-    }
-
-    el.addEventListener('mouseenter', handleEnter)
-    el.addEventListener('mouseleave', handleLeave)
-
-    return () => {
-      el.removeEventListener('mouseenter', handleEnter)
-      el.removeEventListener('mouseleave', handleLeave)
-    }
-  }, [lockLine])
 
   const pos = line.position * scale + offset
 
   const style = useMemo(() => {
     const cursor = line.locked || lockLine ? 'default' : vertical ? 'ew-resize' : 'ns-resize'
-    const pointerEvents: 'auto' | 'none' = line.locked || lockLine ? 'none' : 'auto'
+    const pointerEvents: 'auto' | 'none' = line.locked || lockLine || isInScale ? 'none' : 'auto'
     if (vertical) {
       return {
         left: `${pos}px`,
@@ -86,24 +48,27 @@ const RulerLineComponent = ({
       cursor,
       pointerEvents
     }
-  }, [pos, vertical, palette.guideLineColor, line.locked, lockLine, width, height])
+  }, [pos, vertical, palette.guideLineColor, line.locked, lockLine, width, height, isInScale])
 
   const labelText = useMemo(() => {
-    const displayPos = draggingPos !== null ? draggingPos : line.position
-    const limit = vertical ? canvasWidth : canvasHeight
-    if (displayPos < 0 || displayPos > limit) {
-      return deleteLabel
+    if (draggingPos !== null) {
+      const limit = vertical ? canvasWidth : canvasHeight
+      const isOutOfCanvas = draggingPos < 0 || draggingPos > limit
+      const screenPos = draggingPos * scale + offset
+      const isOverRuler = screenPos <= thick
+      if (isOutOfCanvas || isOverRuler) {
+        return deleteLabel
+      }
     }
-    return `${vertical ? 'X' : 'Y'}: ${Math.round(displayPos)}`
-  }, [draggingPos, line.position, canvasWidth, canvasHeight, deleteLabel, vertical])
+    return String(Math.round(line.position))
+  }, [draggingPos, line.position, canvasWidth, canvasHeight, deleteLabel, vertical, scale, offset, thick])
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
       if (lineRef.current.locked || lockLine) return
       e.preventDefault()
       e.stopPropagation()
-      if (labelTimerRef.current) clearTimeout(labelTimerRef.current)
-      if (mountedRef.current) setShowLabel(true)
+      setDraggingPos(lineRef.current.position)
 
       const startMouse = vertical ? e.clientX : e.clientY
       const startPos = lineRef.current.position
@@ -114,17 +79,27 @@ const RulerLineComponent = ({
         const delta = (currentMouse - startMouse) / scale
         let newPos = startPos + delta
 
+        // 吸附到最近主刻度（基于当前缩放级别的刻度间隔，不依赖可见刻度数组）
         const snapThreshold = 10 / scale
-        const nearest = Math.round(newPos / snapThreshold) * snapThreshold
-        if (Math.abs(nearest - newPos) < snapThreshold * 0.5) {
-          newPos = nearest
+        const interval = getTickConfig(scale).interval
+        const gridPos = Math.round(newPos / interval) * interval
+        const dist = Math.abs(newPos - gridPos)
+        if (dist < snapThreshold) {
+          newPos = gridPos
         }
 
-        if (mountedRef.current) setDraggingPos(newPos)
+        setDraggingPos(newPos)
 
+        // 越界检测：记录是否拖出画布外，等鼠标放开时再删除
         const limit = vertical ? canvasWidth : canvasHeight
-        shouldDelete = newPos < -10 / scale || newPos > limit + 10 / scale
+        const isOutOfCanvas = newPos < 0 || newPos > limit
+        // 标尺区域检测：参考线被拖回到标尺区域（screenPos ≤ thick）也应删除
+        const screenPos = newPos * scale + offset
+        const isOverRuler = screenPos <= thick
 
+        shouldDelete = isOutOfCanvas || isOverRuler
+
+        // 始终更新位置，让线可以跟随鼠标移出画布
         onUpdate?.(lineRef.current.id, Math.round(newPos))
       }
 
@@ -134,37 +109,19 @@ const RulerLineComponent = ({
         }
         document.removeEventListener('mousemove', onMove)
         document.removeEventListener('mouseup', onUp)
-        if (labelTimerRef.current) clearTimeout(labelTimerRef.current)
-        if (mountedRef.current) {
-          setShowLabel(false)
-          setDraggingPos(null)
-        }
+        setDraggingPos(null)
       }
 
       document.addEventListener('mousemove', onMove)
       document.addEventListener('mouseup', onUp)
     },
-    [lockLine, vertical, scale, offset, width, height, onUpdate, onDelete]
+    [lockLine, vertical, scale, offset, width, height, thick, onUpdate, onDelete]
   )
 
   return (
-    <div ref={lineElRef} className="line" style={style} onMouseDown={handleMouseDown}>
-      {showLabel && (
-        <span
-          className="line-label"
-          style={{
-            position: 'absolute',
-            background: palette.hoverBg,
-            color: palette.hoverColor,
-            fontSize: '10px',
-            padding: '2px 4px',
-            borderRadius: '2px',
-            whiteSpace: 'nowrap',
-            pointerEvents: 'none',
-            transform: 'scale(0.83)',
-            [vertical ? 'top' : 'left']: '4px'
-          }}
-        >
+    <div className="line" style={style} onMouseDown={handleMouseDown}>
+      {!line.locked && (
+        <span className="line-label" style={{ color: palette.hoverColor }}>
           {labelText}
         </span>
       )}

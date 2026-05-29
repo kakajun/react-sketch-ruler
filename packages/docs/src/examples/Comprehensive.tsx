@@ -116,13 +116,14 @@ const Comprehensive: React.FC = () => {
           labelColor: '#DEDEDE',
           guideLineColor: '#51d6a9',
           guideLineLockedColor: '#d4d7dc',
-          hoverBg: '#fff',
-          hoverColor: '#000',
+          hoverBg: 'transparent',
+          hoverColor: '#fff',
           borderColor: '#B5B5B5',
           shadowColor: '#525252'
         }
       : {
           bgColor: 'transparent',
+          hoverColor: '#000',
           guideLineColor: '#51d6a9'
         }
   }, [isBlack])

@@ -60,8 +60,8 @@ const EightKSketchRuler: React.FC = () => {
   const cpuPalette = isBlack
     ? {
         bgColor: 'transparent',
-        hoverBg: '#fff',
-        hoverColor: '#000',
+        hoverBg: 'transparent',
+        hoverColor: '#fff',
         tickColor: '#BABBBC',
         labelColor: '#DEDEDE',
         shadowColor: '#525252',
@@ -70,6 +70,7 @@ const EightKSketchRuler: React.FC = () => {
       }
     : {
         bgColor: 'transparent',
+        hoverColor: '#000',
         guideLineColor: '#51d6a9'
       }
 
@@ -91,6 +92,7 @@ const EightKSketchRuler: React.FC = () => {
             canvasHeight={canvasHeight}
             lines={lines}
             autoCenter={true}
+            paddingRatio={0.1}
             showRuler={true}
             onUpdateScale={setScale}
             palette={cpuPalette}

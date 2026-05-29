@@ -8,7 +8,6 @@ import React, {
   useCallback
 } from 'react'
 import {
-  fitRect,
   PluginManager,
   importLines,
   exportLines,
@@ -41,8 +40,8 @@ const usePaletteConfig = (palette: PaletteType | undefined) => {
       labelColor: palette?.labelColor ?? '#7D8694',
       guideLineColor: palette?.guideLineColor ?? '#51d6a9',
       guideLineLockedColor: palette?.guideLineLockedColor ?? '#d4d7dc',
-      hoverBg: palette?.hoverBg ?? '#000',
-      hoverColor: palette?.hoverColor ?? '#fff',
+      hoverBg: palette?.hoverBg ?? 'transparent',
+      hoverColor: palette?.hoverColor ?? '#000',
       borderColor: palette?.borderColor ?? '#eeeeef',
       shadowColor: palette?.shadowColor ?? '#e9f7fe',
       fontShadowColor: palette?.fontShadowColor ?? '#106ebe'

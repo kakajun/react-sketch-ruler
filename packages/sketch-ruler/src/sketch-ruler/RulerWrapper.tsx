@@ -31,16 +31,35 @@ const RulerComponent = ({
   const rendererRef = useRef<Canvas2DRenderer | null>(null)
   const ratio = typeof window !== 'undefined' ? window.devicePixelRatio : 1
 
+  // 缩放期间临时禁用参考线交互，防止滚轮事件被参考线拦截导致页面缩放
+  const [isInScale, setIsInScale] = useState(false)
+  const scaleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    setIsInScale(true)
+    if (scaleTimerRef.current) {
+      clearTimeout(scaleTimerRef.current)
+    }
+    scaleTimerRef.current = setTimeout(() => {
+      setIsInScale(false)
+    }, 1000)
+    return () => {
+      if (scaleTimerRef.current) {
+        clearTimeout(scaleTimerRef.current)
+      }
+    }
+  }, [scale])
+
   const containerClass = vertical ? 'v-container' : 'h-container'
 
   const rulerStyle = useMemo(
     () => ({
       width: width + 'px',
       height: height + 'px',
-      cursor: vertical ? 'ew-resize' : 'ns-resize',
+      cursor: lockLine ? 'default' : vertical ? 'ew-resize' : 'ns-resize',
       [vertical ? 'borderRight' : 'borderBottom']: `1px solid ${palette.borderColor}`
     }),
-    [width, height, vertical, palette.borderColor]
+    [width, height, vertical, palette.borderColor, lockLine]
   )
 
   // === 刻度计算 ===
@@ -94,17 +113,17 @@ const RulerComponent = ({
 
   // === 吸附预览线 ===
   const [isCreatingLine, setIsCreatingLine] = useState(false)
-  const [isSnapping, setIsSnapping] = useState(false)
   const [previewScreenPos, setPreviewScreenPos] = useState(0)
   const [previewWorldPos, setPreviewWorldPos] = useState(0)
 
   const previewStyle = useMemo(() => {
     const pos = previewScreenPos
+    const border = `1px dashed ${palette.guideLineColor}`
     if (vertical) {
-      return { left: `${pos}px`, top: 0, height: '100%', width: '1px' }
+      return { left: `${pos}px`, top: 0, height: '100%', width: '1px', borderLeft: border }
     }
-    return { top: `${pos}px`, left: 0, width: '100%', height: '1px' }
-  }, [previewScreenPos, vertical])
+    return { top: `${pos}px`, left: 0, width: '100%', height: '1px', borderBottom: border }
+  }, [previewScreenPos, vertical, palette.guideLineColor])
 
   const updatePreview = useCallback(
     (e: MouseEvent) => {
@@ -115,31 +134,20 @@ const RulerComponent = ({
       const offsetVal = vertical ? offset.x : offset.y
       let worldPos = (screenPos - offsetVal) / scale
 
-      // 吸附检测
+      // 吸附检测：吸附到最近主刻度（基于当前缩放级别的刻度间隔，不依赖可见刻度数组）
       const snapThreshold = 10 / scale
-      let bestTick: number | null = null
-      let bestDist = Infinity
+      const interval = getTickConfig(scale).interval
+      const gridPos = Math.round(worldPos / interval) * interval
+      const dist = Math.abs(worldPos - gridPos)
 
-      for (const mark of marks) {
-        if (!mark.isMajor) continue
-        const dist = Math.abs(worldPos - mark.value)
-        if (dist < snapThreshold && dist < bestDist) {
-          bestDist = dist
-          bestTick = mark.value
-        }
-      }
-
-      if (bestTick !== null) {
-        worldPos = bestTick
-        setIsSnapping(true)
-      } else {
-        setIsSnapping(false)
+      if (dist < snapThreshold) {
+        worldPos = gridPos
       }
 
       setPreviewScreenPos(worldPos * scale + offsetVal)
       setPreviewWorldPos(worldPos)
     },
-    [vertical, offset, scale, marks]
+    [vertical, offset, scale]
   )
 
   const previewWorldPosRef = useRef(previewWorldPos)
@@ -157,20 +165,15 @@ const RulerComponent = ({
       const offsetVal = vertical ? offset.x : offset.y
       let worldPos = (screenPos - offsetVal) / scale
       const snapThreshold = 10 / scale
-      let bestTick: number | null = null
-      let bestDist = Infinity
-      for (const mark of marks) {
-        if (!mark.isMajor) continue
-        const dist = Math.abs(worldPos - mark.value)
-        if (dist < snapThreshold && dist < bestDist) {
-          bestDist = dist
-          bestTick = mark.value
-        }
+      const interval = getTickConfig(scale).interval
+      const gridPos = Math.round(worldPos / interval) * interval
+      const dist = Math.abs(worldPos - gridPos)
+      if (dist < snapThreshold) {
+        worldPos = gridPos
       }
-      if (bestTick !== null) worldPos = bestTick
       previewWorldPosRef.current = worldPos
     },
-    [updatePreview, vertical, offset, scale, marks]
+    [updatePreview, vertical, offset, scale]
   )
 
   const handlePointerDown = useCallback(
@@ -178,7 +181,6 @@ const RulerComponent = ({
       if (lockLine) return
       e.stopPropagation()
       setIsCreatingLine(true)
-      setIsSnapping(false)
       updatePreviewWithRef(e.nativeEvent)
 
       const onMove = (moveEvent: MouseEvent) => {
@@ -191,7 +193,10 @@ const RulerComponent = ({
 
         const worldPos = previewWorldPosRef.current
         const limit = vertical ? canvasWidth : canvasHeight
-        if (worldPos >= 0 && worldPos <= limit) {
+        const offsetVal = vertical ? offset.x : offset.y
+        const screenPos = worldPos * scale + offsetVal
+        const isOverRuler = screenPos <= thick
+        if (worldPos >= 0 && worldPos <= limit && !isOverRuler) {
           onAddLine?.({
             orientation: vertical ? 'v' : 'h',
             position: Math.round(worldPos),
@@ -201,42 +206,13 @@ const RulerComponent = ({
         }
 
         setIsCreatingLine(false)
-        setIsSnapping(false)
       }
 
       document.addEventListener('mousemove', onMove)
       document.addEventListener('mouseup', onUp)
     },
-    [lockLine, vertical, canvasWidth, canvasHeight, onAddLine, updatePreviewWithRef]
+    [lockLine, vertical, canvasWidth, canvasHeight, onAddLine, updatePreviewWithRef, scale, offset, thick]
   )
-
-  // === 参考线渲染 ===
-  const lineStyle = (line: GuideLine) => {
-    const offsetVal = vertical ? offset.x : offset.y
-    const pos = line.position * scale + offsetVal
-    const cursor = line.locked || lockLine ? 'default' : vertical ? 'ew-resize' : 'ns-resize'
-    const pointerEvents: 'auto' | 'none' = line.locked || lockLine ? 'none' : 'auto'
-    if (vertical) {
-      return {
-        left: `${pos}px`,
-        top: 0,
-        height: '100vh',
-        width: '1px',
-        borderLeft: `1px dashed ${palette.guideLineColor}`,
-        cursor,
-        pointerEvents
-      }
-    }
-    return {
-      top: `${pos}px`,
-      left: 0,
-      width: '100vw',
-      height: '1px',
-      borderBottom: `1px dashed ${palette.guideLineColor}`,
-      cursor,
-      pointerEvents
-    }
-  }
 
   return (
     <div className={containerClass}>
@@ -247,15 +223,10 @@ const RulerComponent = ({
         onMouseDown={handlePointerDown}
       />
       {isCreatingLine && (
-        <div
-          className="preview-line"
-          style={{
-            ...previewStyle,
-            background: isSnapping ? palette.hoverBg : palette.guideLineColor,
-            opacity: isSnapping ? 0.9 : 0.5
-          }}
-        >
-          <span className="preview-label">{Math.round(previewWorldPos)}</span>
+        <div className="preview-line" style={previewStyle}>
+          <span className="preview-label" style={{ color: palette.hoverColor }}>
+            {Math.round(previewWorldPos)}
+          </span>
         </div>
       )}
       {showReferLine && (
@@ -272,8 +243,10 @@ const RulerComponent = ({
               canvasHeight={canvasHeight}
               width={width}
               height={height}
+              thick={thick}
               lockLine={lockLine}
               deleteLabel={deleteLabel}
+              isInScale={isInScale}
               onUpdate={onUpdateLine}
               onDelete={onDeleteLine}
             />

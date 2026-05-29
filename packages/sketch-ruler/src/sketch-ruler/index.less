@@ -161,24 +161,25 @@
   position: absolute;
   pointer-events: none;
   z-index: 5;
-
-  .preview-label {
-    position: absolute;
-    font-size: 10px;
-    padding: 2px 4px;
-    border-radius: 2px;
-    white-space: nowrap;
-    pointer-events: none;
-  }
 }
 
-.line-label {
+.line-label,
+.preview-label {
   position: absolute;
-  font-size: 10px;
-  padding: 2px 4px;
-  border-radius: 2px;
+  font-size: 12px;
   white-space: nowrap;
   pointer-events: none;
   transform: scale(0.83);
-  z-index: 10;
+}
+
+.h-container .line-label,
+.h-container .preview-label {
+  top: 14px;
+  left: 24px;
+}
+
+.v-container .line-label,
+.v-container .preview-label {
+  top: 24px;
+  left: 10px;
 }

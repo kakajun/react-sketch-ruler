@@ -124,8 +124,10 @@ export interface LineProps {
   canvasHeight: number
   width?: number
   height?: number
+  thick?: number
   lockLine?: boolean
   deleteLabel?: string
+  isInScale?: boolean
   onUpdate?: (id: string, position: number) => void
   onDelete?: (id: string) => void
 }
