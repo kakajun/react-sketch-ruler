@@ -12,6 +12,10 @@ import EightK from './examples/EightK'
 import EightKSketchRuler from './examples/EightKSketchRuler'
 import MultiInstance from './examples/MultiInstance'
 import SelectoDemo from './examples/SelectoDemo'
+import FlowEditor from './examples/FlowEditor'
+import Whiteboard from './examples/Whiteboard'
+import Topology from './examples/Topology'
+import OrgChart from './examples/OrgChart'
 
 export const menuRoutes = [
   {
@@ -69,6 +73,26 @@ export const menuRoutes = [
     path: '/multi-instance',
     element: <MultiInstance />,
     meta: { title: 'multi-instance' }
+  },
+  {
+    path: '/flow-editor',
+    element: <FlowEditor />,
+    meta: { title: 'flow-editor' }
+  },
+  {
+    path: '/whiteboard',
+    element: <Whiteboard />,
+    meta: { title: 'whiteboard' }
+  },
+  {
+    path: '/topology',
+    element: <Topology />,
+    meta: { title: 'topology' }
+  },
+  {
+    path: '/org-chart',
+    element: <OrgChart />,
+    meta: { title: 'org-chart' }
   }
 ]
 

@@ -12,7 +12,11 @@
     "bigscreen": "bigscreen",
     "8k": "8k",
     "sketch-ruler": "8K sketch-ruler",
-    "multi-instance": "Multi Instance"
+    "multi-instance": "Multi Instance",
+    "flow-editor": "Flow Editor",
+    "whiteboard": "Whiteboard",
+    "topology": "Topology",
+    "org-chart": "Org Chart"
   },
   "common": {
     "code": "Code",

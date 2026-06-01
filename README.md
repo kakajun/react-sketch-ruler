@@ -47,14 +47,45 @@ import type { SketchRulerProps, SketchRulerMethods } from 'react-sketch-ruler'
 import 'react-sketch-ruler/index.css'
 ```
 
-### CDN
+### CDN (IIFE)
+
+通过 `<script>` 标签直接引入，挂载到全局变量 `SketchRuler`：
 
 ```html
-<script src="https://unpkg.com/react-sketch-ruler/lib/index.umd.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/react-sketch-ruler/lib/index.css" />
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/react-sketch-ruler/lib/index.iife.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/react-sketch-ruler/lib/style.css" />
 
 <script>
-  const { SketchRule, Minimap } = window.ReactSketchRuler
+  const { SketchRule } = SketchRuler
+
+  function App() {
+    return React.createElement(SketchRule, { width: 1470, height: 700 })
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App))
+</script>
+```
+
+### CDN (UMD)
+
+UMD 格式兼容 CommonJS、AMD 和浏览器全局变量三种环境：
+
+```html
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/react-sketch-ruler/lib/index.umd.cjs"></script>
+<link rel="stylesheet" href="https://unpkg.com/react-sketch-ruler/lib/style.css" />
+
+<script>
+  const { SketchRule } = SketchRuler
+
+  function App() {
+    return React.createElement(SketchRule, { width: 1470, height: 700 })
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App))
 </script>
 ```
 

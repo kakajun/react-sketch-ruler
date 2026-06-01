@@ -13,7 +13,7 @@ export default defineConfig({
     'process.env.NODE_ENV': '"production"'
   },
   plugins: [
-    react(),
+    react({ jsxRuntime: 'classic' }),
     dts({
       rollupTypes: true,
       tsconfigPath: resolve(__dirname, 'tsconfig.json'),
@@ -29,18 +29,26 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/index.tsx'),
       name: 'SketchRuler',
-      fileName: 'index'
+      fileName: (format) => {
+        if (format === 'umd') return 'index.umd.cjs'
+        if (format === 'cjs') return 'index.cjs'
+        if (format === 'iife') return 'index.iife.js'
+        return 'index.js'
+      },
+      formats: ['es', 'cjs', 'umd', 'iife']
     },
     rollupOptions: {
-      external: ['react', 'react-dom', '@sketch-ruler/core', '@sketch-ruler/canvas'],
+      external: ['react', 'react-dom'],
       output: {
         exports: 'named',
         banner,
+        assetFileNames: (chunkInfo) => {
+          if (chunkInfo.name && /\.css$/.test(chunkInfo.name)) return 'style.css'
+          return chunkInfo.name ? chunkInfo.name : '[name][extname]'
+        },
         globals: {
           react: 'React',
-          'react-dom': 'ReactDOM',
-          '@sketch-ruler/core': 'SketchRulerCore',
-          '@sketch-ruler/canvas': 'SketchRulerCanvas'
+          'react-dom': 'ReactDOM'
         }
       }
     }
