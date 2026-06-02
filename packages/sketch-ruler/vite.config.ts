@@ -43,7 +43,7 @@ export default defineConfig({
         exports: 'named',
         banner,
         assetFileNames: (chunkInfo) => {
-          if (chunkInfo.name && /\.css$/.test(chunkInfo.name)) return 'style.css'
+          if (chunkInfo.name && /\.css$/.test(chunkInfo.name)) return 'index.css'
           return chunkInfo.name ? chunkInfo.name : '[name][extname]'
         },
         globals: {
