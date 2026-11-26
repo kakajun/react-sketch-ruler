@@ -15,7 +15,7 @@ export default defineConfig({
   plugins: [
     react({ jsxRuntime: 'classic' }),
     dts({
-      rollupTypes: true,
+      bundleTypes: true,
       tsconfigPath: resolve(__dirname, 'tsconfig.json'),
       entryRoot: resolve(__dirname, 'src'),
       include: [resolve(__dirname, 'src')],
